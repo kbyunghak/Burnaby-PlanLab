@@ -1,14 +1,50 @@
-// src/components/SimulationModal.js
 import React from 'react';
 import Modal from 'react-modal';
-import SimulationSummary from '../components/SimulationSummary';
-import SimulationSummary2 from '../components/SimulationSummary2';
-import { facilityImpactData } from '../constants/facilityDefinitions';
+import {
+  CartesianGrid,
+  Legend,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
+import { facilityDefinitions } from '../constants/facilityDefinitions';
 import {
   formatMetricValue,
   isFavorableChange,
   metricEntries,
 } from '../constants/metricDefinitions';
+import SimulationSummary from './SimulationSummary';
+import SimulationSummary2 from './SimulationSummary2';
+import './SimulationModal.css';
+
+const featuredMetricKeys = [
+  'population',
+  'trafficAccidents',
+  'crimeRate',
+  'housingSatisfaction',
+];
+
+const formatSignedMetric = (key, value) => {
+  const prefix = value > 0 ? '+' : '';
+  return `${prefix}${formatMetricValue(key, value)}`;
+};
+
+const getChangeClassName = (key, value) => {
+  const favorable = isFavorableChange(key, value);
+  if (favorable === null) return 'impact-neutral';
+  return favorable ? 'impact-positive' : 'impact-negative';
+};
+
+const formatImpactPercent = (value) => {
+  const prefix = value > 0 ? '+' : '';
+  return `${prefix}${value.toLocaleString(undefined, {
+    maximumFractionDigits: 1,
+  })}%`;
+};
+
 const SimulationModal = ({
   isOpen,
   onRequestClose,
@@ -17,15 +53,26 @@ const SimulationModal = ({
 }) => {
   if (!simulationData) return null;
 
-  const filteredFacilityImpact = facilityImpactData.filter(f =>
-    facilitiesInstalled.includes(f.facility)
-  );
   const {
     baseline2025,
     projection2050,
     userPlan2050,
     netImpact,
+    yearlyTrend,
   } = simulationData;
+
+  const installedDefinitions = facilitiesInstalled
+    .map((facilityName) => ({
+      name: facilityName,
+      ...facilityDefinitions[facilityName],
+    }))
+    .filter(({ impacts }) => impacts);
+
+  const populationTrend = yearlyTrend.map(({ year, projection, withPlan }) => ({
+    year,
+    projection: Math.round(projection.population),
+    withPlan: Math.round(withPlan.population),
+  }));
 
   return (
     <Modal
@@ -33,132 +80,208 @@ const SimulationModal = ({
       onRequestClose={onRequestClose}
       contentLabel="Simulation Results"
       ariaHideApp={false}
-      style={{
-        overlay: { zIndex: 10000, backgroundColor: 'rgba(0, 0, 0, 0.5)' },
-        content: { maxWidth: '1000px', margin: 'auto', width: 'auto', height: 'auto', borderRadius: '10px', padding: '20px', maxHeight: '80vh', overflowY: 'auto' },
-      }}
+      overlayClassName="simulation-modal-overlay"
+      className="simulation-modal"
     >
-      <h2>City Growth Simulation Results (2025-2050)</h2>
-      <div style={{ marginTop: '0px' }}>
-        <SimulationSummary simulationData={simulationData} facilitiesInstalled={facilitiesInstalled} />
-      </div>
+      <header className="simulation-modal__header">
+        <div>
+          <p className="simulation-modal__eyebrow">Your 2050 city plan</p>
+          <h2>Simulation Results</h2>
+          <p>
+            Compare Burnaby&apos;s projected future with the measurable impact
+            of your facility plan.
+          </p>
+        </div>
+        <button
+          type="button"
+          className="simulation-modal__close-icon"
+          onClick={onRequestClose}
+          aria-label="Close simulation results"
+        >
+          ×
+        </button>
+      </header>
 
-      <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '0px', fontSize: '1rem' }}>
-        <thead>
-          <tr>
-            <th style={{ borderBottom: '2px solid #444', textAlign: 'left', padding: '8px' }}>Indicator</th>
-            <th style={{ borderBottom: '2px solid #444', textAlign: 'right', padding: '8px' }}>2025 (Baseline)</th>
-            <th style={{ borderBottom: '2px solid #444', textAlign: 'right', padding: '8px' }}>2050 (Projected)</th>
-            <th style={{ borderBottom: '2px solid #444', textAlign: 'right', padding: '8px' }}>2050 (With Your Plan)</th>
-            <th style={{ borderBottom: '2px solid #444', textAlign: 'right', padding: '0px' }}>Difference (User - Projected)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td style={{ borderBottom: '1px solid #ccc', padding: '8px' }}>Year</td>
-            <td style={{ borderBottom: '1px solid #ccc', padding: '8px', textAlign: 'right' }}>2025</td>
-            <td style={{ borderBottom: '1px solid #ccc', padding: '8px', textAlign: 'right' }}>2050</td>
-            <td style={{ borderBottom: '1px solid #ccc', padding: '8px', textAlign: 'right' }}>2050</td>
-            <td style={{ borderBottom: '1px solid #ccc', padding: '8px' }} />
-          </tr>
-          {metricEntries.map(({ key: dataKey, label }) => {
-            const currentValue = baseline2025[dataKey] ?? 0;
-            const forecastValue = projection2050[dataKey] ?? 0;
-            const userTrendValue = userPlan2050[dataKey] ?? 0;
-            const difference = netImpact[dataKey] ?? 0;
-            const favorable = isFavorableChange(dataKey, difference);
+      <section aria-labelledby="net-impact-heading">
+        <div className="simulation-section-heading">
+          <div>
+            <p className="simulation-section-heading__kicker">Plan outcome</p>
+            <h3 id="net-impact-heading">Net Impact by 2050</h3>
+          </div>
+          <p>Changes shown against the 2050 projection without your plan.</p>
+        </div>
+
+        <div className="impact-card-grid">
+          {featuredMetricKeys.map((key) => {
+            const metric = metricEntries.find((entry) => entry.key === key);
+            const change = netImpact[key];
 
             return (
-              <tr key={dataKey}>
-                <td style={{ borderBottom: '1px solid #ccc', padding: '8px' }}>{label}</td>
-                <td style={{ borderBottom: '1px solid #ccc', padding: '8px', textAlign: 'right' }}>{formatMetricValue(dataKey, currentValue)}</td>
-                <td style={{ borderBottom: '1px solid #ccc', padding: '8px', textAlign: 'right' }}>{formatMetricValue(dataKey, forecastValue)}</td>
-                <td style={{ borderBottom: '1px solid #ccc', padding: '8px', textAlign: 'right' }}>{formatMetricValue(dataKey, userTrendValue)}</td>
-                <td style={{
-                  borderBottom: '1px solid #ccc',
-                  padding: '8px',
-                  textAlign: 'right',
-                  fontWeight: difference !== 0 ? 'bold' : 'normal',
-                  color: favorable === null ? 'inherit' : favorable ? '#2e7d32' : '#c62828',
-                }}>
-                  {difference > 0 ? '+' : ''}
-                  {formatMetricValue(dataKey, difference)}
-                </td>
-              </tr>
+              <article className="impact-card" key={key}>
+                <p>{metric.label}</p>
+                <strong className={getChangeClassName(key, change)}>
+                  {formatSignedMetric(key, change)}
+                </strong>
+                <span>
+                  {formatMetricValue(key, projection2050[key])}
+                  {' → '}
+                  {formatMetricValue(key, userPlan2050[key])}
+                </span>
+              </article>
             );
           })}
-        </tbody>
-      </table>
+        </div>
+      </section>
 
-      <h3 style={{ marginTop: '10px' }}>Facility Impact Details
-        <SimulationSummary2 simulationData={simulationData} facilitiesInstalled={facilitiesInstalled} />
-      </h3>
+      <section aria-labelledby="comparison-heading">
+        <div className="simulation-section-heading">
+          <div>
+            <p className="simulation-section-heading__kicker">Scenario comparison</p>
+            <h3 id="comparison-heading">Baseline and Plan Comparison</h3>
+          </div>
+        </div>
 
-      <table
-        style={{
-          width: '100%',
-          borderCollapse: 'collapse',
-          marginTop: '10px',
-          fontSize: '0.9rem',
-          textAlign: 'center',
-        }}
-      >
-        <thead>
-          <tr>
-            <th style={{ border: '1px solid #ccc', padding: '6px' }}>Facility</th>
-            <th style={{ border: '1px solid #ccc', padding: '6px' }}>Population Change (%)</th>
-            <th style={{ border: '1px solid #ccc', padding: '6px' }}>Traffic Change (%)</th>
-            <th style={{ border: '1px solid #ccc', padding: '6px' }}>Crime Change (%)</th>
-            <th style={{ border: '1px solid #ccc', padding: '6px' }}>Housing Satisfaction (%)</th>
-            <th style={{ border: '1px solid #ccc', padding: '6px' }}>Unemployment Change (%)</th>
-            <th style={{ border: '1px solid #ccc', padding: '6px' }}>Housing Supply Rate (%)</th>
-            <th style={{ border: '1px solid #ccc', padding: '6px' }}>Air Quality Change (%)</th>
-            <th style={{ border: '1px solid #ccc', padding: '6px' }}>Inflation Rate (%)</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredFacilityImpact.map(({
-            facility,
-            populationChange,
-            trafficChange,
-            crimeChange,
-            housingSatisfaction,
-            unemploymentChange,
-            housingSupplyRate,
-            airQualityChange,
-            inflationRate,
-          }) => (
-            <tr key={facility}>
-              <td style={{ border: '1px solid #ccc', padding: '6px', fontWeight: 'bold' }}>{facility}</td>
-              <td style={{ border: '1px solid #ccc', padding: '6px' }}>{populationChange}</td>
-              <td style={{ border: '1px solid #ccc', padding: '6px' }}>{trafficChange}</td>
-              <td style={{ border: '1px solid #ccc', padding: '6px' }}>{crimeChange}</td>
-              <td style={{ border: '1px solid #ccc', padding: '6px' }}>{housingSatisfaction}</td>
-              <td style={{ border: '1px solid #ccc', padding: '6px' }}>{unemploymentChange}</td>
-              <td style={{ border: '1px solid #ccc', padding: '6px' }}>{housingSupplyRate}</td>
-              <td style={{ border: '1px solid #ccc', padding: '6px' }}>{airQualityChange}</td>
-              <td style={{ border: '1px solid #ccc', padding: '6px' }}>{inflationRate}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+        <div className="simulation-table-scroll">
+          <table className="simulation-table">
+            <thead>
+              <tr>
+                <th scope="col">Indicator</th>
+                <th scope="col">2025 Baseline</th>
+                <th scope="col">2050 Without Plan</th>
+                <th scope="col">2050 With Your Plan</th>
+                <th scope="col">Net Impact</th>
+              </tr>
+            </thead>
+            <tbody>
+              {metricEntries.map(({ key, label }) => {
+                const difference = netImpact[key];
 
-      <button
-        onClick={onRequestClose}
-        style={{
-          marginTop: '20px',
-          padding: '10px 20px',
-          backgroundColor: '#3f51b5',
-          color: 'white',
-          border: 'none',
-          borderRadius: '6px',
-          fontWeight: 'bold',
-          cursor: 'pointer',
-          float: 'right',
-        }}
-      >
-        Close
-      </button>
+                return (
+                  <tr key={key}>
+                    <th scope="row">{label}</th>
+                    <td>{formatMetricValue(key, baseline2025[key])}</td>
+                    <td>{formatMetricValue(key, projection2050[key])}</td>
+                    <td>{formatMetricValue(key, userPlan2050[key])}</td>
+                    <td className={getChangeClassName(key, difference)}>
+                      {formatSignedMetric(key, difference)}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section aria-labelledby="trend-heading">
+        <div className="simulation-section-heading">
+          <div>
+            <p className="simulation-section-heading__kicker">Population outlook</p>
+            <h3 id="trend-heading">Projected Growth</h3>
+          </div>
+          <p>Facility effects are introduced gradually from 2025 to 2050.</p>
+        </div>
+
+        <div className="simulation-chart" role="img" aria-label="Population projection chart">
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={populationTrend} margin={{ top: 8, right: 20, left: 12, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#dbe3ee" />
+              <XAxis dataKey="year" tick={{ fill: '#526173', fontSize: 12 }} />
+              <YAxis
+                width={76}
+                tick={{ fill: '#526173', fontSize: 12 }}
+                tickFormatter={(value) => `${Math.round(value / 1000)}k`}
+              />
+              <Tooltip formatter={(value) => value.toLocaleString()} />
+              <Legend />
+              <Line
+                type="monotone"
+                dataKey="projection"
+                name="Without Plan"
+                stroke="#7a8798"
+                strokeWidth={2}
+                dot={false}
+              />
+              <Line
+                type="monotone"
+                dataKey="withPlan"
+                name="With Your Plan"
+                stroke="#3157c8"
+                strokeWidth={3}
+                dot={false}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </section>
+
+      <section aria-labelledby="policy-heading">
+        <div className="simulation-section-heading">
+          <div>
+            <p className="simulation-section-heading__kicker">Interpretation</p>
+            <h3 id="policy-heading">Policy Summary</h3>
+          </div>
+        </div>
+        <SimulationSummary simulationData={simulationData} />
+      </section>
+
+      <section aria-labelledby="facility-impact-heading">
+        <div className="simulation-section-heading">
+          <div>
+            <p className="simulation-section-heading__kicker">Plan inputs</p>
+            <h3 id="facility-impact-heading">Facility Impact Details</h3>
+          </div>
+        </div>
+
+        <SimulationSummary2 facilitiesInstalled={facilitiesInstalled} />
+
+        <div className="simulation-table-scroll">
+          <table className="simulation-table simulation-table--compact">
+            <thead>
+              <tr>
+                <th scope="col">Facility</th>
+                <th scope="col">Population</th>
+                <th scope="col">Traffic</th>
+                <th scope="col">Crime</th>
+                <th scope="col">Housing Satisfaction</th>
+                <th scope="col">Unemployment</th>
+                <th scope="col">Housing Supply</th>
+                <th scope="col">Air Quality</th>
+                <th scope="col">Inflation</th>
+              </tr>
+            </thead>
+            <tbody>
+              {installedDefinitions.map(({ name, label, impacts }) => (
+                <tr key={name}>
+                  <th scope="row">{label}</th>
+                  <td>{formatImpactPercent(impacts.populationPercent * 100)}</td>
+                  <td>{formatImpactPercent(impacts.trafficPercent * 100)}</td>
+                  <td>{formatImpactPercent(impacts.crimePercent * 100)}</td>
+                  <td>{formatImpactPercent(impacts.housingSatisfactionPercent * 100)}</td>
+                  <td>{formatImpactPercent(impacts.unemploymentPercent * 100)}</td>
+                  <td>{formatImpactPercent(impacts.housingSupplyPercent * 100)}</td>
+                  <td>{formatImpactPercent(impacts.airQualityPercent * 100)}</td>
+                  <td>{formatImpactPercent(impacts.inflationPercent * 100)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <footer className="simulation-modal__footer">
+        <p>
+          Illustrative planning model. See the simulation methodology for
+          assumptions and limitations.
+        </p>
+        <button
+          type="button"
+          className="simulation-modal__close-button"
+          onClick={onRequestClose}
+        >
+          Close Results
+        </button>
+      </footer>
     </Modal>
   );
 };
