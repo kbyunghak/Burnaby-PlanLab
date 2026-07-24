@@ -73,13 +73,13 @@ fix: stabilize map controls and facility markers
 
 ### Step 2 — Add Plan Editing
 
-- [ ] Introduce a plan reducer or equivalent isolated state model.
-- [ ] Add Undo Last Placement.
-- [ ] Allow a selected user-plan marker to be removed.
-- [ ] Add Reset Plan.
-- [ ] Restore budget and usage counts after removal.
-- [ ] Prevent existing facilities from being removed.
-- [ ] Add reducer and integration tests for add, undo, remove, and reset.
+- [x] Introduce a plan reducer or equivalent isolated state model.
+- [x] Add Undo Last Placement.
+- [x] Allow a selected user-plan marker to be removed.
+- [x] Add Reset Plan.
+- [x] Restore budget and usage counts after removal.
+- [x] Prevent existing facilities from being removed.
+- [x] Add reducer and integration tests for add, undo, remove, and reset.
 
 Acceptance criteria:
 

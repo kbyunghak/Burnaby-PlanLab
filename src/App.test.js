@@ -4,7 +4,10 @@ import App from './App';
 jest.mock('./components/MapComponentWrapper', () => function MockMap({
   markers,
   onMapClick,
+  onUserFacilitySelect,
 }) {
+  const userFacility = markers.find(({ id }) => id);
+
   return (
     <div>
       <div data-testid="city-map" data-marker-count={markers.length}>
@@ -16,6 +19,14 @@ jest.mock('./components/MapComponentWrapper', () => function MockMap({
       >
         Place facility on map
       </button>
+      {userFacility && (
+        <button
+          type="button"
+          onClick={() => onUserFacilitySelect(userFacility.id)}
+        >
+          Select proposed facility
+        </button>
+      )}
     </div>
   );
 });
@@ -66,4 +77,51 @@ test('charges the budget only for facilities added to the user plan', () => {
     .getByRole('heading', { name: /building usage/i })
     .closest('section');
   expect(within(usageSection).getByText(/1 × \$300/)).toHaveTextContent('= $300');
+});
+
+test('undoes the latest placement and restores its budget', () => {
+  render(<App />);
+
+  fireEvent.click(screen.getByRole('button', { name: /Market\s+\$300/i }));
+  fireEvent.click(screen.getByRole('button', { name: /place facility on map/i }));
+  fireEvent.click(screen.getByRole('button', { name: /place facility on map/i }));
+  expect(screen.getByText('$9,400')).toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole('button', { name: 'Undo Last' }));
+
+  expect(screen.getByText('$9,700')).toBeInTheDocument();
+  expect(screen.getByText('$300 used')).toBeInTheDocument();
+});
+
+test('removes a selected proposed facility without affecting existing facilities', () => {
+  render(<App />);
+
+  fireEvent.click(screen.getByRole('button', { name: /Market\s+\$300/i }));
+  fireEvent.click(screen.getByRole('button', { name: /place facility on map/i }));
+  expect(screen.getByTestId('city-map')).toHaveAttribute(
+    'data-marker-count',
+    '11'
+  );
+
+  fireEvent.click(
+    screen.getByRole('button', { name: 'Select proposed facility' })
+  );
+  fireEvent.click(screen.getByRole('button', { name: 'Remove Selected' }));
+
+  expect(screen.getByText('$10,000')).toBeInTheDocument();
+  expect(screen.getByTestId('city-map')).toHaveAttribute(
+    'data-marker-count',
+    '10'
+  );
+});
+
+test('resets the full user plan and restores the initial budget', () => {
+  render(<App />);
+
+  fireEvent.click(screen.getByRole('button', { name: /Market\s+\$300/i }));
+  fireEvent.click(screen.getByRole('button', { name: /place facility on map/i }));
+  fireEvent.click(screen.getByRole('button', { name: 'Reset Plan' }));
+
+  expect(screen.getByText('$10,000')).toBeInTheDocument();
+  expect(screen.getByText('$0 used')).toBeInTheDocument();
 });

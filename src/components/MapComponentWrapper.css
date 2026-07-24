@@ -43,6 +43,13 @@
   filter: drop-shadow(0 0 3px rgba(20, 184, 166, 0.95));
 }
 
+.facility-marker--selected {
+  filter:
+    drop-shadow(0 0 3px #fff)
+    drop-shadow(0 0 7px var(--color-primary));
+  transform-origin: bottom center;
+}
+
 @media (max-width: 980px) {
   .map-panel {
     height: 65vh;

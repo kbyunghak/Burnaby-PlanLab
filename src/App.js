@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useReducer, useState } from 'react';
 import './App.css';
 import LegendModal from './components/LegendModal';
 import MapComponentWrapper from './components/MapComponentWrapper';
 import SimulationModal from './components/SimulationModal';
 import { facilityOptions } from './constants/facilityDefinitions';
 import { burnabyPolygon, existingFacilities } from './constants/mapData';
+import { initialPlanState, planReducer } from './planning/planReducer';
 import { calculateSimulation } from './simulation/calculateSimulation';
 
 function pointInPolygon(point, polygon) {
@@ -29,15 +30,20 @@ const isInsideBurnaby = (latlng) => pointInPolygon(latlng, burnabyPolygon);
 function App() {
   const [loading, setLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
-  const [budget, setBudget] = useState(10000);
-  const [userPlanFacilities, setUserPlanFacilities] = useState([]);
+  const [planState, dispatchPlan] = useReducer(planReducer, initialPlanState);
   const [selectedBuilding, setSelectedBuilding] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [simulationData, setSimulationData] = useState(null);
   const [isLegendOpen, setIsLegendOpen] = useState(false);
   const [showAllIcons, setShowAllIcons] = useState(false);
 
+  const { facilities: userPlanFacilities, selectedFacilityId } = planState;
   const displayedFacilities = [...existingFacilities, ...userPlanFacilities];
+  const totalUsedBudget = userPlanFacilities.reduce(
+    (total, facility) => total + facility.cost,
+    0
+  );
+  const budget = 10000 - totalUsedBudget;
   const buildingUsage = facilityOptions.map((facility) => {
     const count = userPlanFacilities.filter(
       ({ buildingName }) => buildingName === facility.name
@@ -50,15 +56,22 @@ function App() {
       totalCost: facility.cost * count,
     };
   });
-  const totalUsedBudget = buildingUsage.reduce(
-    (total, facility) => total + facility.totalCost,
-    0
-  );
   const displayedMarkers = selectedBuilding
     ? displayedFacilities.filter(
         ({ buildingName }) => buildingName === selectedBuilding.name
       )
     : displayedFacilities;
+
+  const invalidateSimulationResult = () => {
+    setSimulationData(null);
+    setIsModalOpen(false);
+    setShowAllIcons(false);
+  };
+
+  const updatePlan = (action) => {
+    dispatchPlan(action);
+    invalidateSimulationResult();
+  };
 
   const handleMapClick = (latlng) => {
     if (!selectedBuilding) {
@@ -74,18 +87,15 @@ function App() {
       return;
     }
 
-    setBudget((currentBudget) => currentBudget - selectedBuilding.cost);
-    setUserPlanFacilities((currentFacilities) => [
-      ...currentFacilities,
-      {
+    updatePlan({
+      type: 'add',
+      facility: {
         position: [latlng.lat, latlng.lng],
         popup: selectedBuilding.popup,
         buildingName: selectedBuilding.name,
+        cost: selectedBuilding.cost,
       },
-    ]);
-    setSimulationData(null);
-    setIsModalOpen(false);
-    setShowAllIcons(false);
+    });
   };
 
   const simulateCityGrowth = () => {
@@ -113,6 +123,10 @@ function App() {
           selectedBuilding={selectedBuilding}
           showAllIcons={showAllIcons}
           existingFacilities={existingFacilities}
+          selectedUserFacilityId={selectedFacilityId}
+          onUserFacilitySelect={(facilityId) =>
+            updatePlan({ type: 'select', facilityId })
+          }
         />
 
         <aside className="control-panel" aria-label="City plan controls">
@@ -172,6 +186,33 @@ function App() {
               <strong>${budget.toLocaleString()}</strong>
             </div>
           </section>
+
+          <div className="plan-actions" aria-label="Plan editing">
+            <button
+              type="button"
+              className="button button--secondary"
+              onClick={() => updatePlan({ type: 'undo' })}
+              disabled={userPlanFacilities.length === 0}
+            >
+              Undo Last
+            </button>
+            <button
+              type="button"
+              className="button button--secondary"
+              onClick={() => updatePlan({ type: 'remove-selected' })}
+              disabled={!selectedFacilityId}
+            >
+              Remove Selected
+            </button>
+            <button
+              type="button"
+              className="button button--secondary"
+              onClick={() => updatePlan({ type: 'reset' })}
+              disabled={userPlanFacilities.length === 0}
+            >
+              Reset Plan
+            </button>
+          </div>
 
           <button
             type="button"

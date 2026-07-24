@@ -59,6 +59,8 @@ test('connects Reset View to the initialized Leaflet map', async () => {
       selectedBuilding={null}
       showAllIcons={false}
       existingFacilities={[]}
+      selectedUserFacilityId={null}
+      onUserFacilitySelect={jest.fn()}
     />
   );
 
@@ -80,6 +82,8 @@ test('keeps facility icons and distinguishes existing and proposed markers', () 
       selectedBuilding={null}
       showAllIcons
       existingFacilities={[existingMarket]}
+      selectedUserFacilityId={null}
+      onUserFacilitySelect={jest.fn()}
     />
   );
 

@@ -43,6 +43,16 @@ const proposedIconMap = Object.fromEntries(
   ])
 );
 
+const selectedIconMap = Object.fromEntries(
+  Object.entries(facilityDefinitions).map(([name, definition]) => [
+    name,
+    createIcon(
+      process.env.PUBLIC_URL + definition.icon,
+      'facility-marker facility-marker--proposed facility-marker--selected'
+    ),
+  ])
+);
+
 const existingIconMap = Object.fromEntries(
   Object.entries(facilityDefinitions).map(([name, definition]) => [
     name,
@@ -90,6 +100,8 @@ const MapComponent = ({
   zoom,
   showAllIcons,
   existingFacilities,
+  selectedUserFacilityId,
+  onUserFacilitySelect,
 }) => {
   const [map, setMap] = useState(null);
 
@@ -131,7 +143,12 @@ const MapComponent = ({
               && existingFacility.position[1] === marker.position[1]
               && existingFacility.buildingName === marker.buildingName
           );
-          const facilityIcons = isExisting ? existingIconMap : proposedIconMap;
+          const isSelected = marker.id === selectedUserFacilityId;
+          const facilityIcons = isExisting
+            ? existingIconMap
+            : isSelected
+              ? selectedIconMap
+              : proposedIconMap;
           const icon = facilityIcons[marker.buildingName] || defaultIcon;
 
           if (!selectedBuilding && !showAllIcons) return null;
@@ -142,6 +159,18 @@ const MapComponent = ({
               position={marker.position}
               icon={icon}
               opacity={isExisting ? 0.55 : 1}
+              eventHandlers={
+                isExisting
+                  ? undefined
+                  : {
+                      click: (event) => {
+                        if (event.originalEvent) {
+                          L.DomEvent.stopPropagation(event.originalEvent);
+                        }
+                        onUserFacilitySelect(marker.id);
+                      },
+                    }
+              }
             >
               <Popup>
                 <strong>{isExisting ? 'Existing facility' : 'Your plan'}</strong>
