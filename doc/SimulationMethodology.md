@@ -30,6 +30,22 @@ The difference attributable to the user plan:
 Net Impact = 2050 With Your Plan - 2050 Without Plan
 ```
 
+Net Impact is classified as **User Plan Impact**. It is produced by the illustrative model and must not be described as an official forecast or an observed outcome.
+
+### No-Plan Reference Scenario
+
+When the user proposes no facilities, the plan impact is zero and the application displays the underlying reference growth explicitly:
+
+```text
+2026 Model Start: 289,421
+2050 Official Reference: 408,150
+Projected Growth: +118,729
+Your Proposed Facilities: 0
+Plan Impact: No change
+```
+
+This does not mean Burnaby remains unchanged. It means the user's plan adds no change beyond the published reference outlook.
+
 ### Yearly Trend
 
 A 2026-2050 series used to compare a linearly interpolated no-plan projection with a user-plan scenario whose facility effects are gradually introduced over the same period.
@@ -39,6 +55,8 @@ A 2026-2050 series used to compare a linearly interpolated no-plan projection wi
 Population reference values are stored as a versioned snapshot of the Burnaby 2050 Official Community Plan. The 2026 population is a documented model estimate. Other baseline and forecast indicators remain illustrative project assumptions.
 
 See [Simulation Data Sources](DataSources.md) for source metadata, published values, transformations, and maintenance rules.
+
+The application uses five provenance classifications: Official Reference, Model Estimate, Observed Baseline, Illustrative Assumption, and User Plan Impact. A visual asset may explain a source, but calculations always consume structured data.
 
 Before presenting the model as data-informed policy analysis, each baseline and forecast value should have:
 

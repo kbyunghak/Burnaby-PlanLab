@@ -64,6 +64,8 @@ const SimulationModal = ({
   } = simulationData;
   const isNoPlan =
     (planSnapshot?.facilityCount ?? facilitiesInstalled.length) === 0;
+  const referencePopulationGrowth =
+    projection2050.population - baseline2026.population;
 
   const installedDefinitions = facilitiesInstalled
     .map((facilityName) => ({
@@ -139,15 +141,41 @@ const SimulationModal = ({
             </span>
             <strong>{referenceScenario.label}</strong>
             <p>
-              Population uses the Metro Vancouver high-growth scenario published
-              in the Burnaby 2050 Official Community Plan. The 2026 population is
-              a model estimate interpolated between official 2021 and 2030 values.
+              Reference scenario based on the Metro Vancouver high-growth
+              forecast published in the Burnaby 2050 Official Community Plan.
+              The 2026 population is a model estimate interpolated between
+              official 2021 and 2030 values.
             </p>
+            {isNoPlan && (
+              <dl className="simulation-reference__facts">
+                <div>
+                  <dt>2026 Model Start</dt>
+                  <dd>{formatMetricValue('population', baseline2026.population)}</dd>
+                </div>
+                <div>
+                  <dt>2050 Official Reference</dt>
+                  <dd>{formatMetricValue('population', projection2050.population)}</dd>
+                </div>
+                <div>
+                  <dt>Projected Growth</dt>
+                  <dd>{formatSignedMetric('population', referencePopulationGrowth)}</dd>
+                </div>
+                <div>
+                  <dt>Your Proposed Facilities</dt>
+                  <dd>0</dd>
+                </div>
+                <div>
+                  <dt>Plan Impact</dt>
+                  <dd>No change</dd>
+                </div>
+              </dl>
+            )}
           </div>
           <div className="simulation-reference__actions">
             <span className="data-status data-status--assumption">
               Other indicators: illustrative
             </span>
+            <small>Not an official City of Burnaby forecast</small>
             <a
               href={referenceScenario.source.url}
               target="_blank"

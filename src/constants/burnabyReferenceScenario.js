@@ -44,6 +44,8 @@ export const burnabyReferenceScenario = {
     publication: 'Burnaby 2050 Official Community Plan',
     scenario: 'Metro Vancouver high-growth scenario',
     url: 'https://www.burnaby.ca/sites/default/files/acquiadam/2025-12/Burnaby%202050%20Official%20Community%20Plan.pdf',
+    landingPageUrl: 'https://www.burnaby.ca/our-city/official-community-plan',
+    retrievedDate: '2026-07-24',
   },
   officialSeries,
   modelStart2026: {

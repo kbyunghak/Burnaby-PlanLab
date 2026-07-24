@@ -106,6 +106,9 @@ Local branding can be implemented in the repository. Renaming the remote GitHub 
 - [x] Label the 2050 population as OCP-based.
 - [x] Label unsourced long-range indicators as illustrative assumptions.
 - [x] Add a source link to the no-plan result.
+- [x] Show 2026 Model Start, 2050 Official Reference, Projected Growth, facility count, and Plan Impact for an empty plan.
+- [x] Define Official Reference, Model Estimate, Observed Baseline, Illustrative Assumption, and User Plan Impact.
+- [x] Require structured calculation data instead of image-derived values.
 - [x] Create `doc/DataSources.md`.
 - [x] Update the simulation methodology and tests.
 

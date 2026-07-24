@@ -132,6 +132,17 @@ describe('SimulationModal', () => {
     expect(
       screen.getByRole('complementary', { name: 'Reference scenario source' })
     ).toHaveTextContent('Official reference');
+    const sourceCard = screen.getByRole('complementary', {
+      name: 'Reference scenario source',
+    });
+    expect(sourceCard).toHaveTextContent('2026 Model Start289,421');
+    expect(sourceCard).toHaveTextContent('2050 Official Reference408,150');
+    expect(sourceCard).toHaveTextContent('Projected Growth+118,729');
+    expect(sourceCard).toHaveTextContent('Your Proposed Facilities0');
+    expect(sourceCard).toHaveTextContent('Plan ImpactNo change');
+    expect(sourceCard).toHaveTextContent(
+      'Not an official City of Burnaby forecast'
+    );
     expect(
       screen.getByRole('link', { name: 'View official source' })
     ).toHaveAttribute('href', expect.stringContaining('Burnaby%202050'));
