@@ -1,4 +1,4 @@
-import React, { useReducer, useState } from 'react';
+import React, { useReducer, useRef, useState } from 'react';
 import './App.css';
 import BuildingUsage from './components/BuildingUsage';
 import LegendModal from './components/LegendModal';
@@ -32,6 +32,13 @@ function pointInPolygon(point, polygon) {
 }
 
 const isInsideBurnaby = (latlng) => pointInPolygon(latlng, burnabyPolygon);
+const defaultControlPanelWidth = 390;
+const minControlPanelWidth = 320;
+const maxControlPanelWidth = 520;
+const resizeKeyboardStep = 16;
+
+const clampControlPanelWidth = (width) =>
+  Math.min(maxControlPanelWidth, Math.max(minControlPanelWidth, width));
 
 function App() {
   const [feedback, setFeedback] = useState(null);
@@ -46,6 +53,10 @@ function App() {
   );
   const [showExistingFacilities, setShowExistingFacilities] = useState(true);
   const [showProposedFacilities, setShowProposedFacilities] = useState(true);
+  const [controlPanelWidth, setControlPanelWidth] = useState(
+    defaultControlPanelWidth
+  );
+  const resizeStart = useRef(null);
 
   const { facilities: userPlanFacilities, selectedFacilityId } = planState;
   const displayedFacilities = [...existingFacilities, ...userPlanFacilities];
@@ -161,9 +172,53 @@ function App() {
     );
   };
 
+  const handleResizePointerDown = (event) => {
+    resizeStart.current = {
+      pointerX: event.clientX,
+      panelWidth: controlPanelWidth,
+    };
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
+  const handleResizePointerMove = (event) => {
+    if (!resizeStart.current) return;
+
+    const pointerDelta = event.clientX - resizeStart.current.pointerX;
+    setControlPanelWidth(
+      clampControlPanelWidth(resizeStart.current.panelWidth - pointerDelta)
+    );
+  };
+
+  const stopResizing = (event) => {
+    resizeStart.current = null;
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+  };
+
+  const handleResizeKeyDown = (event) => {
+    const keyActions = {
+      ArrowLeft: () => setControlPanelWidth((width) =>
+        clampControlPanelWidth(width + resizeKeyboardStep)),
+      ArrowRight: () => setControlPanelWidth((width) =>
+        clampControlPanelWidth(width - resizeKeyboardStep)),
+      Home: () => setControlPanelWidth(minControlPanelWidth),
+      End: () => setControlPanelWidth(maxControlPanelWidth),
+    };
+    const action = keyActions[event.key];
+
+    if (action) {
+      event.preventDefault();
+      action();
+    }
+  };
+
   return (
     <>
-      <main className="app-shell">
+      <main
+        className="app-shell"
+        style={{ '--control-panel-width': `${controlPanelWidth}px` }}
+      >
         <MapComponentWrapper
           center={[49.2488, -122.9805]}
           zoom={12}
@@ -189,6 +244,26 @@ function App() {
           showProposed={showProposedFacilities}
           onShowProposedChange={setShowProposedFacilities}
         />
+
+        <div
+          className="workspace-resizer"
+          role="separator"
+          aria-label="Resize map and plan panels"
+          aria-orientation="vertical"
+          aria-valuemin={minControlPanelWidth}
+          aria-valuemax={maxControlPanelWidth}
+          aria-valuenow={controlPanelWidth}
+          tabIndex="0"
+          onDoubleClick={() =>
+            setControlPanelWidth(defaultControlPanelWidth)}
+          onKeyDown={handleResizeKeyDown}
+          onPointerDown={handleResizePointerDown}
+          onPointerMove={handleResizePointerMove}
+          onPointerUp={stopResizing}
+          onPointerCancel={stopResizing}
+        >
+          <span aria-hidden="true" />
+        </div>
 
         <aside className="control-panel" aria-label="City plan controls">
           <header className="control-panel__header">

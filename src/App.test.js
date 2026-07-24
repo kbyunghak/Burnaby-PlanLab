@@ -76,6 +76,26 @@ test('renders the city planning controls with the initial budget', () => {
   expect(
     screen.getByText(/empty plan to view Burnaby's no-plan 2050 scenario/i)
   ).toBeInTheDocument();
+  expect(
+    screen.getByRole('separator', { name: /resize map and plan panels/i })
+  ).toHaveAttribute('aria-valuenow', '390');
+});
+
+test('resizes the workspace with keyboard controls and restores the default', () => {
+  render(<App />);
+
+  const resizer = screen.getByRole('separator', {
+    name: /resize map and plan panels/i,
+  });
+
+  fireEvent.keyDown(resizer, { key: 'ArrowLeft' });
+  expect(resizer).toHaveAttribute('aria-valuenow', '406');
+
+  fireEvent.keyDown(resizer, { key: 'End' });
+  expect(resizer).toHaveAttribute('aria-valuenow', '520');
+
+  fireEvent.doubleClick(resizer);
+  expect(resizer).toHaveAttribute('aria-valuenow', '390');
 });
 
 test('shows contextual feedback when placement is attempted without a facility', () => {

@@ -82,6 +82,23 @@ function MapController({ onReady }) {
   return null;
 }
 
+function MapResizeObserver() {
+  const map = useMap();
+
+  useEffect(() => {
+    if (typeof ResizeObserver === 'undefined') return undefined;
+
+    const observer = new ResizeObserver(() => {
+      map.invalidateSize({ pan: false });
+    });
+    observer.observe(map.getContainer());
+
+    return () => observer.disconnect();
+  }, [map]);
+
+  return null;
+}
+
 function ZoomObserver({ onZoomChange }) {
   const map = useMapEvents({
     zoomend() {
@@ -198,6 +215,7 @@ const MapComponent = ({
         zoomDelta={0.25}
       >
         <MapController onReady={setMap} />
+        <MapResizeObserver />
         <ZoomObserver onZoomChange={setCurrentZoom} />
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         <FitBounds polygon={burnabyPolygon} />
