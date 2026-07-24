@@ -2,7 +2,7 @@
   "name": "burnaby-plan-lab",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://kbyunghak.github.io/burnaby-plan-lab",
+  "homepage": "https://kbyunghak.github.io/Burnaby-PlanLab",
   "dependencies": {
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",

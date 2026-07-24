@@ -16,8 +16,8 @@ The agreed product identity is:
 |---|---|
 | Product name | Burnaby PlanLab |
 | Subtitle | 2026–2050 City Development Simulator |
-| Repository name | `burnaby-plan-lab` |
-| Deployment path | `/burnaby-plan-lab/` |
+| Repository name | `Burnaby-PlanLab` |
+| Deployment path | `/Burnaby-PlanLab/` |
 | Browser title | Burnaby PlanLab \| 2026–2050 City Simulator |
 
 Local branding can be implemented in the repository. Renaming the remote GitHub repository and changing the production URL are external operations and must be handled as a separate deployment step.
@@ -185,7 +185,7 @@ Do not use `npm audit fix --force` as a substitute for an intentional tooling mi
 - [ ] Update the browser title and metadata.
 - [ ] Update the package name where safe.
 - [x] Replace old `city-sim` and generic City Simulation references in documentation.
-- [ ] Update local deployment configuration to `/burnaby-plan-lab/`.
+- [x] Update local deployment configuration to `/Burnaby-PlanLab/`.
 - [ ] Replace the placeholder clone URL after the remote repository is renamed.
 - [ ] Verify favicon, manifest, links, and production asset paths.
 
@@ -205,7 +205,7 @@ docs: update repository identity and links
 - [ ] Add Vite and the React plugin.
 - [ ] Replace `react-scripts` commands.
 - [ ] Move environment and public-path handling to Vite conventions.
-- [ ] Preserve the `/burnaby-plan-lab/` base path.
+- [x] Preserve the `/Burnaby-PlanLab/` base path.
 - [ ] Migrate Jest tests to Vitest or retain a documented compatible runner.
 - [ ] Remove unused CRA-only dependencies.
 - [ ] Re-run the dependency audit without forced upgrades.
@@ -398,7 +398,7 @@ ci: add browser tests and quality gates
 
 ### Step 12 — Add Verified Continuous Deployment
 
-- [ ] Confirm the remote repository is named `burnaby-plan-lab`.
+- [x] Confirm the remote repository is named `Burnaby-PlanLab`.
 - [ ] Confirm the production URL and GitHub Pages base path.
 - [ ] Deploy only from the protected default branch.
 - [ ] Deploy the exact artifact produced by the verified build job.
