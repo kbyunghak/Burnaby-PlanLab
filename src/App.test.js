@@ -31,8 +31,15 @@ jest.mock('./components/MapComponentWrapper', () => function MockMap({
   );
 });
 
-jest.mock('./components/SimulationModal', () => function MockSimulationModal() {
-  return null;
+jest.mock('./components/SimulationModal', () => function MockSimulationModal({
+  isOpen,
+  simulationData,
+}) {
+  return isOpen ? (
+    <div role="dialog" aria-label="Simulation Results">
+      {simulationData.planSnapshot.facilityCount} facilities simulated
+    </div>
+  ) : null;
 });
 
 jest.mock('./components/LegendModal', () => function MockLegendModal() {
@@ -46,13 +53,13 @@ test('renders the city planning controls with the initial budget', () => {
   expect(screen.getByRole('heading', { name: /select building/i })).toBeInTheDocument();
   const planStatus = screen.getByRole('region', { name: /plan status/i });
   expect(within(planStatus).getByText('$10,000')).toBeInTheDocument();
-  expect(screen.getByRole('button', { name: /simulate/i })).toBeDisabled();
+  expect(screen.getByRole('button', { name: /simulate/i })).toBeEnabled();
   expect(screen.getByText('$0 used')).toBeInTheDocument();
   expect(
     screen.getByRole('heading', { name: 'Create your plan' })
   ).toBeInTheDocument();
   expect(
-    screen.getByText(/place at least one facility/i)
+    screen.getByText(/empty plan to view Burnaby's no-plan 2050 scenario/i)
   ).toBeInTheDocument();
 });
 
@@ -157,4 +164,49 @@ test('locates a facility by selecting its type and map marker', () => {
 
   const planStatus = screen.getByRole('region', { name: /plan status/i });
   expect(within(planStatus).getByText('Community Centre')).toBeInTheDocument();
+});
+
+test('simulates a partially allocated plan and captures its facility count', () => {
+  render(<App />);
+
+  fireEvent.click(screen.getByRole('button', { name: /Market\s+\$300/i }));
+  fireEvent.click(screen.getByRole('button', { name: /place facility on map/i }));
+
+  const simulateButton = screen.getByRole('button', { name: 'Simulate' });
+  expect(simulateButton).toBeEnabled();
+  expect(screen.getByText('$9,700 will remain unallocated in this plan.'))
+    .toBeInTheDocument();
+
+  fireEvent.click(simulateButton);
+
+  expect(
+    screen.getByRole('dialog', { name: 'Simulation Results' })
+  ).toHaveTextContent('1 facilities simulated');
+});
+
+test('simulates an empty plan as the no-plan comparison scenario', () => {
+  render(<App />);
+
+  fireEvent.click(screen.getByRole('button', { name: 'Simulate' }));
+
+  expect(
+    screen.getByRole('dialog', { name: 'Simulation Results' })
+  ).toHaveTextContent('0 facilities simulated');
+});
+
+test('invalidates an open result when the plan changes', () => {
+  render(<App />);
+
+  fireEvent.click(screen.getByRole('button', { name: /Market\s+\$300/i }));
+  fireEvent.click(screen.getByRole('button', { name: /place facility on map/i }));
+  fireEvent.click(screen.getByRole('button', { name: 'Simulate' }));
+  expect(
+    screen.getByRole('dialog', { name: 'Simulation Results' })
+  ).toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole('button', { name: /place facility on map/i }));
+
+  expect(
+    screen.queryByRole('dialog', { name: 'Simulation Results' })
+  ).not.toBeInTheDocument();
 });

@@ -59,6 +59,7 @@ const SimulationModal = ({
     userPlan2050,
     netImpact,
     yearlyTrend,
+    planSnapshot,
   } = simulationData;
 
   const installedDefinitions = facilitiesInstalled
@@ -101,6 +102,24 @@ const SimulationModal = ({
           ×
         </button>
       </header>
+
+      {planSnapshot && (
+        <aside
+          className="simulation-plan-snapshot"
+          aria-label="Simulated plan snapshot"
+        >
+          <strong>
+            {planSnapshot.facilityCount}{' '}
+            {planSnapshot.facilityCount === 1
+              ? 'proposed facility'
+              : 'proposed facilities'}
+          </strong>
+          <span>${planSnapshot.totalCost.toLocaleString()} allocated</span>
+          <span>
+            ${planSnapshot.remainingBudget.toLocaleString()} unallocated
+          </span>
+        </aside>
+      )}
 
       <section aria-labelledby="net-impact-heading">
         <div className="simulation-section-heading">

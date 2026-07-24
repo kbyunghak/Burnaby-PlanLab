@@ -265,16 +265,6 @@
   text-align: center;
 }
 
-.loader {
-  animation: spin 800ms linear infinite;
-  border: 2px solid rgba(255, 255, 255, 0.45);
-  border-radius: 50%;
-  border-top-color: #fff;
-  height: 14px;
-  margin-right: 8px;
-  width: 14px;
-}
-
 .feedback-message {
   border-radius: var(--radius-sm);
   font-size: 0.82rem;
@@ -292,12 +282,6 @@
 .feedback-message--error {
   background: #fff1f2;
   color: #9f1239;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 @media (max-width: 980px) {

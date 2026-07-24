@@ -6,6 +6,7 @@ import MapComponentWrapper from './components/MapComponentWrapper';
 import SimulationModal from './components/SimulationModal';
 import { facilityOptions } from './constants/facilityDefinitions';
 import { burnabyPolygon, existingFacilities } from './constants/mapData';
+import { createPlanSnapshot } from './planning/createPlanSnapshot';
 import { initialPlanState, planReducer } from './planning/planReducer';
 import { calculateSimulation } from './simulation/calculateSimulation';
 
@@ -29,7 +30,6 @@ function pointInPolygon(point, polygon) {
 const isInsideBurnaby = (latlng) => pointInPolygon(latlng, burnabyPolygon);
 
 function App() {
-  const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState(null);
   const [planState, dispatchPlan] = useReducer(planReducer, initialPlanState);
   const [selectedBuilding, setSelectedBuilding] = useState(null);
@@ -127,20 +127,20 @@ function App() {
   };
 
   const simulateCityGrowth = () => {
-    setLoading(true);
     setFeedback(null);
+    const planSnapshot = createPlanSnapshot(userPlanFacilities, 10000);
 
-    setTimeout(() => {
-      setSimulationData(calculateSimulation(userPlanFacilities));
-      setIsModalOpen(true);
-      setLoading(false);
-      setFeedback({
-        type: 'success',
-        message: 'Simulation complete. Review the 2050 comparison and net impact.',
-      });
-      setTimeout(() => setFeedback(null), 4000);
-      setShowAllIcons(true);
-    }, 1500);
+    setSimulationData({
+      ...calculateSimulation(userPlanFacilities),
+      planSnapshot,
+    });
+    setIsModalOpen(true);
+    setFeedback({
+      type: 'success',
+      message: 'Simulation complete. Review the 2050 comparison and net impact.',
+    });
+    setTimeout(() => setFeedback(null), 4000);
+    setShowAllIcons(true);
   };
 
   return (
@@ -155,9 +155,6 @@ function App() {
           showAllIcons={showAllIcons}
           existingFacilities={existingFacilities}
           selectedUserFacilityId={selectedFacilityId}
-          selectedUserFacility={userPlanFacilities.find(
-            ({ id }) => id === selectedFacilityId
-          )}
           onUserFacilitySelect={(facilityId) =>
             updatePlan({ type: 'select', facilityId })
           }
@@ -270,16 +267,16 @@ function App() {
             type="button"
             className="button button--primary simulate-button"
             onClick={simulateCityGrowth}
-            disabled={budget !== 0 || loading}
           >
-            {loading && <span className="loader" aria-hidden="true" />}
-            {loading ? 'Simulating...' : 'Simulate'}
+            Simulate
           </button>
-          {budget !== 0 && (
+          {userPlanFacilities.length === 0 ? (
             <p className="simulate-hint">
-              {userPlanFacilities.length === 0
-                ? 'Place at least one facility to begin allocating the plan.'
-                : `Allocate the remaining $${budget.toLocaleString()} to unlock simulation.`}
+              Run an empty plan to view Burnaby&apos;s no-plan 2050 scenario.
+            </p>
+          ) : (
+            <p className="simulate-hint">
+              ${budget.toLocaleString()} will remain unallocated in this plan.
             </p>
           )}
 

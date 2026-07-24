@@ -65,6 +65,23 @@
   width: 42px;
 }
 
+.simulation-plan-snapshot {
+  align-items: center;
+  background: var(--color-primary-soft);
+  color: var(--color-primary-dark);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 0.78rem;
+  gap: 8px 18px;
+  margin: 20px 28px 0;
+  padding: 12px 16px;
+  border-radius: 10px;
+}
+
+.simulation-plan-snapshot span {
+  color: var(--color-text-muted);
+}
+
 .simulation-modal > section {
   background: var(--color-surface);
   border: 1px solid var(--color-border);

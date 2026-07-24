@@ -85,4 +85,31 @@ describe('SimulationModal', () => {
     fireEvent.click(screen.getByRole('button', { name: /close results/i }));
     expect(onRequestClose).toHaveBeenCalledTimes(2);
   });
+
+  test('identifies the immutable plan snapshot used for the result', () => {
+    const simulationData = {
+      ...calculateSimulation(schoolPlan),
+      planSnapshot: {
+        facilityCount: 1,
+        totalCost: 500,
+        remainingBudget: 9500,
+      },
+    };
+
+    render(
+      <SimulationModal
+        isOpen
+        onRequestClose={jest.fn()}
+        simulationData={simulationData}
+        facilitiesInstalled={['School']}
+      />
+    );
+
+    const snapshot = screen.getByRole('complementary', {
+      name: 'Simulated plan snapshot',
+    });
+    expect(snapshot).toHaveTextContent('1 proposed facility');
+    expect(snapshot).toHaveTextContent('$500 allocated');
+    expect(snapshot).toHaveTextContent('$9,500 unallocated');
+  });
 });

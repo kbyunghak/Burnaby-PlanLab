@@ -25,7 +25,6 @@ Known product limitations:
 - The full plan cannot be reset.
 - The map reset control is not reliably connected to the Leaflet instance.
 - Facility-specific marker icons are lost after simulation.
-- Simulation requires the budget to reach exactly zero.
 - Building Usage is a read-only list rather than a plan-management tool.
 - User guidance and model explanations are limited.
 - Baseline and projection values still require authoritative source validation.
@@ -140,13 +139,13 @@ feat: add planning guidance and contextual feedback
 
 ### Step 5 — Simplify Simulation Execution
 
-- [ ] Allow simulation when at least one valid user facility exists.
-- [ ] Treat remaining budget as unused budget.
-- [ ] Remove the artificial fixed loading delay.
-- [ ] Capture an immutable plan snapshot for each result.
-- [ ] Mark or close stale results after plan changes.
-- [ ] Handle empty and invalid plans explicitly.
-- [ ] Add full workflow integration tests.
+- [x] Allow simulation when at least one valid user facility exists.
+- [x] Treat remaining budget as unused budget.
+- [x] Remove the artificial fixed loading delay.
+- [x] Capture an immutable plan snapshot for each result.
+- [x] Mark or close stale results after plan changes.
+- [x] Handle empty and invalid plans explicitly.
+- [x] Add full workflow integration tests.
 
 Acceptance criteria:
 
