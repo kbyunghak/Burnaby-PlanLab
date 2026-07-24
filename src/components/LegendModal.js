@@ -1,48 +1,8 @@
 import React from 'react';
 import Modal from 'react-modal';
+import { facilityDefinitions } from '../constants/facilityDefinitions';
 
-const legendData = [
-  {
-    name: 'Market',
-    positive: 'Economic activation, job growth, increased tax revenue',
-    negative: 'Increased traffic congestion, noise pollution',
-  },
-  {
-    name: 'School',
-    positive: 'Improved education level, population inflow',
-    negative: 'Overcrowded educational facilities, financial burden',
-  },
-  {
-    name: 'Community Centre',
-    positive: 'Increased housing satisfaction, cultural revitalization',
-    negative: 'Facility maintenance costs',
-  },
-  {
-    name: 'Hospital',
-    positive: 'Improved healthcare level, increased public safety',
-    negative: 'Increased operating costs, more traffic',
-  },
-  {
-    name: 'Police Station',
-    positive: 'Reduced crime rate, increased resident safety perception',
-    negative: 'Police shortage concerns, risk of excessive force',
-  },
-  {
-    name: 'Non-Profit Housing',
-    positive: 'Improved housing stability, support for low-income groups',
-    negative: 'Negative impact on neighborhood image',
-  },
-  {
-    name: 'Goverment funded Daycare',
-    positive: 'Increased young families, promotion of female economic activity',
-    negative: 'Operating costs and lack of space',
-  },
-  {
-    name: 'Senior Centre',
-    positive: 'Improved elderly welfare, community strengthening',
-    negative: 'Operating costs, lack of resources',
-  },
-];
+const legendData = Object.values(facilityDefinitions);
 
 const LegendModal = ({ isOpen, onRequestClose }) => (
   <Modal
@@ -75,10 +35,10 @@ const LegendModal = ({ isOpen, onRequestClose }) => (
       </thead>
       <tbody>
         {legendData.map((item) => (
-          <tr key={item.name} style={{ borderBottom: '1px solid #ddd' }}>
-            <td style={{ padding: '8px', fontWeight: '600' }}>{item.name}</td>
-            <td style={{ padding: '8px' }}>{item.positive}</td>
-            <td style={{ padding: '8px' }}>{item.negative}</td>
+          <tr key={item.label} style={{ borderBottom: '1px solid #ddd' }}>
+            <td style={{ padding: '8px', fontWeight: '600' }}>{item.label}</td>
+            <td style={{ padding: '8px' }}>{item.benefits}</td>
+            <td style={{ padding: '8px' }}>{item.drawbacks}</td>
           </tr>
         ))}
       </tbody>

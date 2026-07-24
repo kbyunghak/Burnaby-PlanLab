@@ -1,15 +1,5 @@
 import { burnaby2025 } from '../constants/mapData';
-
-export const facilityImpactMultipliers = {
-  Market: { populationPercent: 0.03, trafficPercent: 0.05, crimePercent: 0.02, housingSatisfactionPercent: 0.01, unemploymentPercent: -0.02, housingSupplyPercent: 0.005, airQualityPercent: -0.03, inflationPercent: 0.002 },
-  School: { populationPercent: 0.05, trafficPercent: -0.02, crimePercent: -0.05, housingSatisfactionPercent: 0.04, unemploymentPercent: -0.03, housingSupplyPercent: 0.002, airQualityPercent: 0.02, inflationPercent: 0.001 },
-  CommunityCentre: { populationPercent: 0.02, trafficPercent: -0.01, crimePercent: -0.03, housingSatisfactionPercent: 0.07, unemploymentPercent: -0.01, housingSupplyPercent: 0.001, airQualityPercent: 0.04, inflationPercent: 0.001 },
-  Hospital: { populationPercent: 0.03, trafficPercent: -0.10, crimePercent: -0.02, housingSatisfactionPercent: 0.03, unemploymentPercent: -0.01, housingSupplyPercent: 0, airQualityPercent: 0.05, inflationPercent: 0.001 },
-  PoliceStation: { populationPercent: 0.01, trafficPercent: -0.15, crimePercent: -0.20, housingSatisfactionPercent: 0.05, unemploymentPercent: 0, housingSupplyPercent: 0, airQualityPercent: 0.01, inflationPercent: 0 },
-  NonProfitHousing: { populationPercent: 0.08, trafficPercent: 0.02, crimePercent: 0.01, housingSatisfactionPercent: 0.10, unemploymentPercent: -0.05, housingSupplyPercent: 0.02, airQualityPercent: -0.05, inflationPercent: 0.002 },
-  Daycare: { populationPercent: 0.04, trafficPercent: 0, crimePercent: 0, housingSatisfactionPercent: 0.03, unemploymentPercent: -0.01, housingSupplyPercent: 0, airQualityPercent: 0, inflationPercent: 0.001 },
-  SeniorCentre: { populationPercent: 0.02, trafficPercent: 0, crimePercent: -0.01, housingSatisfactionPercent: 0.06, unemploymentPercent: 0, housingSupplyPercent: 0, airQualityPercent: 0.01, inflationPercent: 0 },
-};
+import { facilityDefinitions } from '../constants/facilityDefinitions';
 
 const aggregateImpacts = (facilities) => {
   const facilityCounts = facilities.reduce((counts, facility) => {
@@ -18,7 +8,7 @@ const aggregateImpacts = (facilities) => {
   }, {});
 
   return Object.entries(facilityCounts).reduce((total, [facilityName, count]) => {
-    const impact = facilityImpactMultipliers[facilityName];
+    const impact = facilityDefinitions[facilityName]?.impacts;
     if (!impact) return total;
 
     Object.entries(impact).forEach(([metric, value]) => {

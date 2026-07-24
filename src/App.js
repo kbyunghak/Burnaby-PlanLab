@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import MapComponentWrapper from './components/MapComponentWrapper';
 import SimulationModal from './components/SimulationModal';
-import { buildingOptions, initialMarkers, burnabyPolygon } from './constants/mapData';
+import { initialMarkers, burnabyPolygon } from './constants/mapData';
+import { facilityOptions } from './constants/facilityDefinitions';
 import LegendModal from './components/LegendModal';
 import { calculateSimulation } from './simulation/calculateSimulation';
 
@@ -51,7 +52,7 @@ function App() {
       )
   );
 
-  const buildingUsage = buildingOptions.map(b => {
+  const buildingUsage = facilityOptions.map(b => {
     const count = newMarkers.filter(m => m.buildingName === b.name).length;
     return {
       name: b.name,
@@ -173,7 +174,7 @@ function App() {
                 overflowY: 'auto',
               }}
             >
-              {buildingOptions.map((b) => (
+              {facilityOptions.map((b) => (
                 <button
                   key={b.name}
                   onClick={() => {
@@ -204,7 +205,7 @@ function App() {
                   }}
                 >
                   <img
-                    src={process.env.PUBLIC_URL + `/icons/${b.name.toLowerCase()}.png`}
+                    src={process.env.PUBLIC_URL + b.icon}
                     alt={b.name}
                     style={{ width: 24, height: 24 }}
                   />

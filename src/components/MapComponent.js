@@ -11,6 +11,7 @@ import {
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { burnabyPolygon } from '../constants/mapData';
+import { facilityDefinitions } from '../constants/facilityDefinitions';
 
 const createIcon = (iconUrl) =>
   new L.Icon({
@@ -31,16 +32,12 @@ const defaultIcon = new L.Icon({
   shadowSize: [41, 41],
 });
 
-const iconMap = {
-  Market: createIcon(process.env.PUBLIC_URL + '/icons/market.png'),
-  School: createIcon(process.env.PUBLIC_URL + '/icons/school.png'),
-  CommunityCentre: createIcon(process.env.PUBLIC_URL + '/icons/communitycentre.png'),
-  Hospital: createIcon(process.env.PUBLIC_URL + '/icons/hospital.png'),
-  PoliceStation: createIcon(process.env.PUBLIC_URL + '/icons/policestation.png'),
-  NonProfitHousing: createIcon(process.env.PUBLIC_URL + '/icons/nonprofithousing.png'),
-  Daycare: createIcon(process.env.PUBLIC_URL + '/icons/daycare.png'),
-  SeniorCentre: createIcon(process.env.PUBLIC_URL + '/icons/seniorcentre.png'),
-};
+const iconMap = Object.fromEntries(
+  Object.entries(facilityDefinitions).map(([name, definition]) => [
+    name,
+    createIcon(process.env.PUBLIC_URL + definition.icon),
+  ])
+);
 
 const MapEventHandler = React.memo(({ onUserMove }) => {
   useMapEvents({

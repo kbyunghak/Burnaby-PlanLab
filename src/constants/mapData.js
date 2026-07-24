@@ -21,17 +21,6 @@ export const burnabyPolygon = [
   [49.29383005419665, -123.02342690275432],
 ];
 
-export const buildingOptions = [
-  { name: 'Market', label: 'Market', cost: 300, popup: 'Market: Shopping place' },
-  { name: 'School', label: 'School',cost: 500, popup: 'School: Education center' },
-  { name: 'CommunityCentre', label: 'Community Centre',cost: 400, popup: 'Community Center: Social activities' },
-  { name: 'Hospital', label: 'Hospital',cost: 800, popup: 'Hospital: Healthcare facility' },
-  { name: 'PoliceStation', label: 'Police Station',cost: 600, popup: 'Police Station: Security' },
-  { name: 'NonProfitHousing', label: 'NonMarket Housing',cost: 700, popup: 'Non-Profit Housing: Affordable homes' },
-  { name: 'Daycare', label: 'Goverment funded Daycare',cost: 100, popup: 'Daycare: Child care' },
-  { name: 'SeniorCentre', label: 'Senior Centre',cost: 200, popup: 'Senior Center: Services for seniors' },
-];
-
 export const burnaby2025 = {
   year: 2025,
   population: 263046,
@@ -55,97 +44,6 @@ export const burnabyForecast2050 = {
   airQualityIndex: 17,
   inflationRate: 3.2,
 };
-
-export const facilityImpactData = [
-  {
-    facility: "Market",
-    populationChange: "+3",
-    trafficChange: "+5",
-    crimeChange: "+2",
-    housingSatisfaction: "+1",
-    unemploymentChange: "-2",
-    housingSupplyRate: "+2",   
-    airQualityChange: "-3",
-    inflationRate: "+0.5",
-  },
-  {
-    facility: "School",
-    populationChange: "+5",
-    trafficChange: "-2",
-    crimeChange: "-5",
-    housingSatisfaction: "+4",
-    unemploymentChange: "-3",
-    housingSupplyRate: "+3",
-    airQualityChange: "+2",
-    inflationRate: "+0.3",
-  },
-  {
-    facility: "CommunityCentre",
-    populationChange: "+2",
-    trafficChange: "-1",
-    crimeChange: "-3",
-    housingSatisfaction: "+7",
-    unemploymentChange: "-1",
-    housingSupplyRate: "+1",
-    airQualityChange: "+4",
-    inflationRate: "+0.2",
-  },
-  {
-    facility: "Hospital",
-    populationChange: "+3",
-    trafficChange: "-10",
-    crimeChange: "-2",
-    housingSatisfaction: "+3",
-    unemploymentChange: "-1",
-    housingSupplyRate: "+0",    
-    airQualityChange: "+5",
-    inflationRate: "+0.1",
-  },
-  {
-    facility: "PoliceStation",
-    populationChange: "+1",
-    trafficChange: "-15",
-    crimeChange: "-20",
-    housingSatisfaction: "+5",
-    unemploymentChange: "0",
-    housingSupplyRate: "+0",    
-    airQualityChange: "+1",
-    inflationRate: "+0",
-  },
-  {
-    facility: "NonProfitHousing",
-    populationChange: "+8",
-    trafficChange: "+2",
-    crimeChange: "+1",
-    housingSatisfaction: "+10",
-    unemploymentChange: "-5",
-    housingSupplyRate: "+5",    
-    airQualityChange: "-5",
-    inflationRate: "-0.5",
-  },
-  {
-    facility: "Daycare",
-    populationChange: "+4",
-    trafficChange: "0",
-    crimeChange: "0",
-    housingSatisfaction: "+3",
-    unemploymentChange: "-1",
-    housingSupplyRate: "+1",    
-    airQualityChange: "0",
-    inflationRate: "0",
-  },
-  {
-    facility: "SeniorCentre",
-    populationChange: "+2",
-    trafficChange: "0",
-    crimeChange: "-1",
-    housingSatisfaction: "+6",
-    unemploymentChange: "0",
-    housingSupplyRate: "0",    
-    airQualityChange: "+1",
-    inflationRate: "0",
-  },
-];
 
 export const initialMarkers = [
  // Schools

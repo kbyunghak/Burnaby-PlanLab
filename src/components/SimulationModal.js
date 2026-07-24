@@ -3,7 +3,8 @@ import React from 'react';
 import Modal from 'react-modal';
 import SimulationSummary from '../components/SimulationSummary';
 import SimulationSummary2 from '../components/SimulationSummary2';
-import { burnabyForecast2050, burnaby2025, facilityImpactData } from '../constants/mapData';
+import { burnabyForecast2050, burnaby2025 } from '../constants/mapData';
+import { facilityImpactData } from '../constants/facilityDefinitions';
 
 const headers = [
   "Year",
