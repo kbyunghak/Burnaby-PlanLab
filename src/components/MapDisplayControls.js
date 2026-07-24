@@ -23,6 +23,10 @@ function MapDisplayControls({
   onShowProposedChange,
   visibleMarkerCount,
 }) {
+  const visibleFacilityLabels = facilityOptions
+    .filter(({ name }) => visibleFacilityTypes.includes(name))
+    .map(({ label }) => label);
+
   return (
     <section className="map-display" aria-labelledby="map-display-heading">
       <div className="map-display__topline">
@@ -53,32 +57,43 @@ function MapDisplayControls({
       )}
 
       {viewMode === MAP_VIEW_MODES.FILTER && (
-        <fieldset className="map-display__filters">
-          <legend>
-            <span>Facility types</span>
-            <span className="map-display__filter-actions">
-              <button type="button" onClick={onSelectAllFacilityTypes}>
-                Select all
-              </button>
-              <button type="button" onClick={onClearFacilityTypes}>
-                Clear
-              </button>
+        <>
+          <p className="map-display__context map-display__context--filter">
+            <strong>Showing:</strong>{' '}
+            {visibleFacilityLabels.length
+              ? visibleFacilityLabels.join(', ')
+              : 'No facility types'}
+            <span aria-label={`${visibleFacilityLabels.length} facility types selected`}>
+              × {visibleFacilityLabels.length}
             </span>
-          </legend>
-          <div className="map-display__filter-grid">
-            {facilityOptions.map((facility) => (
-              <label key={facility.name}>
-                <input
-                  type="checkbox"
-                  checked={visibleFacilityTypes.includes(facility.name)}
-                  onChange={() => onFacilityTypeToggle(facility.name)}
-                />
-                <img src={process.env.PUBLIC_URL + facility.icon} alt="" />
-                <span>{facility.label}</span>
-              </label>
-            ))}
-          </div>
-        </fieldset>
+          </p>
+          <fieldset className="map-display__filters">
+            <legend>
+              <span>Facility types</span>
+              <span className="map-display__filter-actions">
+                <button type="button" onClick={onSelectAllFacilityTypes}>
+                  Select all
+                </button>
+                <button type="button" onClick={onClearFacilityTypes}>
+                  Clear
+                </button>
+              </span>
+            </legend>
+            <div className="map-display__filter-grid">
+              {facilityOptions.map((facility) => (
+                <label key={facility.name}>
+                  <input
+                    type="checkbox"
+                    checked={visibleFacilityTypes.includes(facility.name)}
+                    onChange={() => onFacilityTypeToggle(facility.name)}
+                  />
+                  <img src={process.env.PUBLIC_URL + facility.icon} alt="" />
+                  <span>{facility.label}</span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+        </>
       )}
 
       <fieldset className="map-display__layers">

@@ -61,6 +61,7 @@ test('highlights Burnaby and connects Reset View to its bounds', async () => {
       markers={[]}
       onMapClick={jest.fn()}
       existingFacilities={[]}
+      selectedBuildingName={null}
       selectedUserFacilityId={null}
       onUserFacilitySelect={jest.fn()}
     />
@@ -93,6 +94,7 @@ test('keeps facility icons and distinguishes existing and proposed markers', () 
       markers={[existingMarket, proposedMarket]}
       onMapClick={jest.fn()}
       existingFacilities={[existingMarket]}
+      selectedBuildingName={null}
       selectedUserFacilityId={null}
       onUserFacilitySelect={jest.fn()}
     />
@@ -110,4 +112,30 @@ test('keeps facility icons and distinguishes existing and proposed markers', () 
     'facility-marker facility-marker--proposed'
   );
   expect(markers[1]).toHaveAttribute('data-opacity', '1');
+});
+
+test('highlights markers that match the currently selected facility type', () => {
+  render(
+    <MapComponent
+      center={[49.2488, -122.9805]}
+      zoom={12}
+      markers={[existingMarket, proposedMarket]}
+      onMapClick={jest.fn()}
+      existingFacilities={[existingMarket]}
+      selectedBuildingName="Market"
+      selectedUserFacilityId={null}
+      onUserFacilitySelect={jest.fn()}
+    />
+  );
+
+  const markers = screen.getAllByTestId('facility-marker');
+
+  expect(markers[0]).toHaveAttribute(
+    'data-icon-class',
+    expect.stringContaining('facility-marker--active-type')
+  );
+  expect(markers[1]).toHaveAttribute(
+    'data-icon-class',
+    expect.stringContaining('facility-marker--active-type')
+  );
 });

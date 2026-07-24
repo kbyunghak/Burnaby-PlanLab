@@ -63,6 +63,26 @@ const existingIconMap = Object.fromEntries(
   ])
 );
 
+const activeProposedIconMap = Object.fromEntries(
+  Object.entries(facilityDefinitions).map(([name, definition]) => [
+    name,
+    createIcon(
+      process.env.PUBLIC_URL + definition.icon,
+      'facility-marker facility-marker--proposed facility-marker--active-type'
+    ),
+  ])
+);
+
+const activeExistingIconMap = Object.fromEntries(
+  Object.entries(facilityDefinitions).map(([name, definition]) => [
+    name,
+    createIcon(
+      process.env.PUBLIC_URL + definition.icon,
+      'facility-marker facility-marker--existing facility-marker--active-type'
+    ),
+  ])
+);
+
 const mapMaskBounds = [
   [85, -180],
   [85, 180],
@@ -109,6 +129,7 @@ const MapComponent = ({
   center,
   zoom,
   existingFacilities,
+  selectedBuildingName,
   selectedUserFacilityId,
   onUserFacilitySelect,
 }) => {
@@ -168,11 +189,16 @@ const MapComponent = ({
               && existingFacility.buildingName === marker.buildingName
           );
           const isSelected = marker.id === selectedUserFacilityId;
+          const isActiveType = marker.buildingName === selectedBuildingName;
           const facilityIcons = isExisting
-            ? existingIconMap
+            ? isActiveType
+              ? activeExistingIconMap
+              : existingIconMap
             : isSelected
               ? selectedIconMap
-              : proposedIconMap;
+              : isActiveType
+                ? activeProposedIconMap
+                : proposedIconMap;
           const icon = facilityIcons[marker.buildingName] || defaultIcon;
 
           return (

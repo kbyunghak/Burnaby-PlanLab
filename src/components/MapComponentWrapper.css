@@ -131,6 +131,19 @@
   transform-origin: bottom center;
 }
 
+.facility-marker--active-type {
+  filter:
+    drop-shadow(0 0 2px #fff)
+    drop-shadow(0 0 5px #f59e0b);
+}
+
+.facility-marker--existing.facility-marker--active-type {
+  filter:
+    grayscale(0.4)
+    drop-shadow(0 0 2px #fff)
+    drop-shadow(0 0 5px #f59e0b);
+}
+
 @media (max-width: 980px) {
   .map-panel {
     height: 65vh;

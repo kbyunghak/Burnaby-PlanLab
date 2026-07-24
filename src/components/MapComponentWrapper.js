@@ -6,6 +6,7 @@ import './MapComponentWrapper.css';
 const MapComponentWrapper = ({
   viewMode,
   onViewModeChange,
+  selectedBuildingName,
   selectedBuildingLabel,
   visibleFacilityTypes,
   onFacilityTypeToggle,
@@ -45,7 +46,10 @@ const MapComponentWrapper = ({
         visibleMarkerCount={visibleMarkerCount}
       />
       <div className="map-panel__canvas">
-        <MapComponent {...mapProps} />
+        <MapComponent
+          {...mapProps}
+          selectedBuildingName={selectedBuildingName}
+        />
       </div>
     </section>
   );

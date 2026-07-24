@@ -53,6 +53,10 @@ test('supports multiple facility filters', () => {
 
   expect(screen.getByRole('checkbox', { name: 'School' })).toBeChecked();
   expect(screen.getByRole('checkbox', { name: 'Police Station' })).toBeChecked();
+  expect(screen.getByText('School, Police Station')).toBeInTheDocument();
+  expect(
+    screen.getByLabelText('2 facility types selected')
+  ).toHaveTextContent('× 2');
   fireEvent.click(screen.getByRole('checkbox', { name: 'Market' }));
 
   expect(defaultProps.onFacilityTypeToggle).toHaveBeenCalledWith('Market');

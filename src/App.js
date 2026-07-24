@@ -176,6 +176,7 @@ function App() {
           }
           viewMode={mapViewMode}
           onViewModeChange={setMapViewMode}
+          selectedBuildingName={selectedBuilding?.name || null}
           selectedBuildingLabel={selectedBuilding?.label || null}
           visibleFacilityTypes={visibleFacilityTypes}
           onFacilityTypeToggle={toggleVisibleFacilityType}
