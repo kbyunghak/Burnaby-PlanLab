@@ -17,12 +17,14 @@ jest.mock('leaflet', () => ({
 
 jest.mock('react-leaflet', () => ({
   MapContainer: ({ children }) => <div data-testid="leaflet-map">{children}</div>,
-  Marker: ({ children, icon, opacity }) => (
+  Marker: ({ children, icon, opacity, alt, title }) => (
     <div
       data-testid="facility-marker"
       data-icon-class={icon.options.className || 'default'}
       data-icon-size={icon.options.iconSize?.join('x') || 'default'}
       data-opacity={opacity}
+      data-alt={alt}
+      data-title={title}
     >
       {children}
     </div>
@@ -137,12 +139,16 @@ test('keeps facility icons and distinguishes existing and proposed markers', () 
     'facility-marker facility-marker--existing'
   );
   expect(markers[0]).toHaveAttribute('data-icon-size', '24x24');
+  expect(markers[0]).toHaveAttribute('data-alt', 'Existing Market');
+  expect(markers[0]).toHaveAttribute('data-title', 'Existing Market');
   expect(markers[0]).toHaveAttribute('data-opacity', '0.55');
   expect(markers[1]).toHaveAttribute(
     'data-icon-class',
     'facility-marker facility-marker--proposed'
   );
   expect(markers[1]).toHaveAttribute('data-opacity', '1');
+  expect(markers[1]).toHaveAttribute('data-alt', 'Your plan Market');
+  expect(markers[1]).toHaveAttribute('data-title', 'Your plan Market');
 });
 
 test('highlights markers that match the currently selected facility type', () => {

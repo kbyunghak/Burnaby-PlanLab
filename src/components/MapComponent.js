@@ -13,6 +13,10 @@ import L from 'leaflet';
 import { burnabyPolygon } from '../constants/mapData';
 import { facilityDefinitions } from '../constants/facilityDefinitions';
 
+const publicBaseUrl = (process.env.PUBLIC_URL || '').replace(/\/$/, '');
+const getPublicAssetUrl = (assetPath) =>
+  `${publicBaseUrl}/${assetPath.replace(/^\//, '')}`;
+
 const createIcon = (iconUrl, className, size = 32) =>
   new L.Icon({
     iconUrl,
@@ -23,14 +27,11 @@ const createIcon = (iconUrl, className, size = 32) =>
   });
 
 const defaultIcon = new L.Icon({
-  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-  iconRetinaUrl:
-    'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
+  iconUrl: getPublicAssetUrl('/city-sim-icon.svg'),
+  iconSize: [28, 28],
+  iconAnchor: [14, 28],
+  popupAnchor: [0, -28],
+  className: 'facility-marker facility-marker--fallback',
 });
 
 const createFacilityIconMap = (className, size) =>
@@ -38,7 +39,7 @@ const createFacilityIconMap = (className, size) =>
     Object.entries(facilityDefinitions).map(([name, definition]) => [
       name,
       createIcon(
-        process.env.PUBLIC_URL + definition.icon,
+        getPublicAssetUrl(definition.icon),
         className,
         size
       ),
@@ -227,12 +228,21 @@ const MapComponent = ({
                 ? iconMaps.activeProposed
                 : iconMaps.proposed;
           const icon = facilityIcons[marker.buildingName] || defaultIcon;
+          const facilityLabel =
+            facilityDefinitions[marker.buildingName]?.label
+            || marker.buildingName
+            || 'Facility';
+          const markerLabel = isExisting
+            ? `Existing ${facilityLabel}`
+            : `Your plan ${facilityLabel}`;
 
           return (
             <Marker
               key={`${marker.buildingName}-${marker.position.join('-')}-${idx}`}
               position={marker.position}
               icon={icon}
+              alt={markerLabel}
+              title={markerLabel}
               opacity={isExisting ? 0.55 : 1}
               eventHandlers={
                 isExisting
