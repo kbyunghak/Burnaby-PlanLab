@@ -1,355 +1,453 @@
-# City Simulation Delivery Plan
+# Burnaby PlanLab Delivery Plan
 
 ## 1. Purpose
 
-This document is the authoritative delivery checklist for the Burnaby city-planning simulation. Work must proceed in order, one reviewable commit at a time. Every step must leave tests and the production build passing.
+This document is the authoritative delivery plan for Burnaby PlanLab, a 2026–2050 city development simulator for Burnaby, British Columbia.
 
-If a step reveals an unexpected data issue, architectural conflict, broken dependency, or requirement that changes the agreed scope, implementation must stop and the issue must be reviewed before continuing.
+The project must progress through focused, reviewable commits. Every implementation step must leave automated tests and the production build passing.
 
-## 2. Current Baseline
+If work reveals conflicting official data, an incompatible geographic scope, a security-sensitive migration, an external repository change, or a requirement that materially changes the agreed product direction, implementation must stop for review before continuing.
 
-The current version provides:
+## 2. Confirmed Product Identity
 
-- A responsive React and Leaflet interface.
-- Facility selection and map placement within the Burnaby boundary.
-- Budget tracking and a facility usage summary.
-- A 2026 baseline, 2050 no-plan projection, user-plan projection, and net-impact results view.
-- Central facility and metric definitions.
-- Unit and component tests.
-- GitHub Actions checks for tests and the production build.
+The agreed product identity is:
 
-Known product limitations:
+| Item | Confirmed value |
+|---|---|
+| Product name | Burnaby PlanLab |
+| Subtitle | 2026–2050 City Development Simulator |
+| Repository name | `burnaby-plan-lab` |
+| Deployment path | `/burnaby-plan-lab/` |
+| Browser title | Burnaby PlanLab \| 2026–2050 City Simulator |
 
-- Facility location does not affect simulation outcomes.
-- A placed facility cannot be removed or undone.
-- The full plan cannot be reset.
-- The map reset control is not reliably connected to the Leaflet instance.
-- Facility-specific marker icons are lost after simulation.
-- Building Usage is a read-only list rather than a plan-management tool.
-- User guidance and model explanations are limited.
-- Baseline and projection values still require authoritative source validation.
-- Continuous deployment and real-browser workflow tests are not configured.
+Local branding can be implemented in the repository. Renaming the remote GitHub repository and changing the production URL are external operations and must be handled as a separate deployment step.
 
-## 3. Delivery Rules
+## 3. Current Project Status
 
-Each checklist item must:
+### Quality baseline
 
-- Be implemented as a focused change.
-- Include tests for changed behavior.
-- Pass `npm test -- --watchAll=false`.
-- Pass `npm run build` with CI warnings treated as errors.
-- Pass `git diff --check`.
-- Be manually verified when it changes map behavior or responsive layout.
-- Be committed independently with the listed commit message.
-- Update this checklist in the same commit or an immediately following documentation commit.
+- Branch: `agent/results-redesign`
+- Automated tests: 78 passing tests across 14 suites.
+- Production build: passing.
+- Browser validation: completed for the primary desktop workflow, map display modes, responsive layout, empty-plan simulation, and map zoom behavior.
+- Working tree at the start of this plan revision: clean.
 
-## 4. Release 0.2 — Usable Planning Experience
+### Product readiness assessment
 
-Goal: A user can understand, create, edit, and simulate a plan without being trapped by an accidental action.
+| Area | Status | Notes |
+|---|---|---|
+| Planning workflow | Strong | Selection, placement, editing, budget tracking, and simulation are functional. |
+| Map usability | Strong | Burnaby highlighting, display modes, filters, layers, reset, and detailed zoom are implemented. |
+| Result clarity | Improved | Baseline, reference, user-plan, and Net Impact are separated. |
+| Data provenance | Partial | Population is source-backed; other long-range indicators remain illustrative. |
+| Algorithm realism | Needs redesign | Facility coefficients are still linear, large, and not calibrated. |
+| Maintainability | Moderate | Definitions and calculations are centralized, but application responsibilities need further separation. |
+| CI | Basic | Unit tests and build checks exist; browser workflows and stronger quality gates are pending. |
+| CD | Pending | Verified deployment has not been finalized. |
+| Portfolio readiness | Approximately 80% | The interface is presentable, but model realism, branding, tooling, and deployment still need work. |
 
-### Step 1 — Stabilize Map Controls and Markers
+## 4. Completed Work
 
-- [x] Replace the obsolete map-instance callback with a React Leaflet v5-compatible controller.
-- [x] Make Reset View reliably restore the initial center and zoom.
-- [x] Preserve facility-specific icons before and after simulation.
-- [x] Visually distinguish existing facilities from user-plan facilities.
-- [x] Invalidate an existing result when the plan changes.
-- [x] Add or update focused tests.
-- [x] Manually verify reset, filtering, placement, and post-simulation markers.
+### 4.1 Foundation, tests, and result structure
 
-Acceptance criteria:
+- [x] Replace the default CRA test with application tests.
+- [x] Configure Jest to work with the React Leaflet dependency chain.
+- [x] Remove the initial unused-variable warnings.
+- [x] Make unit tests and the production build pass.
+- [x] Centralize facility definitions and metric definitions.
+- [x] Separate the 2026 model start, 2050 reference, user-plan result, and Net Impact.
+- [x] Add yearly projection data and result comparison views.
 
-- Reset View works after map initialization.
-- Existing and proposed facilities remain distinguishable.
-- Every visible marker retains its facility identity.
-- A result is never presented as current after its input plan changes.
+### 4.2 Plan creation and editing
 
-Commit:
+- [x] Add a reducer-based plan state model.
+- [x] Allow placement only inside the Burnaby boundary.
+- [x] Allow simulation with a partially used budget.
+- [x] Allow an empty plan to run as a no-plan scenario.
+- [x] Add Undo Last, Remove Selected, Remove One, Remove All, and Reset Plan.
+- [x] Keep budget and facility usage synchronized after edits.
+- [x] Invalidate stale simulation results when the plan changes.
+- [x] Preserve an immutable plan snapshot for each result.
 
-```text
-fix: stabilize map controls and facility markers
-```
+### 4.3 Map and facility visibility
 
-### Step 2 — Add Plan Editing
+- [x] Keep map center and zoom stable when selecting or placing a facility.
+- [x] Restore the Burnaby view through Reset View.
+- [x] Highlight the Burnaby planning area and dim surrounding municipalities.
+- [x] Add `Focus`, `Filter`, and `All` display modes.
+- [x] Keep the selected display mode when the facility selection changes.
+- [x] Add independent Existing and My Plan layers.
+- [x] Add multi-select facility filters with Select All and Clear actions.
+- [x] Display the number of visible facilities.
+- [x] Use reduced opacity and grayscale for existing facilities.
+- [x] Highlight the active facility type and selected proposed marker.
+- [x] Add a quarter-step map detail slider.
+- [x] Change marker size by zoom level.
+- [x] Fix marker displacement by changing Leaflet icon size and anchors instead of scaling CSS transforms.
 
-- [x] Introduce a plan reducer or equivalent isolated state model.
-- [x] Add Undo Last Placement.
-- [x] Allow a selected user-plan marker to be removed.
-- [x] Add Reset Plan.
-- [x] Restore budget and usage counts after removal.
-- [x] Prevent existing facilities from being removed.
-- [x] Add reducer and integration tests for add, undo, remove, and reset.
+### 4.4 UI and accessibility
 
-Acceptance criteria:
+- [x] Add first-use planning guidance and contextual feedback.
+- [x] Improve facility selector icon, label, price, and spacing hierarchy.
+- [x] Redesign Building Usage as a plan-management summary.
+- [x] Improve map filter readability and long-label wrapping.
+- [x] Add keyboard focus styles and accessible labels.
+- [x] Replace `react-modal` with an accessible portal modal.
+- [x] Remove the duplicate modal registration warning under React Strict Mode.
+- [x] Refresh the browser favicon.
 
-- Every user placement is reversible.
-- Budget and usage totals remain consistent.
-- Existing facility data remains immutable.
+### 4.5 Reference scenario and data transparency
 
-Commit:
+- [x] Add a versioned Burnaby 2050 OCP high-growth reference scenario.
+- [x] Store official population, dwelling-unit, and job reference points for 2021, 2030, 2040, and 2050.
+- [x] Derive the 2026 model-start population through documented interpolation.
+- [x] Update the 2050 population reference from 360,000 to 408,150.
+- [x] Label the 2026 population as a model estimate.
+- [x] Label the 2050 population as OCP-based.
+- [x] Label unsourced long-range indicators as illustrative assumptions.
+- [x] Add a source link to the no-plan result.
+- [x] Create `doc/DataSources.md`.
+- [x] Update the simulation methodology and tests.
 
-```text
-feat: add editable planning controls
-```
+### 4.6 Relevant completed commits
 
-### Step 3 — Redesign Building Usage
+| Commit | Outcome |
+|---|---|
+| `148058d` | Stabilized map controls and markers. |
+| `7f190e7` | Added editable planning controls. |
+| `590fde5` | Redesigned Building Usage. |
+| `716c6b7` | Added planning guidance and contextual feedback. |
+| `dcc8737` | Allowed partial-budget and empty-plan simulation. |
+| `dc061ad` | Added Focus, Filter, All, and layer controls. |
+| `c50fa19` | Highlighted the Burnaby planning area. |
+| `b81867b` | Clarified active map facility context. |
+| `f3c1a1a` | Added detailed map zoom control. |
+| `61ae1e0` | Improved planning-control readability. |
+| `1c8d03f` | Fixed marker positions across zoom levels. |
+| `dccb4c5` | Replaced `react-modal` with an accessible portal. |
+| `4a14679` | Added the sourced Burnaby reference scenario. |
 
-- [x] Add a used-budget progress indicator.
-- [x] Show user-facing labels instead of internal facility IDs.
-- [x] List used facilities before unused facility types.
-- [x] Collapse or hide zero-count facilities by default.
-- [x] Show icon, count, unit cost, and total cost separately.
-- [x] Add Locate, Remove One, and Remove All actions.
-- [x] Provide a mobile card layout without horizontal overflow.
-- [x] Add component and responsive behavior tests.
+## 5. Known Limitations and Risks
 
-Acceptance criteria:
+### Simulation model
 
-- Building Usage functions as a plan-management panel.
-- Internal domain keys are not exposed to users.
-- The panel remains readable at desktop and mobile widths.
+- Facility effects are still applied as additive proportional changes.
+- A single facility can create an unrealistically large city-wide effect.
+- Repeated facilities can create uncontrolled linear growth until metric limits are reached.
+- Percentage changes and percentage-point changes are not modeled separately.
+- Facility location does not yet affect the calculation.
+- Facility capacity, service radius, construction time, and operating cost are not modeled.
+- Uncertainty ranges are not provided.
 
-Commit:
+### Data
 
-```text
-feat: redesign building usage as a plan summary
-```
+- Only the population outlook currently uses a source-backed long-range reference series.
+- Traffic, crime, satisfaction, unemployment, housing supply, AQI, and inflation projections remain illustrative.
+- Facility costs and the total budget are not yet realistic CAD capital and operating budgets.
+- Some existing facility records need geographic and naming verification.
+- A full UTF-8 corruption scan and repair is still required.
 
-### Step 4 — Add Guidance and Contextual Feedback
+### Tooling and delivery
 
-- [x] Add a three-step first-use guide.
-- [x] Explain the Burnaby placement boundary.
-- [x] Explain existing and proposed marker styles.
-- [x] Replace native alerts with contextual messages or toasts.
-- [x] Explain why an action or Simulate button is unavailable.
-- [x] Improve the facility legend with costs, measured impacts, and units.
-- [x] Verify keyboard focus and screen-reader labels.
+- Create React App and `react-scripts` are obsolete and retain audit findings in the build dependency chain.
+- The browser compatibility database is outdated and produces a build warning.
+- Automated Playwright workflow tests are not committed.
+- CI does not yet run browser tests or upload useful artifacts.
+- Verified continuous deployment is not configured.
+- The remote repository and GitHub Pages path still use the old project identity.
 
-Acceptance criteria:
+## 6. Delivery Rules
 
-- The primary workflow can be understood without opening the README.
-- Every rejected action provides visible, contextual feedback.
-- Important status is not communicated by color alone.
+Every implementation step must:
 
-Commit:
+1. Remain focused enough to review independently.
+2. Include tests for changed behavior.
+3. Pass `npm test -- --watchAll=false`.
+4. Pass `npm run build`.
+5. Pass `git diff --check`.
+6. Receive real-browser verification when it changes UI, map, modal, or responsive behavior.
+7. Update documentation when it changes data, calculations, setup, or deployment.
+8. End in a dedicated commit with no unrelated changes.
 
-```text
-feat: add planning guidance and contextual feedback
-```
+Do not use `npm audit fix --force` as a substitute for an intentional tooling migration.
 
-### Step 5 — Simplify Simulation Execution
+## 7. Next Delivery Sequence
 
-- [x] Allow simulation when at least one valid user facility exists.
-- [x] Treat remaining budget as unused budget.
-- [x] Remove the artificial fixed loading delay.
-- [x] Capture an immutable plan snapshot for each result.
-- [x] Mark or close stale results after plan changes.
-- [x] Handle empty and invalid plans explicitly.
-- [x] Add full workflow integration tests.
+## Release 0.3 — Identity and Tooling Stability
 
-Acceptance criteria:
+### Step 1 — Apply Burnaby PlanLab Branding
 
-- Users are not required to spend the budget exactly.
-- Results identify the plan from which they were calculated.
-- Execution state reflects real work rather than a cosmetic timer.
-
-Commit:
-
-```text
-refactor: simplify simulation execution flow
-```
-
-## 5. Release 0.3 — Credible Simulation Model
-
-Goal: Facility type and placement location both contribute to an explainable result.
-
-### Step 6 — Validate Data Sources and Assumptions
-
-- [ ] Create `doc/DataSources.md`.
-- [ ] Verify the 2026 baseline against authoritative sources.
-- [ ] Verify or define the 2050 no-plan projection methodology.
-- [ ] Record source organization, URL, publication date, geographic scope, unit, and retrieval date.
-- [ ] Label assumed, derived, and official values separately.
-- [ ] Define a repeatable data-update procedure.
-- [ ] Update the methodology and UI with data-status language.
+- [ ] Change visible product headings to Burnaby PlanLab.
+- [ ] Add the confirmed subtitle.
+- [ ] Update the browser title and metadata.
+- [ ] Update the package name where safe.
+- [ ] Replace old `city-sim` and generic City Simulation references in documentation.
+- [ ] Update local deployment configuration to `/burnaby-plan-lab/`.
+- [ ] Replace the placeholder clone URL after the remote repository is renamed.
+- [ ] Verify favicon, manifest, links, and production asset paths.
 
 Stop condition:
 
-- Do not replace current values when authoritative sources conflict, use incompatible geographic scopes, or require a policy decision. Document the conflict and request review.
+- Do not rename the remote repository or change GitHub Pages settings without confirming the exact remote operation and redirect implications.
 
-Commit:
+Planned commits:
 
 ```text
-docs: define simulation data sources and assumptions
+refactor: apply Burnaby PlanLab branding
+docs: update repository identity and links
 ```
 
-### Step 7 — Add a Spatial Demand Model
+### Step 2 — Migrate from CRA to Vite
 
-- [ ] Choose and document a neighbourhood or grid analysis unit.
-- [ ] Add population or demand values for each analysis area.
-- [ ] Define a service radius or travel assumption for each facility.
+- [ ] Add Vite and the React plugin.
+- [ ] Replace `react-scripts` commands.
+- [ ] Move environment and public-path handling to Vite conventions.
+- [ ] Preserve the `/burnaby-plan-lab/` base path.
+- [ ] Migrate Jest tests to Vitest or retain a documented compatible runner.
+- [ ] Remove unused CRA-only dependencies.
+- [ ] Re-run the dependency audit without forced upgrades.
+- [ ] Verify map assets, icons, modals, tests, and the production build.
+
+Acceptance criteria:
+
+- Development, test, and build commands work from a clean install.
+- The production bundle loads from the confirmed base path.
+- CRA-specific audit findings are removed from the dependency tree.
+
+Stop condition:
+
+- Stop if a test migration changes application behavior or if the deployment base path cannot be verified.
+
+Planned commit:
+
+```text
+build: migrate Burnaby PlanLab from CRA to Vite
+```
+
+### Step 3 — Repair Encoding and Repository Hygiene
+
+- [ ] Scan all source and documentation files for damaged Unicode.
+- [ ] Repair corrupted facility names, separators, symbols, and formula operators.
+- [ ] Confirm UTF-8 encoding and line-ending policy.
+- [ ] Update the browser compatibility database after the Vite migration.
+- [ ] Remove unused packages, including marker clustering if it remains unused.
+- [ ] Verify a clean `npm ci`.
+
+Planned commit:
+
+```text
+chore: repair encoding and dependency hygiene
+```
+
+## Release 0.4 — Credible Simulation Model
+
+### Step 4 — Define the Simulation Metric Contract
+
+- [ ] Decide which indicators remain in the core result.
+- [ ] Define every metric's unit, geographic scope, data class, source status, and favorable direction.
+- [ ] Separate observed values, official references, model estimates, and illustrative assumptions.
+- [ ] Define percentage versus percentage-point calculations explicitly.
+- [ ] Remove or rename ambiguous metrics such as Housing Supply Rate.
+- [ ] Add dwelling units and jobs where they improve the official reference comparison.
+- [ ] Add schema and provenance tests.
+
+Stop condition:
+
+- Do not present a value as an official Burnaby forecast unless a compatible source and definition are recorded.
+
+Planned commit:
+
+```text
+refactor: define simulation metrics and provenance
+```
+
+### Step 5 — Introduce Realistic CAD Budgeting
+
+- [ ] Define whether the plan represents capital cost, annual operating cost, or both.
+- [ ] Replace game-scale values with documented CAD estimates or explicitly labeled budget units.
+- [ ] Display CAD consistently through `Intl.NumberFormat`.
+- [ ] Add facility capacity and cost metadata.
+- [ ] Add budget presets if a single city-wide budget is misleading.
+- [ ] Document the source or assumption behind every cost.
+- [ ] Add cost and formatting tests.
+
+Stop condition:
+
+- Stop when facility cost scopes are incompatible, such as mixing construction cost with annual operating cost, until a common model is selected.
+
+Planned commit:
+
+```text
+feat: add documented CAD planning budgets
+```
+
+### Step 6 — Implement Simulation Model v2
+
+- [ ] Replace direct city-wide percentage multipliers with bounded contributions.
+- [ ] Add diminishing returns for repeated facilities.
+- [ ] Separate absolute changes, proportional changes, and percentage points.
+- [ ] Prevent a single facility from producing implausible city-wide population growth.
+- [ ] Add low, reference, and high impact ranges where uncertainty is material.
+- [ ] Produce a per-facility contribution breakdown.
+- [ ] Keep displayed descriptions and calculation coefficients in one definition.
+- [ ] Version coefficient sets for reproducibility.
+- [ ] Add empty, single, repeated, mixed, boundary, and regression tests.
+
+Acceptance criteria:
+
+- Repeated facilities cannot reduce crime or traffic to zero through uncontrolled linear stacking.
+- Every result identifies its coefficient set and assumptions.
+- Identical inputs always produce identical results.
+
+Planned commit:
+
+```text
+feat: implement bounded simulation model v2
+```
+
+### Step 7 — Add a Spatial Demand and Coverage Model
+
+- [ ] Select a neighbourhood or grid analysis unit.
+- [ ] Add population or demand values to each analysis area.
+- [ ] Define service radius or travel assumptions by facility type.
 - [ ] Calculate existing-facility coverage.
 - [ ] Calculate proposed-facility coverage.
-- [ ] Detect overlapping coverage.
-- [ ] Display service areas and underserved areas on the map.
-- [ ] Add deterministic spatial calculation tests.
+- [ ] Detect service overlap and underserved areas.
+- [ ] Make facility placement location affect the result.
+- [ ] Display service areas and coverage changes on the map.
+- [ ] Add deterministic geospatial tests.
 
 Acceptance criteria:
 
-- Moving the same facility to a meaningfully different location can change its result.
+- Moving the same facility to a materially different location can change its coverage result.
 - Spatial inputs and assumptions are visible and testable.
 
-Commit:
+Planned commit:
 
 ```text
-feat: add spatial demand and service coverage model
+feat: add spatial demand and service coverage
 ```
 
-### Step 8 — Implement Simulation Model v2
+### Step 8 — Expand Scenario Results
 
-- [ ] Add diminishing returns for overlapping or repeated facilities.
-- [ ] Separate construction cost from recurring operating cost.
-- [ ] Add construction timing where supported.
-- [ ] Define supported facility interactions.
-- [ ] Produce low, base, and high scenarios where uncertainty exists.
-- [ ] Generate a contribution breakdown by facility and location.
-- [ ] Keep display text and calculation coefficients in the same definitions.
-- [ ] Add boundary, regression, immutability, and representative-scenario tests.
-
-Acceptance criteria:
-
-- Every result can be traced to documented inputs and assumptions.
-- Repeated facilities do not create uncontrolled linear growth.
-- Identical inputs produce identical outputs.
-
-Commit:
-
-```text
-feat: implement explainable simulation model v2
-```
-
-### Step 9 — Expand Results and Scenario Comparison
-
-- [ ] Allow the user to select a metric for trend visualization.
-- [ ] Add before-and-after spatial comparison.
+- [ ] Add official population, dwelling-unit, and job trend views.
+- [ ] Allow users to select result metrics.
+- [ ] Add before-and-after map comparison.
 - [ ] Show neighbourhood-level coverage changes.
-- [ ] Show count and total contribution for each facility type.
-- [ ] Separate favorable, unfavorable, and uncertain effects.
-- [ ] Link result details back to relevant map locations.
+- [ ] Separate favorable, unfavorable, uncertain, and no-change effects.
+- [ ] Link result contributions to relevant facilities and locations.
 - [ ] Add local scenario save, load, and comparison.
-- [ ] Explain assumptions and limitations inside the result view.
+- [ ] Keep methodology and source links available inside results.
 
-Acceptance criteria:
-
-- The result explains what was placed, where it was placed, why it matters, and how it changes the scenario.
-
-Commit:
+Planned commit:
 
 ```text
-feat: add spatial and comparative simulation results
+feat: add comparative and spatial scenario results
 ```
 
-## 6. Release 0.4 — Maintainability and Delivery
+## Release 0.5 — Maintainability, CI, and Deployment
 
-Goal: Make the project safe to extend, verify, deploy, and present.
-
-### Step 10 — Separate Application Responsibilities
+### Step 9 — Separate Application Responsibilities
 
 - [ ] Reduce `App.js` to top-level composition.
-- [ ] Extract planning state and actions.
-- [ ] Split map controls, plan controls, budget summary, usage summary, and result sections.
+- [ ] Extract planning actions into a dedicated hook or domain service.
+- [ ] Separate map state from plan state.
+- [ ] Split budget, selector, usage, and feedback sections.
 - [ ] Replace temporary names such as `SimulationSummary2`.
-- [ ] Keep calculations independent from React presentation code.
-- [ ] Consolidate repeated styles into shared components or CSS modules.
+- [ ] Keep calculations independent from React.
+- [ ] Add shared presentation primitives only where repetition justifies them.
 
-Commit:
+Planned commit:
 
 ```text
-refactor: separate planning simulation and presentation layers
+refactor: separate planning simulation and presentation
 ```
 
-### Step 11 — Add Browser Workflow Coverage
+### Step 10 — Add Browser Workflow Coverage
 
 - [ ] Add Playwright.
-- [ ] Test selection, valid placement, invalid placement, removal, reset, simulation, and result display.
-- [ ] Test a mobile viewport.
-- [ ] Prevent remote map tiles from making tests flaky.
-- [ ] Add an automated accessibility smoke check.
+- [ ] Test selection, placement, invalid placement, removal, reset, filtering, zoom, empty-plan simulation, and populated-plan results.
+- [ ] Test desktop and mobile viewports.
+- [ ] Stub remote map tiles to prevent flaky tests.
+- [ ] Add an accessibility smoke test.
 
-Commit:
+Planned commit:
 
 ```text
-test: add planning workflow and browser coverage
+test: add planning workflow browser coverage
 ```
 
-### Step 12 — Strengthen CI
+### Step 11 — Strengthen CI
 
 - [ ] Run unit and component tests.
-- [ ] Run browser smoke tests.
+- [ ] Run browser workflow tests.
 - [ ] Build the production bundle.
 - [ ] Add realistic coverage thresholds.
-- [ ] Upload useful test reports and build artifacts.
+- [ ] Upload test reports and build artifacts.
 - [ ] Configure minimal workflow permissions.
+- [ ] Prevent deployment when any quality gate fails.
 
-Commit:
+Planned commit:
 
 ```text
 ci: add browser tests and quality gates
 ```
 
-### Step 13 — Add Verified Continuous Deployment
+### Step 12 — Add Verified Continuous Deployment
 
-- [ ] Confirm the final repository name and production URL.
+- [ ] Confirm the remote repository is named `burnaby-plan-lab`.
+- [ ] Confirm the production URL and GitHub Pages base path.
 - [ ] Deploy only from the protected default branch.
 - [ ] Deploy the exact artifact produced by the verified build job.
 - [ ] Prevent overlapping production deployments.
 - [ ] Add manual deployment support.
-- [ ] Run a production smoke check.
+- [ ] Run a production smoke test after deployment.
 
 Stop condition:
 
-- Do not change the repository name, GitHub Pages URL, or external GitHub settings without explicit confirmation of the final name and URL.
+- Do not rename the repository, change Pages settings, or publish a new production URL without explicit confirmation immediately before the external change.
 
-Commit:
+Planned commit:
 
 ```text
 ci: deploy verified builds to GitHub Pages
 ```
 
-### Step 14 — Complete Portfolio Documentation
+## Release 1.0 — Portfolio Release
 
-- [ ] Replace the placeholder clone URL.
-- [ ] Repair damaged README separators and text.
-- [ ] Update the project name after naming is confirmed.
-- [ ] Document purpose, features, architecture, setup, test, and build commands.
-- [ ] Link this plan, methodology, and data-source documentation.
+### Step 13 — Complete Portfolio Documentation
+
+- [ ] Rewrite the README around Burnaby PlanLab.
+- [ ] Document architecture, setup, testing, build, and deployment.
+- [ ] Explain the official reference scenario and illustrative model layer.
 - [ ] Add current screenshots or a short demonstration.
 - [ ] Document limitations and future development.
 - [ ] Add CI and deployment badges.
+- [ ] Verify every local and external link.
 
-Commit:
+Planned commit:
 
 ```text
-docs: complete portfolio documentation
+docs: complete Burnaby PlanLab portfolio documentation
 ```
 
-### Step 15 — Release Review
+### Step 14 — Release Review
 
-- [ ] Verify a clean install with `npm ci`.
-- [ ] Run all automated tests.
-- [ ] Build the production bundle.
+- [ ] Verify a clean install.
+- [ ] Run every automated test.
+- [ ] Build the production artifact.
 - [ ] Verify the deployed application.
 - [ ] Check browser console output.
-- [ ] Verify links, icons, images, and map assets.
+- [ ] Verify links, icons, images, map assets, and source citations.
 - [ ] Review desktop, tablet, and mobile layouts.
-- [ ] Review keyboard navigation and focus visibility.
-- [ ] Scan source files for damaged Unicode.
-- [ ] Confirm that displayed impacts match calculation definitions.
+- [ ] Review keyboard navigation, modal behavior, and focus visibility.
+- [ ] Confirm displayed impacts match calculation definitions.
+- [ ] Confirm the repository is clean and release documentation is current.
 
-Commit:
+Planned commit:
 
 ```text
-chore: complete portfolio release quality checks
+chore: complete Burnaby PlanLab release review
 ```
 
 Target release tag:
@@ -358,29 +456,37 @@ Target release tag:
 v1.0.0
 ```
 
-## 7. Nice to Have
+## 8. Nice to Have
 
-These items must not delay simulation correctness, accessibility, or deployment stability.
+These items must not delay simulation correctness, accessibility, or a verified deployment.
 
 - [ ] Import and export scenarios as JSON.
 - [ ] Shareable scenario URLs.
 - [ ] Multiple budget and policy presets.
 - [ ] Construction phases between 2026 and 2050.
-- [ ] Additional map layers for transit, zoning, and climate risk.
+- [ ] Transit, zoning, climate-risk, and accessibility map layers.
+- [ ] Marker clustering at low zoom if facility volume materially increases.
 - [ ] Dark mode.
 - [ ] Localization.
-- [ ] Migrate from Create React App to Vite after the stable release.
+- [ ] Printable or downloadable scenario reports.
 
-## 8. Definition of Done
+## 9. Definition of Done
 
 A step is complete only when:
 
-- Every acceptance criterion is met.
-- Relevant automated tests pass.
+- Its acceptance criteria are satisfied.
+- Relevant tests pass.
 - The production build succeeds.
-- Manual verification is complete where required.
-- Documentation reflects changed behavior.
-- The checklist is updated.
-- The change is committed independently.
+- Browser verification is complete where required.
+- Data and methodology documentation are current.
+- The checklist reflects the result.
+- The work is committed independently.
 
-The portfolio release is complete when the application is usable without hidden instructions, the simulation is explainable, CI and CD are green, data provenance is documented, and a new contributor can run and understand the repository without additional guidance.
+Burnaby PlanLab is ready for a portfolio release when:
+
+- The project uses the confirmed identity and production URL.
+- The no-plan scenario has transparent provenance.
+- User-plan impacts are bounded and explainable.
+- Placement location has a documented spatial effect.
+- CI and deployment are verified.
+- A new contributor can install, test, build, and understand the project without hidden instructions.
