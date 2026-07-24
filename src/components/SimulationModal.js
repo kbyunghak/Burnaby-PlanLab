@@ -16,11 +16,6 @@ const headers = [
   "Air Quality Index",
   "Inflation Rate (%)",        
 ];
-const formatNumber = (num) => {
-  if (typeof num === 'number') return num.toLocaleString();
-  return num;
-};
-
 const SimulationModal = ({
   isOpen,
   onRequestClose,

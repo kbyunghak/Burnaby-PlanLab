@@ -201,6 +201,7 @@ function App() {
           markers={displayedMarkers}
           onMapClick={handleMapClick}
           selectedBuilding={selectedBuilding}
+          showAllIcons={showAllIcons}
           style={{ height: '100%' }}
           createIcon={null}
           initialMarkers={initialMarkers} 

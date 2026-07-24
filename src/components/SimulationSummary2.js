@@ -1,8 +1,7 @@
 import React from "react";
-import { generatePolicySummary, generateFacilitySummary } from "../utils/summaryGenerator";
+import { generateFacilitySummary } from "../utils/summaryGenerator";
 
-const SimulationSummary2 = ({ simulationData, facilitiesInstalled }) => {
-  const policySummary = generatePolicySummary(simulationData);
+const SimulationSummary2 = ({ facilitiesInstalled }) => {
   const facilitySummary = generateFacilitySummary(facilitiesInstalled);
 
   return (
