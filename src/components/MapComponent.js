@@ -243,7 +243,7 @@ const MapComponent = ({
               icon={icon}
               alt={markerLabel}
               title={markerLabel}
-              opacity={isExisting ? 0.55 : 1}
+              opacity={isExisting ? 0.82 : 1}
               eventHandlers={
                 isExisting
                   ? undefined

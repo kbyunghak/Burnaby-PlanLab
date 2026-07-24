@@ -60,12 +60,13 @@
 }
 
 .map-key__existing {
-  background: #94a3b8;
+  background: #64748b;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.95);
 }
 
 .map-key__proposed {
-  background: #14b8a6;
-  box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.2);
+  background: #0f766e;
+  box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.28);
 }
 
 .map-panel__canvas {
@@ -176,11 +177,21 @@
 }
 
 .facility-marker--existing {
-  filter: grayscale(0.75);
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 1.5px rgba(51, 65, 85, 0.9),
+    0 2px 5px rgba(15, 23, 42, 0.5);
+  filter: grayscale(0.3) saturate(0.8) contrast(1.08);
 }
 
 .facility-marker--proposed {
-  filter: drop-shadow(0 0 3px rgba(20, 184, 166, 0.95));
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 2px #0f766e,
+    0 2px 7px rgba(15, 118, 110, 0.55);
+  filter: saturate(1.12) contrast(1.08);
 }
 
 .facility-marker--selected {
@@ -198,7 +209,9 @@
 
 .facility-marker--existing.facility-marker--active-type {
   filter:
-    grayscale(0.4)
+    grayscale(0.15)
+    saturate(0.95)
+    contrast(1.1)
     drop-shadow(0 0 2px #fff)
     drop-shadow(0 0 5px #f59e0b);
 }

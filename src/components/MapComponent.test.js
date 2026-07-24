@@ -141,7 +141,7 @@ test('keeps facility icons and distinguishes existing and proposed markers', () 
   expect(markers[0]).toHaveAttribute('data-icon-size', '24x24');
   expect(markers[0]).toHaveAttribute('data-alt', 'Existing Market');
   expect(markers[0]).toHaveAttribute('data-title', 'Existing Market');
-  expect(markers[0]).toHaveAttribute('data-opacity', '0.55');
+  expect(markers[0]).toHaveAttribute('data-opacity', '0.82');
   expect(markers[1]).toHaveAttribute(
     'data-icon-class',
     'facility-marker facility-marker--proposed'
