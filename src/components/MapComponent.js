@@ -134,7 +134,12 @@ const MapComponent = ({
         <LocationSelector onClick={onMapClick} />
         <Polygon
           positions={burnabyPolygon}
-          pathOptions={{ color: '#3f51b5', weight: 3, fillOpacity: 0.1 }}
+          pathOptions={{
+            color: '#3f51b5',
+            weight: 3,
+            fillOpacity: 0.1,
+            interactive: false,
+          }}
         />
         {filteredMarkers.map((marker, idx) => {
           const isExisting = existingFacilities.some(
