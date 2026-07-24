@@ -73,7 +73,7 @@ const MapComponent = ({
   center,
   zoom,
   showAllIcons,
-  initialMarkers,
+  existingFacilities,
 }) => {
   const [map, setMap] = useState(null);
   const [isResetDisabled, setIsResetDisabled] = useState(true);
@@ -128,7 +128,7 @@ const MapComponent = ({
           ? iconMap[marker.buildingName] || defaultIcon
           : defaultIcon;
 
-           const isInitial = initialMarkers.some(
+           const isExisting = existingFacilities.some(
           (im) =>
             im.position[0] === marker.position[0] &&
             im.position[1] === marker.position[1] &&
@@ -143,7 +143,7 @@ const MapComponent = ({
             key={idx}
             position={marker.position}
             icon={iconToUse}
-            opacity={isInitial ? 0.4 : 1}
+            opacity={isExisting ? 0.4 : 1}
           >
             <Popup>{marker.popup}</Popup>
           </Marker>

@@ -45,7 +45,7 @@ export const burnabyForecast2050 = {
   inflationRate: 3.2,
 };
 
-export const initialMarkers = [
+export const existingFacilities = [
  // Schools
   { position: [49.2595, -122.9822], popup: 'Burnaby Central Secondary School', buildingName: 'School' },
   { position: [49.2802, -122.9576], popup: 'Burnaby North Secondary School', buildingName: 'School' },

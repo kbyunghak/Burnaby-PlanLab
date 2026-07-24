@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import MapComponentWrapper from './components/MapComponentWrapper';
 import SimulationModal from './components/SimulationModal';
-import { initialMarkers, burnabyPolygon } from './constants/mapData';
+import { existingFacilities, burnabyPolygon } from './constants/mapData';
 import { facilityOptions } from './constants/facilityDefinitions';
 import LegendModal from './components/LegendModal';
 import { calculateSimulation } from './simulation/calculateSimulation';
@@ -34,26 +34,19 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [budget, setBudget] = useState(10000);
-  const [markers, setMarkers] = useState(initialMarkers);
+  const [userPlanFacilities, setUserPlanFacilities] = useState([]);
   const [selectedBuilding, setSelectedBuilding] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [simulationData, setSimulationData] = useState([]);
   const [isLegendOpen, setIsLegendOpen] = useState(false);
   const [showAllIcons, setShowAllIcons] = useState(false);
 
-  // Filter out markers that are not in the initialMarkers
-  const newMarkers = markers.filter(
-    m =>
-      !initialMarkers.some(
-        im =>
-          im.position[0] === m.position[0] &&
-          im.position[1] === m.position[1] &&
-          im.buildingName === m.buildingName
-      )
-  );
+  const displayedFacilities = [...existingFacilities, ...userPlanFacilities];
 
   const buildingUsage = facilityOptions.map(b => {
-    const count = newMarkers.filter(m => m.buildingName === b.name).length;
+    const count = userPlanFacilities.filter(
+      facility => facility.buildingName === b.name
+    ).length;
     return {
       name: b.name,
       costPerUnit: b.cost,
@@ -65,8 +58,10 @@ function App() {
   const totalUsedBudget = buildingUsage.reduce((sum, b) => sum + b.totalCost, 0);
 
   const displayedMarkers = selectedBuilding
-    ? markers.filter(marker => marker.buildingName === selectedBuilding.name)
-    : markers;
+    ? displayedFacilities.filter(
+        facility => facility.buildingName === selectedBuilding.name
+      )
+    : displayedFacilities;
 
   const center = [49.2488, -122.9805];
   const zoom = 12;
@@ -90,14 +85,14 @@ function App() {
       popup: selectedBuilding.popup,
       buildingName: selectedBuilding.name,
     };
-    setMarkers(prev => [...prev, newMarker]);
+    setUserPlanFacilities(prev => [...prev, newMarker]);
   };
 
   const simulateCityGrowth = () => {
     setLoading(true);
     setToastMessage('');
     setTimeout(() => {
-      const results = calculateSimulation(markers);
+      const results = calculateSimulation(userPlanFacilities);
       setSimulationData(results);
       setIsModalOpen(true);
       setLoading(false);
@@ -132,7 +127,7 @@ function App() {
           showAllIcons={showAllIcons}
           style={{ height: '100%' }}
           createIcon={null}
-          initialMarkers={initialMarkers} 
+          existingFacilities={existingFacilities}
         />
 
         {/* Right Control Panel */}
@@ -245,7 +240,9 @@ function App() {
                   }}
                 >
                   (Used: $
-                  {newMarkers.filter(m => m.buildingName === selectedBuilding.name).length *
+                  {userPlanFacilities.filter(
+                    facility => facility.buildingName === selectedBuilding.name
+                  ).length *
                     selectedBuilding.cost}
                   )
                 </span>
