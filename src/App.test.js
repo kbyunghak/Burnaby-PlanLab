@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import App from './App';
 
 jest.mock('./components/MapComponentWrapper', () => function MockMap({
@@ -33,9 +33,10 @@ test('renders the city planning controls with the initial budget', () => {
 
   expect(screen.getByTestId('city-map')).toBeInTheDocument();
   expect(screen.getByRole('heading', { name: /select building/i })).toBeInTheDocument();
-  expect(screen.getByText(/^Budget:/)).toHaveTextContent('$10000');
+  const planStatus = screen.getByRole('region', { name: /plan status/i });
+  expect(within(planStatus).getByText('$10,000')).toBeInTheDocument();
   expect(screen.getByRole('button', { name: /simulate/i })).toBeDisabled();
-  expect(screen.getByText(/Total Used Budget:/)).toHaveTextContent('$0');
+  expect(screen.getByText('$0 used')).toBeInTheDocument();
 });
 
 test('selects and deselects a building type', () => {
@@ -43,10 +44,13 @@ test('selects and deselects a building type', () => {
 
   const marketButton = screen.getByRole('button', { name: /Market\s+\$300/i });
   fireEvent.click(marketButton);
-  expect(screen.getByText(/Selected Building:/)).toHaveTextContent('Market');
+  expect(
+    within(screen.getByRole('region', { name: /plan status/i }))
+      .getByText('Market')
+  ).toBeInTheDocument();
 
   fireEvent.click(marketButton);
-  expect(screen.getByText(/Selected Building:/)).toHaveTextContent('No building selected');
+  expect(screen.getByText('No building selected')).toBeInTheDocument();
 });
 
 test('charges the budget only for facilities added to the user plan', () => {
@@ -55,7 +59,11 @@ test('charges the budget only for facilities added to the user plan', () => {
   fireEvent.click(screen.getByRole('button', { name: /Market\s+\$300/i }));
   fireEvent.click(screen.getByRole('button', { name: /place facility on map/i }));
 
-  expect(screen.getByText(/^Budget:/)).toHaveTextContent('$9700');
-  expect(screen.getByText(/Total Used Budget:/)).toHaveTextContent('$300');
-  expect(screen.getByText(/Market: \$300/)).toHaveTextContent('1 × $300');
+  expect(screen.getByText('$9,700')).toBeInTheDocument();
+  expect(screen.getByText('$300 used')).toBeInTheDocument();
+
+  const usageSection = screen
+    .getByRole('heading', { name: /building usage/i })
+    .closest('section');
+  expect(within(usageSection).getByText(/1 × \$300/)).toHaveTextContent('= $300');
 });

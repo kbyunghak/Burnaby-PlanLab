@@ -10,11 +10,11 @@
 }
 
 .simulation-modal {
-  background: #f7f9fc;
+  background: var(--color-surface-muted);
   border: 0;
   border-radius: 18px;
   box-shadow: 0 24px 70px rgba(14, 24, 40, 0.28);
-  color: #1b2736;
+  color: var(--color-text);
   max-height: calc(100vh - 48px);
   max-width: 1120px;
   outline: none;
@@ -66,8 +66,8 @@
 }
 
 .simulation-modal > section {
-  background: #fff;
-  border: 1px solid #e0e6ef;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 14px;
   margin: 24px 28px 0;
   padding: 24px;
@@ -93,7 +93,7 @@
 }
 
 .simulation-section-heading__kicker {
-  color: #3157c8 !important;
+  color: var(--color-primary) !important;
 }
 
 .impact-card-grid {
@@ -103,8 +103,8 @@
 }
 
 .impact-card {
-  background: #f7f9fc;
-  border: 1px solid #e0e6ef;
+  background: var(--color-surface-muted);
+  border: 1px solid var(--color-border);
   border-radius: 12px;
   display: flex;
   flex-direction: column;
@@ -131,12 +131,12 @@
 }
 
 .impact-positive {
-  color: #167248;
+  color: var(--color-success);
   font-weight: 750;
 }
 
 .impact-negative {
-  color: #b43a3a;
+  color: var(--color-danger);
   font-weight: 750;
 }
 
@@ -211,7 +211,7 @@
 }
 
 .simulation-modal__close-button {
-  background: #3157c8;
+  background: var(--color-primary);
   border: 0;
   border-radius: 9px;
   color: #fff;
@@ -223,12 +223,12 @@
 
 .simulation-modal__close-button:hover,
 .simulation-modal__close-button:focus-visible {
-  background: #2446ad;
+  background: var(--color-primary-dark);
 }
 
 .simulation-modal__close-button:focus-visible,
 .simulation-modal__close-icon:focus-visible {
-  outline: 3px solid #ffcb66;
+  outline: 3px solid var(--color-focus);
   outline-offset: 3px;
 }
 
