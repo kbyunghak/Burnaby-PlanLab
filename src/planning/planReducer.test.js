@@ -77,6 +77,53 @@ test('reset clears the plan and restarts facility IDs', () => {
   expect(planReducer(populatedState, { type: 'reset' })).toEqual(initialPlanState);
 });
 
+test('removes the latest facility of a requested type', () => {
+  const firstMarket = planReducer(initialPlanState, {
+    type: 'add',
+    facility: market,
+  });
+  const withSchool = planReducer(firstMarket, {
+    type: 'add',
+    facility: school,
+  });
+  const secondMarket = planReducer(withSchool, {
+    type: 'add',
+    facility: market,
+  });
+
+  const result = planReducer(secondMarket, {
+    type: 'remove-latest-by-type',
+    buildingName: 'Market',
+  });
+
+  expect(result.facilities.map(({ id }) => id)).toEqual(['plan-1', 'plan-2']);
+  expect(result.selectedFacilityId).toBeNull();
+});
+
+test('removes every facility of a requested type and preserves other types', () => {
+  const firstMarket = planReducer(initialPlanState, {
+    type: 'add',
+    facility: market,
+  });
+  const withSchool = planReducer(firstMarket, {
+    type: 'add',
+    facility: school,
+  });
+  const secondMarket = planReducer(withSchool, {
+    type: 'add',
+    facility: market,
+  });
+
+  const result = planReducer(secondMarket, {
+    type: 'remove-all-by-type',
+    buildingName: 'Market',
+  });
+
+  expect(result.facilities).toEqual([
+    expect.objectContaining({ buildingName: 'School' }),
+  ]);
+});
+
 test('ignores invalid selection and editing actions on an empty plan', () => {
   expect(
     planReducer(initialPlanState, {

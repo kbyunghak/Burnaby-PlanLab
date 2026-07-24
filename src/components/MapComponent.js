@@ -92,6 +92,18 @@ function FitBounds({ polygon }) {
   return null;
 }
 
+function SelectedFacilityView({ facility }) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (facility) {
+      map.panTo(facility.position);
+    }
+  }, [facility, map]);
+
+  return null;
+}
+
 const MapComponent = ({
   markers,
   onMapClick,
@@ -101,6 +113,7 @@ const MapComponent = ({
   showAllIcons,
   existingFacilities,
   selectedUserFacilityId,
+  selectedUserFacility,
   onUserFacilitySelect,
 }) => {
   const [map, setMap] = useState(null);
@@ -131,6 +144,7 @@ const MapComponent = ({
         <MapController onReady={setMap} />
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         <FitBounds polygon={burnabyPolygon} />
+        <SelectedFacilityView facility={selectedUserFacility} />
         <LocationSelector onClick={onMapClick} />
         <Polygon
           positions={burnabyPolygon}

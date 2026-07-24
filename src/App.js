@@ -1,5 +1,6 @@
 import React, { useReducer, useState } from 'react';
 import './App.css';
+import BuildingUsage from './components/BuildingUsage';
 import LegendModal from './components/LegendModal';
 import MapComponentWrapper from './components/MapComponentWrapper';
 import SimulationModal from './components/SimulationModal';
@@ -51,6 +52,8 @@ function App() {
 
     return {
       name: facility.name,
+      label: facility.label,
+      icon: facility.icon,
       costPerUnit: facility.cost,
       count,
       totalCost: facility.cost * count,
@@ -71,6 +74,21 @@ function App() {
   const updatePlan = (action) => {
     dispatchPlan(action);
     invalidateSimulationResult();
+  };
+
+  const locateFacilityType = (buildingName) => {
+    for (let index = userPlanFacilities.length - 1; index >= 0; index -= 1) {
+      if (userPlanFacilities[index].buildingName === buildingName) {
+        setSelectedBuilding(
+          facilityOptions.find(({ name }) => name === buildingName) || null
+        );
+        updatePlan({
+          type: 'select',
+          facilityId: userPlanFacilities[index].id,
+        });
+        return;
+      }
+    }
   };
 
   const handleMapClick = (latlng) => {
@@ -124,6 +142,9 @@ function App() {
           showAllIcons={showAllIcons}
           existingFacilities={existingFacilities}
           selectedUserFacilityId={selectedFacilityId}
+          selectedUserFacility={userPlanFacilities.find(
+            ({ id }) => id === selectedFacilityId
+          )}
           onUserFacilitySelect={(facilityId) =>
             updatePlan({ type: 'select', facilityId })
           }
@@ -227,24 +248,18 @@ function App() {
             <p className="simulate-hint">Allocate the full budget to run your plan.</p>
           )}
 
-          <section className="usage-summary" aria-labelledby="usage-heading">
-            <div className="usage-summary__header">
-              <h3 id="usage-heading">Building Usage</h3>
-              <strong>${totalUsedBudget.toLocaleString()} used</strong>
-            </div>
-            <ul>
-              {buildingUsage.map((facility) => (
-                <li key={facility.name}>
-                  <span>{facility.name}</span>
-                  <span>
-                    {facility.count} × ${facility.costPerUnit}
-                    {' = '}
-                    <strong>${facility.totalCost}</strong>
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </section>
+          <BuildingUsage
+            facilities={buildingUsage}
+            totalUsedBudget={totalUsedBudget}
+            budgetLimit={10000}
+            onLocate={locateFacilityType}
+            onRemoveOne={(buildingName) =>
+              updatePlan({ type: 'remove-latest-by-type', buildingName })
+            }
+            onRemoveAll={(buildingName) =>
+              updatePlan({ type: 'remove-all-by-type', buildingName })
+            }
+          />
 
           {toastMessage && (
             <div className="toast-message" role="status">

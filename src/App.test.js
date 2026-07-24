@@ -76,7 +76,8 @@ test('charges the budget only for facilities added to the user plan', () => {
   const usageSection = screen
     .getByRole('heading', { name: /building usage/i })
     .closest('section');
-  expect(within(usageSection).getByText(/1 × \$300/)).toHaveTextContent('= $300');
+  expect(within(usageSection).getByText('$300 each ·')).toBeInTheDocument();
+  expect(within(usageSection).getByText('$300 total')).toBeInTheDocument();
 });
 
 test('undoes the latest placement and restores its budget', () => {
@@ -124,4 +125,20 @@ test('resets the full user plan and restores the initial budget', () => {
 
   expect(screen.getByText('$10,000')).toBeInTheDocument();
   expect(screen.getByText('$0 used')).toBeInTheDocument();
+});
+
+test('locates a facility by selecting its type and map marker', () => {
+  render(<App />);
+
+  fireEvent.click(
+    screen.getByRole('button', { name: /Community Centre\s+\$400/i })
+  );
+  fireEvent.click(screen.getByRole('button', { name: /place facility on map/i }));
+  fireEvent.click(screen.getByRole('button', { name: /Market\s+\$300/i }));
+  fireEvent.click(
+    screen.getByRole('button', { name: 'Locate Community Centre' })
+  );
+
+  const planStatus = screen.getByRole('region', { name: /plan status/i });
+  expect(within(planStatus).getByText('Community Centre')).toBeInTheDocument();
 });

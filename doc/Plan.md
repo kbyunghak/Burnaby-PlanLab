@@ -95,14 +95,14 @@ feat: add editable planning controls
 
 ### Step 3 — Redesign Building Usage
 
-- [ ] Add a used-budget progress indicator.
-- [ ] Show user-facing labels instead of internal facility IDs.
-- [ ] List used facilities before unused facility types.
-- [ ] Collapse or hide zero-count facilities by default.
-- [ ] Show icon, count, unit cost, and total cost separately.
-- [ ] Add Locate, Remove One, and Remove All actions.
-- [ ] Provide a mobile card layout without horizontal overflow.
-- [ ] Add component and responsive behavior tests.
+- [x] Add a used-budget progress indicator.
+- [x] Show user-facing labels instead of internal facility IDs.
+- [x] List used facilities before unused facility types.
+- [x] Collapse or hide zero-count facilities by default.
+- [x] Show icon, count, unit cost, and total cost separately.
+- [x] Add Locate, Remove One, and Remove All actions.
+- [x] Provide a mobile card layout without horizontal overflow.
+- [x] Add component and responsive behavior tests.
 
 Acceptance criteria:
 

@@ -51,6 +51,45 @@ export function planReducer(state, action) {
         ),
         selectedFacilityId: null,
       };
+    case 'remove-latest-by-type': {
+      let facilityIndex = -1;
+      for (let index = state.facilities.length - 1; index >= 0; index -= 1) {
+        if (state.facilities[index].buildingName === action.buildingName) {
+          facilityIndex = index;
+          break;
+        }
+      }
+      if (facilityIndex === -1) return state;
+
+      const removedFacility = state.facilities[facilityIndex];
+
+      return {
+        ...state,
+        facilities: state.facilities.filter(
+          (_, index) => index !== facilityIndex
+        ),
+        selectedFacilityId:
+          state.selectedFacilityId === removedFacility.id
+            ? null
+            : state.selectedFacilityId,
+      };
+    }
+    case 'remove-all-by-type': {
+      const facilities = state.facilities.filter(
+        ({ buildingName }) => buildingName !== action.buildingName
+      );
+      if (facilities.length === state.facilities.length) return state;
+
+      return {
+        ...state,
+        facilities,
+        selectedFacilityId: facilities.some(
+          ({ id }) => id === state.selectedFacilityId
+        )
+          ? state.selectedFacilityId
+          : null,
+      };
+    }
     case 'reset':
       return initialPlanState;
     default:
