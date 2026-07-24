@@ -30,7 +30,7 @@ const isInsideBurnaby = (latlng) => pointInPolygon(latlng, burnabyPolygon);
 
 function App() {
   const [loading, setLoading] = useState(false);
-  const [toastMessage, setToastMessage] = useState('');
+  const [feedback, setFeedback] = useState(null);
   const [planState, dispatchPlan] = useReducer(planReducer, initialPlanState);
   const [selectedBuilding, setSelectedBuilding] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -93,18 +93,28 @@ function App() {
 
   const handleMapClick = (latlng) => {
     if (!selectedBuilding) {
-      alert('Please select a building first.');
+      setFeedback({
+        type: 'error',
+        message: 'Select a facility before placing it on the map.',
+      });
       return;
     }
     if (!isInsideBurnaby(latlng)) {
-      alert('You can only place buildings within Burnaby!');
+      setFeedback({
+        type: 'error',
+        message: 'Place facilities inside the highlighted Burnaby boundary.',
+      });
       return;
     }
     if (budget < selectedBuilding.cost) {
-      alert('Insufficient budget!');
+      setFeedback({
+        type: 'error',
+        message: `You need $${selectedBuilding.cost.toLocaleString()} to place ${selectedBuilding.label}.`,
+      });
       return;
     }
 
+    setFeedback(null);
     updatePlan({
       type: 'add',
       facility: {
@@ -118,14 +128,17 @@ function App() {
 
   const simulateCityGrowth = () => {
     setLoading(true);
-    setToastMessage('');
+    setFeedback(null);
 
     setTimeout(() => {
       setSimulationData(calculateSimulation(userPlanFacilities));
       setIsModalOpen(true);
       setLoading(false);
-      setToastMessage('Simulation completed! Population and safety status updated.');
-      setTimeout(() => setToastMessage(''), 4000);
+      setFeedback({
+        type: 'success',
+        message: 'Simulation complete. Review the 2050 comparison and net impact.',
+      });
+      setTimeout(() => setFeedback(null), 4000);
       setShowAllIcons(true);
     }, 1500);
   };
@@ -164,6 +177,15 @@ function App() {
               Show Legend
             </button>
           </header>
+
+          <section className="quick-start" aria-labelledby="quick-start-heading">
+            <h3 id="quick-start-heading">Create your plan</h3>
+            <ol>
+              <li><strong>1</strong><span>Select a facility.</span></li>
+              <li><strong>2</strong><span>Place it inside Burnaby.</span></li>
+              <li><strong>3</strong><span>Review the budget and simulate.</span></li>
+            </ol>
+          </section>
 
           <div className="facility-grid" aria-label="Available facilities">
             {facilityOptions.map((facility) => {
@@ -235,6 +257,15 @@ function App() {
             </button>
           </div>
 
+          {feedback && (
+            <div
+              className={`feedback-message feedback-message--${feedback.type}`}
+              role={feedback.type === 'error' ? 'alert' : 'status'}
+            >
+              {feedback.message}
+            </div>
+          )}
+
           <button
             type="button"
             className="button button--primary simulate-button"
@@ -245,7 +276,11 @@ function App() {
             {loading ? 'Simulating...' : 'Simulate'}
           </button>
           {budget !== 0 && (
-            <p className="simulate-hint">Allocate the full budget to run your plan.</p>
+            <p className="simulate-hint">
+              {userPlanFacilities.length === 0
+                ? 'Place at least one facility to begin allocating the plan.'
+                : `Allocate the remaining $${budget.toLocaleString()} to unlock simulation.`}
+            </p>
           )}
 
           <BuildingUsage
@@ -261,11 +296,6 @@ function App() {
             }
           />
 
-          {toastMessage && (
-            <div className="toast-message" role="status">
-              {toastMessage}
-            </div>
-          )}
         </aside>
       </main>
 

@@ -48,6 +48,22 @@ test('renders the city planning controls with the initial budget', () => {
   expect(within(planStatus).getByText('$10,000')).toBeInTheDocument();
   expect(screen.getByRole('button', { name: /simulate/i })).toBeDisabled();
   expect(screen.getByText('$0 used')).toBeInTheDocument();
+  expect(
+    screen.getByRole('heading', { name: 'Create your plan' })
+  ).toBeInTheDocument();
+  expect(
+    screen.getByText(/place at least one facility/i)
+  ).toBeInTheDocument();
+});
+
+test('shows contextual feedback when placement is attempted without a facility', () => {
+  render(<App />);
+
+  fireEvent.click(screen.getByRole('button', { name: /place facility on map/i }));
+
+  expect(screen.getByRole('alert')).toHaveTextContent(
+    'Select a facility before placing it on the map.'
+  );
 });
 
 test('selects and deselects a building type', () => {

@@ -1,0 +1,148 @@
+.legend-overlay {
+  align-items: center;
+  background: rgba(15, 23, 42, 0.62);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  padding: var(--space-4);
+  position: fixed;
+  z-index: 10000;
+}
+
+.legend-modal {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  max-height: min(88vh, 900px);
+  max-width: 960px;
+  overflow-y: auto;
+  padding: var(--space-5);
+  width: 100%;
+}
+
+.legend-modal:focus {
+  outline: none;
+}
+
+.legend-modal__header {
+  align-items: flex-start;
+  display: flex;
+  gap: var(--space-4);
+  justify-content: space-between;
+}
+
+.legend-modal__header p {
+  color: var(--color-primary);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.legend-modal__header h2 {
+  font-size: 1.4rem;
+  margin: 3px 0 0;
+}
+
+.legend-modal__note {
+  background: var(--color-primary-soft);
+  border-radius: var(--radius-sm);
+  color: var(--color-primary-dark);
+  font-size: 0.76rem;
+  line-height: 1.5;
+  margin: var(--space-4) 0;
+  padding: var(--space-3);
+}
+
+.legend-grid {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.legend-card {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+}
+
+.legend-card > header {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+}
+
+.legend-card img {
+  height: 34px;
+  width: 34px;
+}
+
+.legend-card h3 {
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.legend-card header span {
+  color: var(--color-text-muted);
+  font-size: 0.68rem;
+}
+
+.legend-card > p {
+  color: var(--color-text-muted);
+  font-size: 0.7rem;
+  line-height: 1.45;
+  margin: 9px 0 0;
+}
+
+.legend-card > p strong {
+  color: var(--color-text);
+}
+
+.legend-card dl {
+  border-top: 1px solid var(--color-border);
+  display: grid;
+  gap: 5px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: var(--space-3) 0 0;
+  padding-top: var(--space-3);
+}
+
+.legend-card dl div {
+  align-items: baseline;
+  display: flex;
+  font-size: 0.65rem;
+  gap: 5px;
+  justify-content: space-between;
+}
+
+.legend-card dt {
+  color: var(--color-text-muted);
+}
+
+.legend-card dd {
+  font-weight: 800;
+  margin: 0;
+}
+
+.impact-increase {
+  color: var(--color-primary-dark);
+}
+
+.impact-decrease {
+  color: #6d28d9;
+}
+
+@media (max-width: 680px) {
+  .legend-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .legend-modal {
+    padding: var(--space-4);
+  }
+
+  .legend-card dl {
+    grid-template-columns: 1fr;
+  }
+}

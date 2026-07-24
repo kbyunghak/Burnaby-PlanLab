@@ -118,13 +118,13 @@ feat: redesign building usage as a plan summary
 
 ### Step 4 — Add Guidance and Contextual Feedback
 
-- [ ] Add a three-step first-use guide.
-- [ ] Explain the Burnaby placement boundary.
-- [ ] Explain existing and proposed marker styles.
-- [ ] Replace native alerts with contextual messages or toasts.
-- [ ] Explain why an action or Simulate button is unavailable.
-- [ ] Improve the facility legend with costs, measured impacts, and units.
-- [ ] Verify keyboard focus and screen-reader labels.
+- [x] Add a three-step first-use guide.
+- [x] Explain the Burnaby placement boundary.
+- [x] Explain existing and proposed marker styles.
+- [x] Replace native alerts with contextual messages or toasts.
+- [x] Explain why an action or Simulate button is unavailable.
+- [x] Improve the facility legend with costs, measured impacts, and units.
+- [x] Verify keyboard focus and screen-reader labels.
 
 Acceptance criteria:
 

@@ -1,8 +1,17 @@
 import React from 'react';
 import Modal from 'react-modal';
 import { facilityDefinitions } from '../constants/facilityDefinitions';
+import { metricEntries } from '../constants/metricDefinitions';
+import './LegendModal.css';
 
-const legendData = Object.values(facilityDefinitions);
+const legendData = Object.entries(facilityDefinitions).map(
+  ([name, definition]) => ({ name, ...definition })
+);
+
+const formatImpact = (value) => {
+  const percentage = value * 100;
+  return `${percentage > 0 ? '+' : ''}${percentage.toLocaleString()}%`;
+};
 
 const LegendModal = ({ isOpen, onRequestClose }) => (
   <Modal
@@ -10,55 +19,60 @@ const LegendModal = ({ isOpen, onRequestClose }) => (
     onRequestClose={onRequestClose}
     contentLabel="Facility Impact Legend"
     ariaHideApp={false}
-    style={{
-      overlay: { backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 10000 },
-      content: {
-        maxWidth: 800,
-        margin: 'auto',
-        borderRadius: 8,
-        padding: 20,
-        maxHeight: '80vh',
-        overflowY: 'auto',
-      }
-    }}
+    overlayClassName="legend-overlay"
+    className="legend-modal"
   >
-    <h3 style={{ marginBottom: 16, fontWeight: '700', fontSize: '1.25rem' }}>
-      Facility Impact Legend
-    </h3>
-    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-      <thead>
-        <tr style={{ borderBottom: '2px solid #555' }}>
-          <th style={{ textAlign: 'left', padding: '8px' }}>Facility Name</th>
-          <th style={{ textAlign: 'left', padding: '8px' }}>Positive Impact (Benefits)</th>
-          <th style={{ textAlign: 'left', padding: '8px' }}>Negative Impact (Drawbacks)</th>
-        </tr>
-      </thead>
-      <tbody>
-        {legendData.map((item) => (
-          <tr key={item.label} style={{ borderBottom: '1px solid #ddd' }}>
-            <td style={{ padding: '8px', fontWeight: '600' }}>{item.label}</td>
-            <td style={{ padding: '8px' }}>{item.benefits}</td>
-            <td style={{ padding: '8px' }}>{item.drawbacks}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-    <button
-      onClick={onRequestClose}
-      style={{
-        marginTop: 20,
-        padding: '10px 20px',
-        backgroundColor: '#3f51b5',
-        color: 'white',
-        border: 'none',
-        borderRadius: 6,
-        fontWeight: 'bold',
-        cursor: 'pointer',
-        float: 'right',
-      }}
-    >
-      Close
-    </button>
+    <header className="legend-modal__header">
+      <div>
+        <p>Planning reference</p>
+        <h2>Facility Impact Legend</h2>
+      </div>
+      <button
+        type="button"
+        className="button button--secondary"
+        onClick={onRequestClose}
+      >
+        Close
+      </button>
+    </header>
+
+    <p className="legend-modal__note">
+      Impact values are preliminary percentage changes applied per facility to
+      the 2050 no-plan projection. They are educational assumptions and will be
+      replaced as the source-backed model is developed. A plus or minus sign
+      shows direction, not whether the change is desirable.
+    </p>
+
+    <div className="legend-grid">
+      {legendData.map((facility) => (
+        <article className="legend-card" key={facility.name}>
+          <header>
+            <img src={process.env.PUBLIC_URL + facility.icon} alt="" />
+            <div>
+              <h3>{facility.label}</h3>
+              <span>${facility.cost.toLocaleString()} plan cost</span>
+            </div>
+          </header>
+          <p><strong>Benefit:</strong> {facility.benefits}</p>
+          <p><strong>Trade-off:</strong> {facility.drawbacks}</p>
+          <dl>
+            {metricEntries.map((metric) => {
+              const value = facility.impacts[metric.impactKey];
+              if (!value) return null;
+
+              return (
+                <div key={metric.key}>
+                  <dt>{metric.label}</dt>
+                  <dd className={value > 0 ? 'impact-increase' : 'impact-decrease'}>
+                    {formatImpact(value)}
+                  </dd>
+                </div>
+              );
+            })}
+          </dl>
+        </article>
+      ))}
+    </div>
   </Modal>
 );
 
