@@ -20,6 +20,11 @@ their plan with a no-plan 2050 scenario.
 
 [Open Burnaby PlanLab](https://kbyunghak.github.io/Burnaby-PlanLab/)
 
+[![Burnaby PlanLab interface showing the Burnaby planning boundary, facility markers, map controls, and investment panel](doc/assets/burnaby-plan-lab-overview.png)](https://kbyunghak.github.io/Burnaby-PlanLab/)
+
+*Burnaby-focused planning map with existing facilities, proposed-plan controls,
+and CAD budget tracking.*
+
 The former `/city-sim/` URL is retained as a redirect to the current
 application.
 
