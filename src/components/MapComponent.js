@@ -95,19 +95,13 @@ function FitBounds({ polygon }) {
 const MapComponent = ({
   markers,
   onMapClick,
-  selectedBuilding,
   center,
   zoom,
-  showAllIcons,
   existingFacilities,
   selectedUserFacilityId,
   onUserFacilitySelect,
 }) => {
   const [map, setMap] = useState(null);
-
-  const filteredMarkers = selectedBuilding && !showAllIcons
-    ? markers.filter((m) => m.buildingName === selectedBuilding.name)
-    : markers;
 
   const initialCenter = center;
   const initialZoom = zoom;
@@ -141,7 +135,7 @@ const MapComponent = ({
             interactive: false,
           }}
         />
-        {filteredMarkers.map((marker, idx) => {
+        {markers.map((marker, idx) => {
           const isExisting = existingFacilities.some(
             (existingFacility) =>
               existingFacility.position[0] === marker.position[0]
@@ -155,8 +149,6 @@ const MapComponent = ({
               ? selectedIconMap
               : proposedIconMap;
           const icon = facilityIcons[marker.buildingName] || defaultIcon;
-
-          if (!selectedBuilding && !showAllIcons) return null;
 
           return (
             <Marker

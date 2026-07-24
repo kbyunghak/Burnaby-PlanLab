@@ -5,6 +5,9 @@ jest.mock('./components/MapComponentWrapper', () => function MockMap({
   markers,
   onMapClick,
   onUserFacilitySelect,
+  onViewModeChange,
+  onShowExistingChange,
+  onShowProposedChange,
 }) {
   const userFacility = markers.find(({ id }) => id);
 
@@ -18,6 +21,18 @@ jest.mock('./components/MapComponentWrapper', () => function MockMap({
         onClick={() => onMapClick({ lat: 49.25, lng: -122.98 })}
       >
         Place facility on map
+      </button>
+      <button type="button" onClick={() => onViewModeChange('focus')}>
+        Use focus view
+      </button>
+      <button type="button" onClick={() => onViewModeChange('all')}>
+        Use all view
+      </button>
+      <button type="button" onClick={() => onShowExistingChange(false)}>
+        Hide existing layer
+      </button>
+      <button type="button" onClick={() => onShowProposedChange(false)}>
+        Hide proposed layer
       </button>
       {userFacility && (
         <button
@@ -120,11 +135,14 @@ test('undoes the latest placement and restores its budget', () => {
 test('removes a selected proposed facility without affecting existing facilities', () => {
   render(<App />);
 
+  const initialMarkerCount = Number(
+    screen.getByTestId('city-map').getAttribute('data-marker-count')
+  );
   fireEvent.click(screen.getByRole('button', { name: /Market\s+\$300/i }));
   fireEvent.click(screen.getByRole('button', { name: /place facility on map/i }));
   expect(screen.getByTestId('city-map')).toHaveAttribute(
     'data-marker-count',
-    '11'
+    String(initialMarkerCount + 1)
   );
 
   fireEvent.click(
@@ -135,7 +153,48 @@ test('removes a selected proposed facility without affecting existing facilities
   expect(screen.getByText('$10,000')).toBeInTheDocument();
   expect(screen.getByTestId('city-map')).toHaveAttribute(
     'data-marker-count',
-    '10'
+    String(initialMarkerCount)
+  );
+});
+
+test('switches between all and focused map facilities without changing the plan', () => {
+  render(<App />);
+
+  const allMarkerCount = Number(
+    screen.getByTestId('city-map').getAttribute('data-marker-count')
+  );
+  fireEvent.click(screen.getByRole('button', { name: /School\s+\$500/i }));
+  fireEvent.click(screen.getByRole('button', { name: 'Use focus view' }));
+  const focusedMarkerCount = Number(
+    screen.getByTestId('city-map').getAttribute('data-marker-count')
+  );
+
+  expect(focusedMarkerCount).toBeGreaterThan(0);
+  expect(focusedMarkerCount).toBeLessThan(allMarkerCount);
+  expect(screen.getByText('$10,000')).toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole('button', { name: 'Use all view' }));
+  expect(screen.getByTestId('city-map')).toHaveAttribute(
+    'data-marker-count',
+    String(allMarkerCount)
+  );
+});
+
+test('hides existing and proposed facility layers independently', () => {
+  render(<App />);
+
+  fireEvent.click(screen.getByRole('button', { name: /Market\s+\$300/i }));
+  fireEvent.click(screen.getByRole('button', { name: /place facility on map/i }));
+  fireEvent.click(screen.getByRole('button', { name: 'Hide existing layer' }));
+  expect(screen.getByTestId('city-map')).toHaveAttribute(
+    'data-marker-count',
+    '1'
+  );
+
+  fireEvent.click(screen.getByRole('button', { name: 'Hide proposed layer' }));
+  expect(screen.getByTestId('city-map')).toHaveAttribute(
+    'data-marker-count',
+    '0'
   );
 });
 

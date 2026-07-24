@@ -9,6 +9,10 @@ import { burnabyPolygon, existingFacilities } from './constants/mapData';
 import { createPlanSnapshot } from './planning/createPlanSnapshot';
 import { initialPlanState, planReducer } from './planning/planReducer';
 import { calculateSimulation } from './simulation/calculateSimulation';
+import {
+  filterMapFacilities,
+  MAP_VIEW_MODES,
+} from './map/mapVisibility';
 
 function pointInPolygon(point, polygon) {
   const [x, y] = [point.lng, point.lat];
@@ -36,7 +40,12 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [simulationData, setSimulationData] = useState(null);
   const [isLegendOpen, setIsLegendOpen] = useState(false);
-  const [showAllIcons, setShowAllIcons] = useState(false);
+  const [mapViewMode, setMapViewMode] = useState(MAP_VIEW_MODES.ALL);
+  const [visibleFacilityTypes, setVisibleFacilityTypes] = useState(
+    facilityOptions.map(({ name }) => name)
+  );
+  const [showExistingFacilities, setShowExistingFacilities] = useState(true);
+  const [showProposedFacilities, setShowProposedFacilities] = useState(true);
 
   const { facilities: userPlanFacilities, selectedFacilityId } = planState;
   const displayedFacilities = [...existingFacilities, ...userPlanFacilities];
@@ -59,16 +68,18 @@ function App() {
       totalCost: facility.cost * count,
     };
   });
-  const displayedMarkers = selectedBuilding
-    ? displayedFacilities.filter(
-        ({ buildingName }) => buildingName === selectedBuilding.name
-      )
-    : displayedFacilities;
+  const displayedMarkers = filterMapFacilities({
+    facilities: displayedFacilities,
+    viewMode: mapViewMode,
+    selectedBuildingName: selectedBuilding?.name,
+    visibleFacilityTypes,
+    showExisting: showExistingFacilities,
+    showProposed: showProposedFacilities,
+  });
 
   const invalidateSimulationResult = () => {
     setSimulationData(null);
     setIsModalOpen(false);
-    setShowAllIcons(false);
   };
 
   const updatePlan = (action) => {
@@ -140,7 +151,14 @@ function App() {
       message: 'Simulation complete. Review the 2050 comparison and net impact.',
     });
     setTimeout(() => setFeedback(null), 4000);
-    setShowAllIcons(true);
+  };
+
+  const toggleVisibleFacilityType = (facilityName) => {
+    setVisibleFacilityTypes((currentTypes) =>
+      currentTypes.includes(facilityName)
+        ? currentTypes.filter((name) => name !== facilityName)
+        : [...currentTypes, facilityName]
+    );
   };
 
   return (
@@ -151,13 +169,24 @@ function App() {
           zoom={12}
           markers={displayedMarkers}
           onMapClick={handleMapClick}
-          selectedBuilding={selectedBuilding}
-          showAllIcons={showAllIcons}
           existingFacilities={existingFacilities}
           selectedUserFacilityId={selectedFacilityId}
           onUserFacilitySelect={(facilityId) =>
             updatePlan({ type: 'select', facilityId })
           }
+          viewMode={mapViewMode}
+          onViewModeChange={setMapViewMode}
+          selectedBuildingLabel={selectedBuilding?.label || null}
+          visibleFacilityTypes={visibleFacilityTypes}
+          onFacilityTypeToggle={toggleVisibleFacilityType}
+          onSelectAllFacilityTypes={() =>
+            setVisibleFacilityTypes(facilityOptions.map(({ name }) => name))
+          }
+          onClearFacilityTypes={() => setVisibleFacilityTypes([])}
+          showExisting={showExistingFacilities}
+          onShowExistingChange={setShowExistingFacilities}
+          showProposed={showProposedFacilities}
+          onShowProposedChange={setShowProposedFacilities}
         />
 
         <aside className="control-panel" aria-label="City plan controls">
