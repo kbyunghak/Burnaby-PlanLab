@@ -1,143 +1,199 @@
-
 # Burnaby PlanLab
 
-## Live Demo: https://kbyunghak.github.io/Burnaby-PlanLab/
+[![CI](https://github.com/kbyunghak/Burnaby-PlanLab/actions/workflows/ci.yml/badge.svg)](https://github.com/kbyunghak/Burnaby-PlanLab/actions/workflows/ci.yml)
+[![Live Demo](https://img.shields.io/badge/demo-GitHub%20Pages-3157c8)](https://kbyunghak.github.io/Burnaby-PlanLab/)
 
-![image](https://github.com/user-attachments/assets/defb8a73-fb91-41bd-864c-2bffcb3454f3)
+**2026–2050 City Development Simulator**
 
+Burnaby PlanLab is an interactive React application for exploring how a
+facility investment plan could affect a reference scenario for Burnaby,
+British Columbia. Users place proposed facilities inside the Burnaby planning
+boundary, manage a CAD budget, inspect existing infrastructure, and compare
+their plan with a no-plan 2050 scenario.
 
-A React-based interactive city development simulation for Burnaby, BC, showcasing the impact of different facilities on urban indicators from 2026 to 2050.
+> Burnaby PlanLab is an educational planning tool, not an official City of
+> Burnaby forecasting or policy system. Official reference values, model
+> estimates, and illustrative assumptions are identified separately in the
+> project documentation.
 
-## Project Documentation
+## Live Application
 
-- [Simulation Data Sources](doc/DataSources.md) — official reference values, model estimates, illustrative assumptions, and maintenance rules.
+[Open Burnaby PlanLab](https://kbyunghak.github.io/Burnaby-PlanLab/)
 
-- [Development Plan](doc/Plan.md) — roadmap, execution strategy, testing, CI/CD, maintenance standards, and future enhancements.
-- [Simulation Methodology](doc/SimulationMethodology.md) — scenario definitions, formulas, assumptions, data status, and model limitations.
+The former `/city-sim/` URL is retained as a redirect to the current
+application.
 
----
+## Key Features
 
-## Overview
+- Burnaby-focused interactive map with a highlighted municipal boundary.
+- Existing and proposed facilities displayed as separate visual layers.
+- Focus, multi-select Filter, and All map display modes.
+- Zoom-responsive facility markers and a precise map-detail slider.
+- Resizable desktop workspace with keyboard-accessible controls.
+- Eight facility types with centralized cost and impact definitions.
+- CAD budget tracking, undo, selected-item removal, and plan reset actions.
+- Simulation support for empty, partially funded, and fully allocated plans.
+- 2026 model start, 2050 no-plan reference, user-plan result, and net-impact
+  comparisons.
+- Versioned Burnaby 2050 reference scenario with documented provenance.
+- Responsive controls for desktop, tablet, and mobile layouts.
 
-This project simulates the growth and development of Burnaby city by allowing users to place various facilities on a map within the city boundaries. The simulation models how these facilities influence key urban indicators such as population, traffic accidents, crime rates, housing satisfaction, unemployment, air quality, and inflation over a 24-year horizon.
+## Technology Stack
 
-Users can:
+| Area | Technology |
+| --- | --- |
+| UI | React 19, React DOM 19 |
+| Mapping | React Leaflet 5, Leaflet 1.9, OpenStreetMap tiles |
+| Visualization | Recharts |
+| Styling | CSS Grid, Flexbox, design tokens, responsive media queries |
+| State and model | React hooks, reducer-based plan state, JavaScript ES6+ |
+| Testing | Jest, React Testing Library, jest-dom |
+| CI | GitHub Actions with Node.js 20 |
+| Deployment | Create React App production build and GitHub Pages |
 
-- Select and place buildings like Markets, Schools, Hospitals, and more on a detailed Burnaby map.
-- View baseline data (2026), forecasted trends (2050 projected), and user-driven scenarios (2050 user scenario).
-- Analyze a summary of overall policy impacts and detailed facility-level effects.
-- Access a legend explaining the positive and negative impacts of each facility.
-- Visualize placed buildings on the map with distinct icons and adjust the view.
-- Simulate and review results to inform urban planning and policy decisions.
+GitHub reports the repository language as JavaScript because React is a
+JavaScript UI library rather than a separate programming language.
 
----
+## Scenario Model
 
-## Features
+The results distinguish four concepts:
 
-- **Interactive Map:** Leaflet.js-powered map with polygon boundaries for Burnaby.
-- **Facility Selection:** Users can select from a set of buildings with associated costs and impacts.
-- **Budget Management:** Place buildings within a budget constraint.
-- **Dynamic Simulation:** Calculates changes in urban indicators based on placed facilities.
-- **Detailed Reports:** Tabular summaries showing indicator comparisons and facility impact details.
-- **Policy Summaries:** Automatically generated overall and facility-specific policy suggestion summaries.
-- **Legend:** Clarifies benefits and drawbacks for each facility type.
-- **Responsive UI:** Modern, clean interface with easy navigation.
+1. **2026 Model Start** — an interpolated simulator starting point.
+2. **2050 Without Plan** — the reference scenario without user facilities.
+3. **2050 With Your Plan** — the reference scenario plus modeled plan effects.
+4. **Net Impact** — the difference attributed to the user plan.
 
----
+The official reference series currently covers population, dwelling units,
+and jobs. Other urban indicators are explicitly classified as illustrative
+model assumptions until suitable observed or projected sources are integrated.
+Facility impacts remain simplified educational coefficients and should not be
+interpreted as causal forecasts.
 
-## Technologies Used
-
-- React.js (Functional Components & Hooks)
-- React Leaflet (Map rendering and interaction)
-- Leaflet.js (Map library)
-- CSS Flexbox & Grid for layout
-- JavaScript ES6+
-- Modal dialogs for simulation results and legends
-
----
+See [Simulation Methodology](doc/SimulationMethodology.md) and
+[Simulation Data Sources](doc/DataSources.md) for formulas, classifications,
+sources, and limitations.
 
 ## Getting Started
 
-### Prerequisites
+### Requirements
 
-- Node.js (v16 or newer recommended)
-- npm or yarn
+- Node.js 20
+- npm
 
 ### Installation
 
 ```bash
 git clone https://github.com/kbyunghak/Burnaby-PlanLab.git
 cd Burnaby-PlanLab
-npm install
+npm ci
 ```
 
-### Running the App Locally
+### Local Development
 
 ```bash
 npm start
 ```
 
-Open your browser at `http://localhost:3000` to view the simulation.
+Open `http://localhost:3000`.
 
----
+### Tests
+
+```bash
+npm test -- --watchAll=false
+```
+
+The current suite covers simulation calculations, reference data, facility
+definitions, plan state, map visibility, modal accessibility, map behavior,
+budget usage, and primary user workflows.
+
+### Production Build
+
+```bash
+npm run build
+```
+
+The production build uses the `/Burnaby-PlanLab/` base path.
+
+### GitHub Pages Deployment
+
+```bash
+npm run deploy
+```
+
+This publishes the generated `build/` directory to the `gh-pages` branch.
+Application source remains on `master`; `gh-pages` contains deployment output
+only.
+
+## How to Use
+
+1. Choose a facility type from the planning panel.
+2. Place one or more facilities inside the highlighted Burnaby boundary.
+3. Use Focus, Filter, or All mode to review surrounding facilities.
+4. Toggle Existing and My Plan layers independently.
+5. Review the allocated and remaining CAD budget.
+6. Run the simulation at any time. Spending the entire budget is optional.
+7. Compare the no-plan reference with the result and net impact of the plan.
+
+Running the simulation without placing a facility displays the no-plan
+reference scenario and produces a net plan impact of zero.
 
 ## Project Structure
 
-- `src/`
-  - `components/` - React components for Map, Simulation Modal, Legend, etc.
-  - `constants/` - Data files including polygon coordinates, facility impact data, baseline, and forecast data.
-  - `utils/` - Helper functions for summaries and calculations.
-  - `App.js` - Main application component managing state and layout.
+```text
+src/
+├── components/       UI, map, legend, usage, and result components
+├── constants/        Facility definitions, map data, metrics, and references
+├── map/              Facility visibility rules
+├── planning/         Plan reducer and immutable simulation snapshots
+├── simulation/       Simulation calculation logic
+├── styles/           Shared design tokens
+└── utils/            Summary helpers
 
----
+doc/
+├── DataSources.md
+├── Plan.md
+└── SimulationMethodology.md
+```
 
-## Usage
+## Documentation
 
-1. Select a building type from the right panel.
-2. Click on the map inside Burnaby boundaries to place buildings.
-3. Monitor budget usage as you add buildings.
-4. Click **Simulate** when budget is fully used to generate and view simulation results.
-5. Review the summary and detailed reports.
-6. Use the **Show Legend** button to understand facility impacts.
+- [Development Plan](doc/Plan.md) — delivery roadmap, maintenance standards,
+  testing, CI/CD, and planned enhancements.
+- [Simulation Data Sources](doc/DataSources.md) — official references, model
+  estimates, assumptions, provenance, and update rules.
+- [Simulation Methodology](doc/SimulationMethodology.md) — scenario contracts,
+  calculations, terminology, and known limitations.
 
----
+## CI and Maintenance
 
-## Screenshots
+GitHub Actions runs the following checks on every push and pull request:
 
-### Simulation Overview  
-![image](https://github.com/user-attachments/assets/eddff4e7-bdd5-4f10-b3ae-ba2e2cae5fa0)
+```bash
+npm ci
+npm test -- --watchAll=false
+npm run build
+```
 
+The application currently uses Create React App and `react-scripts`. These
+tools remain functional but are no longer the preferred foundation for new
+React applications. Migration to Vite is tracked in the development plan.
 
-### Policy Summary and Facility Impact Details  
-![image](https://github.com/user-attachments/assets/3abbc1a5-208b-4583-9572-737c5b7efe80)
+## Known Limitations
 
+- Several non-demographic indicators use illustrative assumptions.
+- Facility impacts are simplified and currently accumulate linearly.
+- Spatial accessibility, service capacity, land use, operating costs, and
+  facility interactions are not yet modeled.
+- Existing-facility coordinates are maintained as a project dataset and
+  require a formal provenance audit.
+- Create React App introduces legacy dependency and audit warnings.
 
-### Facility Impact Legend  
-![image](https://github.com/user-attachments/assets/25751d13-d2c3-44e3-8ef9-00b979f5bd61)
+## Data and Map Attribution
 
----
-
-## Contributing
-
-Contributions are welcome! Please fork the repository and submit a pull request for review.
-
----
-
-## License
-
-This project is licensed under the MIT License.
-
----
-
-## Acknowledgements
-
-- Leaflet and React-Leaflet teams for map libraries.
-- OpenStreetMap contributors for map tiles.
-- Urban development policy frameworks inspiring simulation logic.
-
----
+- Reference scenario: City of Burnaby, *Burnaby 2050 Official Community Plan*.
+- Base map: [OpenStreetMap contributors](https://www.openstreetmap.org/copyright).
+- Mapping libraries: Leaflet and React Leaflet.
 
 ## Contact
 
-For questions or feedback, please contact [kbyunghak@gmail.com].
-
+[kbyunghak@gmail.com](mailto:kbyunghak@gmail.com)
