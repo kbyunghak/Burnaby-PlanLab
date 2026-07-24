@@ -21,8 +21,8 @@ export const burnabyPolygon = [
   [49.29383005419665, -123.02342690275432],
 ];
 
-export const burnaby2025 = {
-  year: 2025,
+export const burnaby2026 = {
+  year: 2026,
   population: 263046,
   trafficAccidents: 8500,
   crimeRate: 11445,        

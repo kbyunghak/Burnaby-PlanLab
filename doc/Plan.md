@@ -11,7 +11,7 @@ This plan defines how the project will be developed into a reliable and maintain
 The project should:
 
 - Clearly separate Burnaby's existing facilities from facilities proposed by the user.
-- Explain the difference between the 2025 baseline, the 2050 projection without a plan, and the 2050 projection with the user's plan.
+- Explain the difference between the 2026 baseline, the 2050 projection without a plan, and the 2050 projection with the user's plan.
 - Display the net impact caused by the user's choices.
 - Use one source of truth for facility costs, labels, icons, descriptions, and impact coefficients.
 - Provide a responsive and accessible planning experience.
@@ -242,7 +242,7 @@ Return a result model similar to:
 
 ```js
 {
-  baseline2025,
+  baseline2026,
   projection2050,
   userPlan2050,
   netImpact,
@@ -293,7 +293,7 @@ docs: document simulation methodology
 
 Display:
 
-- 2025 Baseline.
+- 2026 Baseline.
 - 2050 Without Plan.
 - 2050 With Your Plan.
 - Net Impact.

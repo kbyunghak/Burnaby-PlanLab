@@ -54,7 +54,7 @@ const SimulationModal = ({
   if (!simulationData) return null;
 
   const {
-    baseline2025,
+    baseline2026,
     projection2050,
     userPlan2050,
     netImpact,
@@ -146,7 +146,7 @@ const SimulationModal = ({
             <thead>
               <tr>
                 <th scope="col">Indicator</th>
-                <th scope="col">2025 Baseline</th>
+                <th scope="col">2026 Baseline</th>
                 <th scope="col">2050 Without Plan</th>
                 <th scope="col">2050 With Your Plan</th>
                 <th scope="col">Net Impact</th>
@@ -159,7 +159,7 @@ const SimulationModal = ({
                 return (
                   <tr key={key}>
                     <th scope="row">{label}</th>
-                    <td>{formatMetricValue(key, baseline2025[key])}</td>
+                    <td>{formatMetricValue(key, baseline2026[key])}</td>
                     <td>{formatMetricValue(key, projection2050[key])}</td>
                     <td>{formatMetricValue(key, userPlan2050[key])}</td>
                     <td className={getChangeClassName(key, difference)}>
@@ -179,7 +179,7 @@ const SimulationModal = ({
             <p className="simulation-section-heading__kicker">Population outlook</p>
             <h3 id="trend-heading">Projected Growth</h3>
           </div>
-          <p>Facility effects are introduced gradually from 2025 to 2050.</p>
+          <p>Facility effects are introduced gradually from 2026 to 2050.</p>
         </div>
 
         <div className="simulation-chart" role="img" aria-label="Population projection chart">

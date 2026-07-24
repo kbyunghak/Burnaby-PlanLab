@@ -1,4 +1,4 @@
-import { burnaby2025, burnabyForecast2050 } from '../constants/mapData';
+import { burnaby2026, burnabyForecast2050 } from '../constants/mapData';
 import {
   aggregateFacilityImpacts,
   calculateSimulation,
@@ -27,17 +27,17 @@ describe('calculateSimulation', () => {
     const result = calculateSimulation([]);
 
     expect(result).toEqual({
-      baseline2025: burnaby2025,
+      baseline2026: burnaby2026,
       projection2050: burnabyForecast2050,
       userPlan2050: burnabyForecast2050,
       netImpact: expect.any(Object),
       yearlyTrend: expect.any(Array),
     });
-    expect(result.yearlyTrend).toHaveLength(26);
+    expect(result.yearlyTrend).toHaveLength(25);
     expect(result.yearlyTrend[0]).toEqual({
-      year: 2025,
-      projection: expect.objectContaining({ population: burnaby2025.population }),
-      withPlan: expect.objectContaining({ population: burnaby2025.population }),
+      year: 2026,
+      projection: expect.objectContaining({ population: burnaby2026.population }),
+      withPlan: expect.objectContaining({ population: burnaby2026.population }),
     });
     expect(result.yearlyTrend.at(-1)).toEqual({
       year: 2050,
@@ -88,13 +88,13 @@ describe('calculateSimulation', () => {
   test('does not mutate facilities or source datasets', () => {
     const facilities = [facility('Hospital')];
     const facilitiesSnapshot = JSON.parse(JSON.stringify(facilities));
-    const baselineSnapshot = { ...burnaby2025 };
+    const baselineSnapshot = { ...burnaby2026 };
     const projectionSnapshot = { ...burnabyForecast2050 };
 
     calculateSimulation(facilities);
 
     expect(facilities).toEqual(facilitiesSnapshot);
-    expect(burnaby2025).toEqual(baselineSnapshot);
+    expect(burnaby2026).toEqual(baselineSnapshot);
     expect(burnabyForecast2050).toEqual(projectionSnapshot);
   });
 });

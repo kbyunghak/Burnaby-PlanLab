@@ -10,9 +10,9 @@ The simulation is not an official City of Burnaby forecast, an engineering model
 
 The application produces five related outputs:
 
-### 2025 Baseline
+### 2026 Baseline
 
-The starting state of Burnaby stored in `burnaby2025`. Existing facilities are part of the map context but do not create user-plan impacts or consume the user's budget.
+The starting state of Burnaby stored in `burnaby2026`. Existing facilities are part of the map context but do not create user-plan impacts or consume the user's budget.
 
 ### 2050 Without Plan
 
@@ -32,7 +32,7 @@ Net Impact = 2050 With Your Plan - 2050 Without Plan
 
 ### Yearly Trend
 
-A 2025-2050 series used to compare a linearly interpolated no-plan projection with a user-plan scenario whose facility effects are gradually introduced over the same period.
+A 2026-2050 series used to compare a linearly interpolated no-plan projection with a user-plan scenario whose facility effects are gradually introduced over the same period.
 
 ## Data Status
 
@@ -141,11 +141,11 @@ The reference value for each intermediate year is linearly interpolated:
 
 ```text
 Year Fraction =
-  (Current Year - 2025) / (2050 - 2025)
+  (Current Year - 2026) / (2050 - 2026)
 
 Projected Value =
-  2025 Baseline
-  + (2050 Without Plan - 2025 Baseline) × Year Fraction
+  2026 Baseline
+  + (2050 Without Plan - 2026 Baseline) × Year Fraction
 ```
 
 ### 5. Introduce User-Plan Effects Over Time
@@ -158,7 +158,7 @@ With-Plan Value =
   × (1 + Total Facility Impact × Year Fraction)
 ```
 
-At 2025 the user-plan effect is zero. At 2050 the full effect is applied.
+At 2026 the user-plan effect is zero. At 2050 the full effect is applied.
 
 ## Worked Example
 
@@ -185,7 +185,7 @@ The application should therefore display:
 
 | Scenario | Population |
 |---|---:|
-| 2025 Baseline | 263,046 |
+| 2026 Baseline | 263,046 |
 | 2050 Without Plan | 360,000 |
 | 2050 With Your Plan | 378,000 |
 | Net Impact | +18,000 |
@@ -268,7 +268,7 @@ Changes to the model should include tests for:
 - Metric range constraints.
 - Source data immutability.
 - Net impact calculations.
-- 2025 and 2050 trend endpoints.
+- 2026 and 2050 trend endpoints.
 - Representative worked examples documented here.
 
 The production build and complete automated test suite must pass before a model change is merged or deployed.

@@ -3,9 +3,9 @@ import {
   constrainMetric,
   metricEntries,
 } from '../constants/metricDefinitions';
-import { burnaby2025, burnabyForecast2050 } from '../constants/mapData';
+import { burnaby2026, burnabyForecast2050 } from '../constants/mapData';
 
-const START_YEAR = 2025;
+const START_YEAR = 2026;
 const END_YEAR = 2050;
 
 export const aggregateFacilityImpacts = (facilities) =>
@@ -29,7 +29,7 @@ const mapMetrics = (createValue, constrain = true) =>
   );
 
 export const calculateSimulation = (facilities) => {
-  const baseline2025 = { ...burnaby2025 };
+  const baseline2026 = { ...burnaby2026 };
   const projection2050 = { ...burnabyForecast2050 };
   const totalImpacts = aggregateFacilityImpacts(facilities);
 
@@ -54,8 +54,8 @@ export const calculateSimulation = (facilities) => {
 
       const projection = mapMetrics(
         (key) =>
-          baseline2025[key]
-          + (projection2050[key] - baseline2025[key]) * fraction
+          baseline2026[key]
+          + (projection2050[key] - baseline2026[key]) * fraction
       );
       const withPlan = mapMetrics(
         (key, impactKey) =>
@@ -67,7 +67,7 @@ export const calculateSimulation = (facilities) => {
   );
 
   return {
-    baseline2025,
+    baseline2026,
     projection2050,
     userPlan2050,
     netImpact,

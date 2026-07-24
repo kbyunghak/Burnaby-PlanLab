@@ -6,7 +6,7 @@
 ![image](https://github.com/user-attachments/assets/defb8a73-fb91-41bd-864c-2bffcb3454f3)
 
 
-A React-based interactive city development simulation for Burnaby, BC, showcasing the impact of different facilities on urban indicators from 2025 to 2050.
+A React-based interactive city development simulation for Burnaby, BC, showcasing the impact of different facilities on urban indicators from 2026 to 2050.
 
 ## Project Documentation
 
@@ -17,12 +17,12 @@ A React-based interactive city development simulation for Burnaby, BC, showcasin
 
 ## Overview
 
-This project simulates the growth and development of Burnaby city by allowing users to place various facilities on a map within the city boundaries. The simulation models how these facilities influence key urban indicators such as population, traffic accidents, crime rates, housing satisfaction, unemployment, air quality, and inflation over a 25-year horizon.
+This project simulates the growth and development of Burnaby city by allowing users to place various facilities on a map within the city boundaries. The simulation models how these facilities influence key urban indicators such as population, traffic accidents, crime rates, housing satisfaction, unemployment, air quality, and inflation over a 24-year horizon.
 
 Users can:
 
 - Select and place buildings like Markets, Schools, Hospitals, and more on a detailed Burnaby map.
-- View baseline data (2025), forecasted trends (2050 projected), and user-driven scenarios (2050 user scenario).
+- View baseline data (2026), forecasted trends (2050 projected), and user-driven scenarios (2050 user scenario).
 - Analyze a summary of overall policy impacts and detailed facility-level effects.
 - Access a legend explaining the positive and negative impacts of each facility.
 - Visualize placed buildings on the map with distinct icons and adjust the view.
