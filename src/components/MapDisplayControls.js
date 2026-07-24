@@ -52,6 +52,25 @@ function MapDisplayControls({
             </button>
           ))}
         </div>
+        <fieldset className="map-display__layers">
+          <legend>Layers</legend>
+          <label>
+            <input
+              type="checkbox"
+              checked={showExisting}
+              onChange={(event) => onShowExistingChange(event.target.checked)}
+            />
+            Existing
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              checked={showProposed}
+              onChange={(event) => onShowProposedChange(event.target.checked)}
+            />
+            My Plan
+          </label>
+        </fieldset>
       </div>
 
       {viewMode === MAP_VIEW_MODES.FOCUS && (
@@ -100,25 +119,6 @@ function MapDisplayControls({
         </>
       )}
 
-      <fieldset className="map-display__layers">
-        <legend>Layers</legend>
-        <label>
-          <input
-            type="checkbox"
-            checked={showExisting}
-            onChange={(event) => onShowExistingChange(event.target.checked)}
-          />
-          Existing
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            checked={showProposed}
-            onChange={(event) => onShowProposedChange(event.target.checked)}
-          />
-          My Plan
-        </label>
-      </fieldset>
     </section>
   );
 }

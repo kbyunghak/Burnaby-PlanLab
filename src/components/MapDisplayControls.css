@@ -1,10 +1,16 @@
 .map-display {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(49, 87, 200, 0.2);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
-  margin: 0 4px var(--space-3);
-  padding: 12px 14px;
+  left: 56px;
+  max-width: min(760px, calc(100% - 180px));
+  padding: 8px 10px;
+  position: absolute;
+  top: 12px;
+  width: max-content;
+  z-index: 900;
 }
 
 .map-display__topline,
@@ -18,6 +24,7 @@
 .map-display__topline {
   gap: 10px;
   justify-content: space-between;
+  white-space: nowrap;
 }
 
 .map-display__topline > div:first-child {
@@ -50,8 +57,8 @@
   font: inherit;
   font-size: 0.72rem;
   font-weight: 750;
-  min-height: 30px;
-  padding: 6px 10px;
+  min-height: 28px;
+  padding: 5px 9px;
 }
 
 .map-display__modes button[aria-pressed='true'] {
@@ -61,7 +68,7 @@
 
 .map-display__context {
   line-height: 1.4;
-  margin: 9px 0 0;
+  margin: 7px 0 0;
 }
 
 .map-display__context--filter {
@@ -89,7 +96,7 @@
 
 .map-display fieldset {
   border: 0;
-  margin: 8px 0 0;
+  margin: 6px 0 0;
   padding: 0;
 }
 
@@ -110,7 +117,7 @@
 
 .map-display__filter-grid {
   display: grid;
-  gap: 7px 10px;
+  gap: 5px 7px;
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
@@ -130,8 +137,8 @@
   background: var(--color-surface-muted);
   border: 1px solid transparent;
   border-radius: 7px;
-  min-height: 40px;
-  padding: 5px 8px;
+  min-height: 34px;
+  padding: 4px 7px;
 }
 
 .map-display__filter-grid label:has(input:checked) {
@@ -140,8 +147,8 @@
 }
 
 .map-display__filter-grid img {
-  height: 22px;
-  width: 22px;
+  height: 20px;
+  width: 20px;
 }
 
 .map-display__filter-grid label span {
@@ -168,13 +175,19 @@
 
 .map-display__layers {
   gap: 10px;
+  margin: 0 !important;
 }
 
 .map-display__layers label {
   background: var(--color-surface-muted);
   border-radius: 7px;
-  min-height: 30px;
-  padding: 4px 9px;
+  min-height: 28px;
+  padding: 3px 8px;
+}
+
+.map-display__layers legend {
+  align-self: center;
+  margin: 0 2px 0 0;
 }
 
 .map-display input {
@@ -188,9 +201,16 @@
 }
 
 @media (max-width: 540px) {
+  .map-display {
+    left: 48px;
+    max-width: calc(100% - 140px);
+    top: 8px;
+  }
+
   .map-display__topline {
     align-items: stretch;
     flex-direction: column;
+    white-space: normal;
   }
 
   .map-display__modes {
@@ -200,4 +220,5 @@
   .map-display__filter-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
 }

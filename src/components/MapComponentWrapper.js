@@ -31,21 +31,21 @@ const MapComponentWrapper = ({
         <span><i className="map-key__existing" />Existing facility</span>
         <span><i className="map-key__proposed" />Your proposed facility</span>
       </div>
-      <MapDisplayControls
-        viewMode={viewMode}
-        onViewModeChange={onViewModeChange}
-        selectedBuildingLabel={selectedBuildingLabel}
-        visibleFacilityTypes={visibleFacilityTypes}
-        onFacilityTypeToggle={onFacilityTypeToggle}
-        onSelectAllFacilityTypes={onSelectAllFacilityTypes}
-        onClearFacilityTypes={onClearFacilityTypes}
-        showExisting={showExisting}
-        onShowExistingChange={onShowExistingChange}
-        showProposed={showProposed}
-        onShowProposedChange={onShowProposedChange}
-        visibleMarkerCount={visibleMarkerCount}
-      />
       <div className="map-panel__canvas">
+        <MapDisplayControls
+          viewMode={viewMode}
+          onViewModeChange={onViewModeChange}
+          selectedBuildingLabel={selectedBuildingLabel}
+          visibleFacilityTypes={visibleFacilityTypes}
+          onFacilityTypeToggle={onFacilityTypeToggle}
+          onSelectAllFacilityTypes={onSelectAllFacilityTypes}
+          onClearFacilityTypes={onClearFacilityTypes}
+          showExisting={showExisting}
+          onShowExistingChange={onShowExistingChange}
+          showProposed={showProposed}
+          onShowProposedChange={onShowProposedChange}
+          visibleMarkerCount={visibleMarkerCount}
+        />
         <MapComponent
           {...mapProps}
           selectedBuildingName={selectedBuildingName}
