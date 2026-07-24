@@ -3,7 +3,7 @@
   color: var(--color-text);
   display: grid;
   gap: var(--space-6);
-  grid-template-columns: minmax(0, 1fr) 370px;
+  grid-template-columns: minmax(0, 1fr) 400px;
   min-height: 100vh;
   padding: var(--space-6);
 }
@@ -30,13 +30,13 @@
 }
 
 .control-panel__header h2 {
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   margin: 2px 0 0;
 }
 
 .control-panel__eyebrow {
   color: var(--color-primary);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 800;
   letter-spacing: 0.1em;
   margin: 0;
@@ -52,7 +52,7 @@
 
 .quick-start h3 {
   color: var(--color-primary-dark);
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   margin: 0 0 7px;
 }
 
@@ -69,7 +69,7 @@
   align-items: center;
   color: var(--color-text-muted);
   display: flex;
-  font-size: 0.63rem;
+  font-size: 0.7rem;
   gap: 5px;
   line-height: 1.25;
 }
@@ -81,10 +81,10 @@
   color: #fff;
   display: inline-flex;
   flex: 0 0 auto;
-  font-size: 0.6rem;
-  height: 18px;
+  font-size: 0.66rem;
+  height: 20px;
   justify-content: center;
-  width: 18px;
+  width: 20px;
 }
 
 .button {
@@ -109,8 +109,8 @@
   background: var(--color-primary-soft);
   color: var(--color-primary-dark);
   flex: 0 0 auto;
-  font-size: 0.78rem;
-  padding: 8px 10px;
+  font-size: 0.82rem;
+  padding: 9px 11px;
 }
 
 .button--secondary:hover {
@@ -152,12 +152,13 @@
   cursor: pointer;
   display: grid;
   font: inherit;
-  font-size: 0.8rem;
+  font-size: 0.88rem;
   font-weight: 700;
   gap: 8px;
-  grid-template-columns: 26px minmax(0, 1fr);
-  min-height: 70px;
-  padding: 11px;
+  grid-template-columns: 32px minmax(0, 1fr);
+  line-height: 1.18;
+  min-height: 78px;
+  padding: 12px;
   text-align: left;
   transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
 }
@@ -179,13 +180,13 @@
 }
 
 .facility-option__icon {
-  height: 26px;
-  width: 26px;
+  height: 32px;
+  width: 32px;
 }
 
 .facility-option__cost {
   color: var(--color-text-muted);
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   font-weight: 650;
   grid-column: 2;
 }
@@ -217,7 +218,7 @@
 
 .plan-status__label {
   color: var(--color-text-muted);
-  font-size: 0.7rem;
+  font-size: 0.74rem;
   font-weight: 700;
   margin-bottom: 3px;
   text-transform: uppercase;
@@ -246,9 +247,9 @@
 }
 
 .plan-actions .button {
-  font-size: 0.7rem;
-  min-height: 36px;
-  padding: 7px;
+  font-size: 0.76rem;
+  min-height: 40px;
+  padding: 8px;
 }
 
 .simulate-button {
@@ -260,7 +261,7 @@
 
 .simulate-hint {
   color: var(--color-text-muted);
-  font-size: 0.72rem;
+  font-size: 0.76rem;
   margin: 7px 0 0;
   text-align: center;
 }

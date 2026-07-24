@@ -77,6 +77,27 @@ test('selects or clears all facility filters with one action', () => {
   expect(defaultProps.onClearFacilityTypes).toHaveBeenCalledTimes(1);
 });
 
+test('summarizes the full filter without listing every facility name', () => {
+  render(
+    <MapDisplayControls
+      {...defaultProps}
+      viewMode={MAP_VIEW_MODES.FILTER}
+      visibleFacilityTypes={[
+        'Market',
+        'School',
+        'CommunityCentre',
+        'Hospital',
+        'PoliceStation',
+        'NonProfitHousing',
+        'Daycare',
+        'SeniorCentre',
+      ]}
+    />
+  );
+
+  expect(screen.getByText('All 8 facility types')).toBeInTheDocument();
+});
+
 test('toggles existing and proposed layers independently', () => {
   render(<MapDisplayControls {...defaultProps} />);
 

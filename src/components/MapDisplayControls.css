@@ -4,7 +4,7 @@
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
   margin: 0 4px var(--space-3);
-  padding: 9px 10px;
+  padding: 12px 14px;
 }
 
 .map-display__topline,
@@ -25,13 +25,13 @@
 }
 
 .map-display__topline strong {
-  font-size: 0.72rem;
+  font-size: 0.82rem;
 }
 
 .map-display__topline span,
 .map-display__context {
   color: var(--color-text-muted);
-  font-size: 0.64rem;
+  font-size: 0.74rem;
 }
 
 .map-display__modes {
@@ -48,9 +48,10 @@
   color: var(--color-text-muted);
   cursor: pointer;
   font: inherit;
-  font-size: 0.64rem;
+  font-size: 0.72rem;
   font-weight: 750;
-  padding: 5px 8px;
+  min-height: 30px;
+  padding: 6px 10px;
 }
 
 .map-display__modes button[aria-pressed='true'] {
@@ -59,7 +60,8 @@
 }
 
 .map-display__context {
-  margin: 7px 0 0;
+  line-height: 1.4;
+  margin: 9px 0 0;
 }
 
 .map-display__context--filter {
@@ -93,7 +95,7 @@
 
 .map-display legend {
   color: var(--color-text-muted);
-  font-size: 0.58rem;
+  font-size: 0.68rem;
   font-weight: 800;
   margin-bottom: 5px;
   text-transform: uppercase;
@@ -108,7 +110,7 @@
 
 .map-display__filter-grid {
   display: grid;
-  gap: 4px 8px;
+  gap: 7px 10px;
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
@@ -118,21 +120,33 @@
   color: var(--color-text);
   cursor: pointer;
   display: flex;
-  font-size: 0.62rem;
+  font-size: 0.78rem;
   font-weight: 650;
-  gap: 4px;
+  gap: 7px;
   min-width: 0;
 }
 
+.map-display__filter-grid label {
+  background: var(--color-surface-muted);
+  border: 1px solid transparent;
+  border-radius: 7px;
+  min-height: 40px;
+  padding: 5px 8px;
+}
+
+.map-display__filter-grid label:has(input:checked) {
+  background: var(--color-primary-soft);
+  border-color: rgba(49, 87, 200, 0.2);
+}
+
 .map-display__filter-grid img {
-  height: 17px;
-  width: 17px;
+  height: 22px;
+  width: 22px;
 }
 
 .map-display__filter-grid label span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
 }
 
 .map-display__filter-actions {
@@ -146,14 +160,21 @@
   color: var(--color-primary-dark);
   cursor: pointer;
   font: inherit;
-  font-size: 0.58rem;
+  font-size: 0.68rem;
   font-weight: 750;
-  padding: 2px 4px;
+  padding: 4px 6px;
   text-transform: none;
 }
 
 .map-display__layers {
-  gap: 16px;
+  gap: 10px;
+}
+
+.map-display__layers label {
+  background: var(--color-surface-muted);
+  border-radius: 7px;
+  min-height: 30px;
+  padding: 4px 9px;
 }
 
 .map-display input {

@@ -26,6 +26,12 @@ function MapDisplayControls({
   const visibleFacilityLabels = facilityOptions
     .filter(({ name }) => visibleFacilityTypes.includes(name))
     .map(({ label }) => label);
+  const visibleFacilitySummary =
+    visibleFacilityLabels.length === facilityOptions.length
+      ? `All ${facilityOptions.length} facility types`
+      : visibleFacilityLabels.length
+        ? visibleFacilityLabels.join(', ')
+        : 'No facility types';
 
   return (
     <section className="map-display" aria-labelledby="map-display-heading">
@@ -60,9 +66,7 @@ function MapDisplayControls({
         <>
           <p className="map-display__context map-display__context--filter">
             <strong>Showing:</strong>{' '}
-            {visibleFacilityLabels.length
-              ? visibleFacilityLabels.join(', ')
-              : 'No facility types'}
+            {visibleFacilitySummary}
             <span aria-label={`${visibleFacilityLabels.length} facility types selected`}>
               × {visibleFacilityLabels.length}
             </span>

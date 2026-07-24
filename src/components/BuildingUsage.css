@@ -12,20 +12,20 @@
 }
 
 .usage-summary h3 {
-  font-size: 0.95rem;
+  font-size: 1.02rem;
   margin: 0;
 }
 
 .usage-summary__header p {
   color: var(--color-text-muted);
-  font-size: 0.7rem;
+  font-size: 0.76rem;
   margin: 3px 0 0;
 }
 
 .usage-summary__header > strong {
   color: var(--color-primary);
   flex: 0 0 auto;
-  font-size: 0.72rem;
+  font-size: 0.78rem;
 }
 
 .budget-progress {
@@ -35,7 +35,7 @@
 .budget-progress__labels {
   color: var(--color-text-muted);
   display: flex;
-  font-size: 0.68rem;
+  font-size: 0.74rem;
   justify-content: space-between;
   margin-bottom: 5px;
 }
@@ -51,7 +51,7 @@
   background: var(--color-surface-muted);
   border-radius: var(--radius-sm);
   color: var(--color-text-muted);
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   line-height: 1.45;
   margin: var(--space-3) 0 0;
   padding: var(--space-3);
@@ -149,7 +149,7 @@
 .unused-facilities {
   border-top: 1px solid var(--color-border);
   color: var(--color-text-muted);
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   margin-top: var(--space-3);
   padding-top: var(--space-3);
 }
