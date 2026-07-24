@@ -5,18 +5,12 @@ import SimulationSummary from '../components/SimulationSummary';
 import SimulationSummary2 from '../components/SimulationSummary2';
 import { burnabyForecast2050, burnaby2025 } from '../constants/mapData';
 import { facilityImpactData } from '../constants/facilityDefinitions';
-
-const headers = [
-  "Year",
-  "Population",
-  "Traffic Accidents",
-  "Crime Incidents",
-  "Housing Satisfaction (%)",
-  "Unemployment Rate (%)",
-  "Housing Supply Rate (%)",   
-  "Air Quality Index",
-  "Inflation Rate (%)",        
-];
+import {
+  constrainMetric,
+  formatMetricValue,
+  isFavorableChange,
+  metricEntries,
+} from '../constants/metricDefinitions';
 const SimulationModal = ({
   isOpen,
   onRequestClose,
@@ -60,14 +54,38 @@ const SimulationModal = ({
   // Calculate the simulation value based on the base and total impact
   const simulationValue = {
     year: 2050,
-    population: Math.round(base.population * (1 + totalImpact.populationChange / 100)),
-    trafficAccidents: Math.round(base.trafficAccidents * (1 + totalImpact.trafficChange / 100)),
-    crimeRate: Math.round(base.crimeRate * (1 + totalImpact.crimeChange / 100)),
-    housingSatisfaction: Math.min(100, Math.max(0, base.housingSatisfaction + totalImpact.housingSatisfaction)),
-    unemploymentRate: Math.min(100, Math.max(0, base.unemploymentRate + totalImpact.unemploymentChange)),
-    housingSupplyRate: Math.min(100, Math.max(0, base.housingSupplyRate + totalImpact.housingSupplyRate)),
-    airQualityIndex: Math.min(500, Math.max(0, base.airQualityIndex * (1 + totalImpact.airQualityChange / 100))),
-    inflationRate: Math.min(100, Math.max(0, base.inflationRate + totalImpact.inflationRate)),
+    population: constrainMetric(
+      'population',
+      Math.round(base.population * (1 + totalImpact.populationChange / 100))
+    ),
+    trafficAccidents: constrainMetric(
+      'trafficAccidents',
+      Math.round(base.trafficAccidents * (1 + totalImpact.trafficChange / 100))
+    ),
+    crimeRate: constrainMetric(
+      'crimeRate',
+      Math.round(base.crimeRate * (1 + totalImpact.crimeChange / 100))
+    ),
+    housingSatisfaction: constrainMetric(
+      'housingSatisfaction',
+      base.housingSatisfaction + totalImpact.housingSatisfaction
+    ),
+    unemploymentRate: constrainMetric(
+      'unemploymentRate',
+      base.unemploymentRate + totalImpact.unemploymentChange
+    ),
+    housingSupplyRate: constrainMetric(
+      'housingSupplyRate',
+      base.housingSupplyRate + totalImpact.housingSupplyRate
+    ),
+    airQualityIndex: constrainMetric(
+      'airQualityIndex',
+      base.airQualityIndex * (1 + totalImpact.airQualityChange / 100)
+    ),
+    inflationRate: constrainMetric(
+      'inflationRate',
+      base.inflationRate + totalImpact.inflationRate
+    ),
   };
 
   return (
@@ -92,43 +110,40 @@ const SimulationModal = ({
             <th style={{ borderBottom: '2px solid #444', textAlign: 'left', padding: '8px' }}>Indicator</th>
             <th style={{ borderBottom: '2px solid #444', textAlign: 'right', padding: '8px' }}>2025 (Baseline)</th>
             <th style={{ borderBottom: '2px solid #444', textAlign: 'right', padding: '8px' }}>2050 (Projected)</th>
-            <th style={{ borderBottom: '2px solid #444', textAlign: 'right', padding: '8px' }}>2050 (User Senario)</th>
+            <th style={{ borderBottom: '2px solid #444', textAlign: 'right', padding: '8px' }}>2050 (With Your Plan)</th>
             <th style={{ borderBottom: '2px solid #444', textAlign: 'right', padding: '0px' }}>Difference (User - Projected)</th>
           </tr>
         </thead>
         <tbody>
-          {headers.map((key) => {
-            const dataKey = {
-              Year: 'year',
-              Population: 'population',
-              "Traffic Accidents": 'trafficAccidents',
-              "Crime Incidents": 'crimeRate',
-              "Housing Satisfaction (%)": 'housingSatisfaction',
-              "Unemployment Rate (%)": 'unemploymentRate',
-              "Housing Supply Rate (%)": 'housingSupplyRate',
-              "Air Quality Index": 'airQualityIndex',
-              "Inflation Rate (%)": 'inflationRate',
-            }[key];
-
+          <tr>
+            <td style={{ borderBottom: '1px solid #ccc', padding: '8px' }}>Year</td>
+            <td style={{ borderBottom: '1px solid #ccc', padding: '8px', textAlign: 'right' }}>2025</td>
+            <td style={{ borderBottom: '1px solid #ccc', padding: '8px', textAlign: 'right' }}>2050</td>
+            <td style={{ borderBottom: '1px solid #ccc', padding: '8px', textAlign: 'right' }}>2050</td>
+            <td style={{ borderBottom: '1px solid #ccc', padding: '8px' }} />
+          </tr>
+          {metricEntries.map(({ key: dataKey, label }) => {
             const currentValue = burnaby2025[dataKey] ?? 0;
             const forecastValue = burnabyForecast2050[dataKey] ?? 0;
             const userTrendValue = simulationValue[dataKey] ?? 0;
             const difference = userTrendValue - forecastValue;
+            const favorable = isFavorableChange(dataKey, difference);
 
             return (
-              <tr key={key}>
-                <td style={{ borderBottom: '1px solid #ccc', padding: '8px' }}>{key}</td>
-                <td style={{ borderBottom: '1px solid #ccc', padding: '8px', textAlign: 'right' }}>{currentValue.toLocaleString()}</td>
-                <td style={{ borderBottom: '1px solid #ccc', padding: '8px', textAlign: 'right' }}>{forecastValue.toLocaleString()}</td>
-                <td style={{ borderBottom: '1px solid #ccc', padding: '8px', textAlign: 'right' }}>{userTrendValue.toLocaleString()}</td>
+              <tr key={dataKey}>
+                <td style={{ borderBottom: '1px solid #ccc', padding: '8px' }}>{label}</td>
+                <td style={{ borderBottom: '1px solid #ccc', padding: '8px', textAlign: 'right' }}>{formatMetricValue(dataKey, currentValue)}</td>
+                <td style={{ borderBottom: '1px solid #ccc', padding: '8px', textAlign: 'right' }}>{formatMetricValue(dataKey, forecastValue)}</td>
+                <td style={{ borderBottom: '1px solid #ccc', padding: '8px', textAlign: 'right' }}>{formatMetricValue(dataKey, userTrendValue)}</td>
                 <td style={{
                   borderBottom: '1px solid #ccc',
                   padding: '8px',
                   textAlign: 'right',
                   fontWeight: difference !== 0 ? 'bold' : 'normal',
-                  color: difference < 0 ? 'red' : 'inherit',
+                  color: favorable === null ? 'inherit' : favorable ? '#2e7d32' : '#c62828',
                 }}>
-                   {key === "Year" ? "" : (difference > 0 ? `+${difference.toLocaleString()}` : difference.toLocaleString())}
+                  {difference > 0 ? '+' : ''}
+                  {formatMetricValue(dataKey, difference)}
                 </td>
               </tr>
             );

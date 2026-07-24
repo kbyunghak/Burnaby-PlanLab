@@ -1,3 +1,5 @@
+import { metricDefinitions } from '../constants/metricDefinitions';
+
 export const indicatorTemplates = {
   population: {
     up: "Population growth strengthens the labor force and economic vitality, attracting investments and improving city services.",
@@ -49,28 +51,15 @@ export function generatePolicySummary(simulationData) {
   const positiveMsgs = [];
   const cautionMsgs = [];
 
-  // Positive if increase
-  // These indicators are considered positive if they increase
-  // For example, an increase in population or housing satisfaction is seen as a positive change
-  // because it indicates growth and improvement in living conditions
-  // and quality of life.
-  const positiveIfIncrease = ['population', 'housingSatisfaction'];
-
-  // Negative if increase
-  // These indicators are considered negative if they increase
-  // For example, an increase in traffic accidents or crime rate is seen as a negative change
-  // because it indicates a decline in public safety and quality of life.
-  // Similarly, an increase in unemployment rate or air quality index is seen as a negative change
-  const negativeIfIncrease = ['trafficAccidents', 'crimeRate', 'unemploymentRate', 'airQualityIndex', 'inflationRate'];
-
   for (const key in indicatorTemplates) {
     if (!(key in latest) || !(key in first)) continue;
     const change = latest[key] - first[key];
+    const favorableDirection = metricDefinitions[key]?.favorableDirection;
 
-    if (positiveIfIncrease.includes(key)) {
+    if (favorableDirection === 'increase') {
       if (change > 0) positiveMsgs.push(indicatorTemplates[key].up);
       else if (change < 0) cautionMsgs.push(indicatorTemplates[key].down);
-    } else if (negativeIfIncrease.includes(key)) {
+    } else if (favorableDirection === 'decrease') {
       if (change < 0) positiveMsgs.push(indicatorTemplates[key].down);
       else if (change > 0) cautionMsgs.push(indicatorTemplates[key].up);
     }

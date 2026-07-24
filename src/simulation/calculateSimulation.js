@@ -1,5 +1,6 @@
 import { burnaby2025 } from '../constants/mapData';
 import { facilityDefinitions } from '../constants/facilityDefinitions';
+import { constrainMetric } from '../constants/metricDefinitions';
 
 const aggregateImpacts = (facilities) => {
   const facilityCounts = facilities.reduce((counts, facility) => {
@@ -32,39 +33,39 @@ export const calculateSimulation = (facilities) => {
       population: Math.round(
         baseData.population * (1 + (totalImpactPercent.populationPercent || 0) * fraction)
       ),
-      housingSatisfaction: Math.min(100, Math.max(
-        0,
+      housingSatisfaction: constrainMetric(
+        'housingSatisfaction',
         baseData.housingSatisfaction
           * (1 + (totalImpactPercent.housingSatisfactionPercent || 0) * fraction)
-      )),
-      housingSupplyRate: Math.min(100, Math.max(
-        0,
+      ),
+      housingSupplyRate: constrainMetric(
+        'housingSupplyRate',
         baseData.housingSupplyRate
           * (1 + (totalImpactPercent.housingSupplyPercent || 0) * fraction)
-      )),
-      airQualityIndex: Math.min(500, Math.max(
-        0,
+      ),
+      airQualityIndex: constrainMetric(
+        'airQualityIndex',
         baseData.airQualityIndex
           * (1 + (totalImpactPercent.airQualityPercent || 0) * fraction)
-      )),
-      inflationRate: Math.max(
-        0,
+      ),
+      inflationRate: constrainMetric(
+        'inflationRate',
         baseData.inflationRate
           * (1 + (totalImpactPercent.inflationPercent || 0) * fraction)
       ),
-      trafficAccidents: Math.max(0, Math.round(
+      trafficAccidents: constrainMetric('trafficAccidents', Math.round(
         baseData.trafficAccidents
           * (1 + (totalImpactPercent.trafficPercent || 0) * fraction)
       )),
-      crimeRate: Math.max(0, Math.round(
+      crimeRate: constrainMetric('crimeRate', Math.round(
         baseData.crimeRate
           * (1 + (totalImpactPercent.crimePercent || 0) * fraction)
       )),
-      unemploymentRate: Math.max(0, Math.min(
-        100,
+      unemploymentRate: constrainMetric(
+        'unemploymentRate',
         baseData.unemploymentRate
           * (1 + (totalImpactPercent.unemploymentPercent || 0) * fraction)
-      )),
+      ),
     };
 
     data.push(newEntry);
