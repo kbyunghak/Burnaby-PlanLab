@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-label="Burnaby PlanLab">
+  <defs>
+    <linearGradient id="background" x1="8" y1="4" x2="56" y2="60" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#3157c8"/>
+      <stop offset="1" stop-color="#17337c"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="15" fill="url(#background)"/>
+  <path d="M13 47V29h11v18M24 47V20h15v27M39 47V26h12v21" fill="#fff" opacity=".96"/>
+  <path d="M17 34h3m-3 6h3m12-14h3m-3 7h3m-3 7h3m12-8h3m-3 7h3" stroke="#3157c8" stroke-width="2" stroke-linecap="round"/>
+  <path d="M9 48h46" stroke="#8ee7db" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="46" cy="16" r="7" fill="#14b8a6" stroke="#fff" stroke-width="3"/>
+  <circle cx="46" cy="16" r="2" fill="#fff"/>
+</svg>
