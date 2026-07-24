@@ -8,6 +8,10 @@
 
 A React-based interactive city development simulation for Burnaby, BC, showcasing the impact of different facilities on urban indicators from 2025 to 2050.
 
+## Project Documentation
+
+- [Development Plan](doc/Plan.md) — roadmap, execution strategy, testing, CI/CD, maintenance standards, and future enhancements.
+
 ---
 
 ## Overview
