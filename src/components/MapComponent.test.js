@@ -21,6 +21,7 @@ jest.mock('react-leaflet', () => ({
     <div
       data-testid="facility-marker"
       data-icon-class={icon.options.className || 'default'}
+      data-icon-size={icon.options.iconSize?.join('x') || 'default'}
       data-opacity={opacity}
     >
       {children}
@@ -135,6 +136,7 @@ test('keeps facility icons and distinguishes existing and proposed markers', () 
     'data-icon-class',
     'facility-marker facility-marker--existing'
   );
+  expect(markers[0]).toHaveAttribute('data-icon-size', '24x24');
   expect(markers[0]).toHaveAttribute('data-opacity', '0.55');
   expect(markers[1]).toHaveAttribute(
     'data-icon-class',

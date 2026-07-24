@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   MapContainer,
   TileLayer,
@@ -13,12 +13,12 @@ import L from 'leaflet';
 import { burnabyPolygon } from '../constants/mapData';
 import { facilityDefinitions } from '../constants/facilityDefinitions';
 
-const createIcon = (iconUrl, className) =>
+const createIcon = (iconUrl, className, size = 32) =>
   new L.Icon({
     iconUrl,
-    iconSize: [32, 32],
-    iconAnchor: [16, 32],
-    popupAnchor: [0, -32],
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size],
+    popupAnchor: [0, -size],
     className,
   });
 
@@ -33,55 +33,17 @@ const defaultIcon = new L.Icon({
   shadowSize: [41, 41],
 });
 
-const proposedIconMap = Object.fromEntries(
-  Object.entries(facilityDefinitions).map(([name, definition]) => [
-    name,
-    createIcon(
-      process.env.PUBLIC_URL + definition.icon,
-      'facility-marker facility-marker--proposed'
-    ),
-  ])
-);
-
-const selectedIconMap = Object.fromEntries(
-  Object.entries(facilityDefinitions).map(([name, definition]) => [
-    name,
-    createIcon(
-      process.env.PUBLIC_URL + definition.icon,
-      'facility-marker facility-marker--proposed facility-marker--selected'
-    ),
-  ])
-);
-
-const existingIconMap = Object.fromEntries(
-  Object.entries(facilityDefinitions).map(([name, definition]) => [
-    name,
-    createIcon(
-      process.env.PUBLIC_URL + definition.icon,
-      'facility-marker facility-marker--existing'
-    ),
-  ])
-);
-
-const activeProposedIconMap = Object.fromEntries(
-  Object.entries(facilityDefinitions).map(([name, definition]) => [
-    name,
-    createIcon(
-      process.env.PUBLIC_URL + definition.icon,
-      'facility-marker facility-marker--proposed facility-marker--active-type'
-    ),
-  ])
-);
-
-const activeExistingIconMap = Object.fromEntries(
-  Object.entries(facilityDefinitions).map(([name, definition]) => [
-    name,
-    createIcon(
-      process.env.PUBLIC_URL + definition.icon,
-      'facility-marker facility-marker--existing facility-marker--active-type'
-    ),
-  ])
-);
+const createFacilityIconMap = (className, size) =>
+  Object.fromEntries(
+    Object.entries(facilityDefinitions).map(([name, definition]) => [
+      name,
+      createIcon(
+        process.env.PUBLIC_URL + definition.icon,
+        className,
+        size
+      ),
+    ])
+  );
 
 const mapMaskBounds = [
   [85, -180],
@@ -158,6 +120,37 @@ const MapComponent = ({
         : currentZoom < 14.5
           ? 'district'
           : 'street';
+  const markerSize = {
+    far: 20,
+    city: 24,
+    district: 28,
+    street: 32,
+  }[markerScale];
+  const iconMaps = useMemo(
+    () => ({
+      proposed: createFacilityIconMap(
+        'facility-marker facility-marker--proposed',
+        markerSize
+      ),
+      selected: createFacilityIconMap(
+        'facility-marker facility-marker--proposed facility-marker--selected',
+        markerSize
+      ),
+      existing: createFacilityIconMap(
+        'facility-marker facility-marker--existing',
+        markerSize
+      ),
+      activeProposed: createFacilityIconMap(
+        'facility-marker facility-marker--proposed facility-marker--active-type',
+        markerSize
+      ),
+      activeExisting: createFacilityIconMap(
+        'facility-marker facility-marker--existing facility-marker--active-type',
+        markerSize
+      ),
+    }),
+    [markerSize]
+  );
 
   const handleZoomChange = (event) => {
     if (!map) return;
@@ -226,13 +219,13 @@ const MapComponent = ({
           const isActiveType = marker.buildingName === selectedBuildingName;
           const facilityIcons = isExisting
             ? isActiveType
-              ? activeExistingIconMap
-              : existingIconMap
+              ? iconMaps.activeExisting
+              : iconMaps.existing
             : isSelected
-              ? selectedIconMap
+              ? iconMaps.selected
               : isActiveType
-                ? activeProposedIconMap
-                : proposedIconMap;
+                ? iconMaps.activeProposed
+                : iconMaps.proposed;
           const icon = facilityIcons[marker.buildingName] || defaultIcon;
 
           return (
