@@ -1,75 +1,76 @@
-import { burnaby2025 } from '../constants/mapData';
 import { facilityDefinitions } from '../constants/facilityDefinitions';
-import { constrainMetric } from '../constants/metricDefinitions';
+import {
+  constrainMetric,
+  metricEntries,
+} from '../constants/metricDefinitions';
+import { burnaby2025, burnabyForecast2050 } from '../constants/mapData';
 
-const aggregateImpacts = (facilities) => {
-  const facilityCounts = facilities.reduce((counts, facility) => {
-    counts[facility.buildingName] = (counts[facility.buildingName] || 0) + 1;
-    return counts;
-  }, {});
+const START_YEAR = 2025;
+const END_YEAR = 2050;
 
-  return Object.entries(facilityCounts).reduce((total, [facilityName, count]) => {
-    const impact = facilityDefinitions[facilityName]?.impacts;
-    if (!impact) return total;
+export const aggregateFacilityImpacts = (facilities) =>
+  facilities.reduce((total, facility) => {
+    const impacts = facilityDefinitions[facility.buildingName]?.impacts;
+    if (!impacts) return total;
 
-    Object.entries(impact).forEach(([metric, value]) => {
-      total[metric] = (total[metric] || 0) + value * count;
+    Object.entries(impacts).forEach(([impactKey, value]) => {
+      total[impactKey] = (total[impactKey] || 0) + value;
     });
 
     return total;
   }, {});
-};
+
+const mapMetrics = (createValue, constrain = true) =>
+  Object.fromEntries(
+    metricEntries.map(({ key, impactKey }) => {
+      const value = createValue(key, impactKey);
+      return [key, constrain ? constrainMetric(key, value) : value];
+    })
+  );
 
 export const calculateSimulation = (facilities) => {
-  const baseData = { ...burnaby2025 };
-  const data = [baseData];
-  const totalImpactPercent = aggregateImpacts(facilities);
-  const yearsToSimulate = 2050 - 2025;
+  const baseline2025 = { ...burnaby2025 };
+  const projection2050 = { ...burnabyForecast2050 };
+  const totalImpacts = aggregateFacilityImpacts(facilities);
 
-  for (let year = 2026; year <= 2050; year++) {
-    const fraction = (year - 2025) / yearsToSimulate;
-    const newEntry = {
-      year,
-      population: Math.round(
-        baseData.population * (1 + (totalImpactPercent.populationPercent || 0) * fraction)
-      ),
-      housingSatisfaction: constrainMetric(
-        'housingSatisfaction',
-        baseData.housingSatisfaction
-          * (1 + (totalImpactPercent.housingSatisfactionPercent || 0) * fraction)
-      ),
-      housingSupplyRate: constrainMetric(
-        'housingSupplyRate',
-        baseData.housingSupplyRate
-          * (1 + (totalImpactPercent.housingSupplyPercent || 0) * fraction)
-      ),
-      airQualityIndex: constrainMetric(
-        'airQualityIndex',
-        baseData.airQualityIndex
-          * (1 + (totalImpactPercent.airQualityPercent || 0) * fraction)
-      ),
-      inflationRate: constrainMetric(
-        'inflationRate',
-        baseData.inflationRate
-          * (1 + (totalImpactPercent.inflationPercent || 0) * fraction)
-      ),
-      trafficAccidents: constrainMetric('trafficAccidents', Math.round(
-        baseData.trafficAccidents
-          * (1 + (totalImpactPercent.trafficPercent || 0) * fraction)
-      )),
-      crimeRate: constrainMetric('crimeRate', Math.round(
-        baseData.crimeRate
-          * (1 + (totalImpactPercent.crimePercent || 0) * fraction)
-      )),
-      unemploymentRate: constrainMetric(
-        'unemploymentRate',
-        baseData.unemploymentRate
-          * (1 + (totalImpactPercent.unemploymentPercent || 0) * fraction)
-      ),
-    };
+  const userPlan2050 = {
+    year: END_YEAR,
+    ...mapMetrics(
+      (key, impactKey) =>
+        projection2050[key] * (1 + (totalImpacts[impactKey] || 0))
+    ),
+  };
 
-    data.push(newEntry);
-  }
+  const netImpact = mapMetrics(
+    (key) => userPlan2050[key] - projection2050[key],
+    false
+  );
 
-  return data;
+  const yearlyTrend = Array.from(
+    { length: END_YEAR - START_YEAR + 1 },
+    (_, index) => {
+      const year = START_YEAR + index;
+      const fraction = index / (END_YEAR - START_YEAR);
+
+      const projection = mapMetrics(
+        (key) =>
+          baseline2025[key]
+          + (projection2050[key] - baseline2025[key]) * fraction
+      );
+      const withPlan = mapMetrics(
+        (key, impactKey) =>
+          projection[key] * (1 + (totalImpacts[impactKey] || 0) * fraction)
+      );
+
+      return { year, projection, withPlan };
+    }
+  );
+
+  return {
+    baseline2025,
+    projection2050,
+    userPlan2050,
+    netImpact,
+    yearlyTrend,
+  };
 };

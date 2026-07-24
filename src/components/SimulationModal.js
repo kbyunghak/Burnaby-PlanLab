@@ -3,10 +3,8 @@ import React from 'react';
 import Modal from 'react-modal';
 import SimulationSummary from '../components/SimulationSummary';
 import SimulationSummary2 from '../components/SimulationSummary2';
-import { burnabyForecast2050, burnaby2025 } from '../constants/mapData';
 import { facilityImpactData } from '../constants/facilityDefinitions';
 import {
-  constrainMetric,
   formatMetricValue,
   isFavorableChange,
   metricEntries,
@@ -17,76 +15,17 @@ const SimulationModal = ({
   simulationData,
   facilitiesInstalled,
 }) => {
-  if (!simulationData || simulationData.length === 0) return null;
+  if (!simulationData) return null;
 
-  // Filter facility impacts based on installed facilities
   const filteredFacilityImpact = facilityImpactData.filter(f =>
     facilitiesInstalled.includes(f.facility)
   );
-
-  // Calculate the total impact of the facilities
-  const totalImpact = filteredFacilityImpact.reduce(
-    (totals, facility) => {
-      totals.populationChange += Number(facility.populationChange);
-      totals.trafficChange += Number(facility.trafficChange);
-      totals.crimeChange += Number(facility.crimeChange);
-      totals.housingSatisfaction += Number(facility.housingSatisfaction);
-      totals.unemploymentChange += Number(facility.unemploymentChange);
-      totals.housingSupplyRate += Number(facility.housingSupplyRate);
-      totals.airQualityChange += Number(facility.airQualityChange);
-      totals.inflationRate += Number(facility.inflationRate);
-      return totals;
-    },
-    {
-      populationChange: 0,
-      trafficChange: 0,
-      crimeChange: 0,
-      housingSatisfaction: 0,
-      unemploymentChange: 0,
-      housingSupplyRate: 0,
-      airQualityChange: 0,
-      inflationRate: 0,
-    }
-  );
-
-  const base = burnaby2025;
-  
-  // Calculate the simulation value based on the base and total impact
-  const simulationValue = {
-    year: 2050,
-    population: constrainMetric(
-      'population',
-      Math.round(base.population * (1 + totalImpact.populationChange / 100))
-    ),
-    trafficAccidents: constrainMetric(
-      'trafficAccidents',
-      Math.round(base.trafficAccidents * (1 + totalImpact.trafficChange / 100))
-    ),
-    crimeRate: constrainMetric(
-      'crimeRate',
-      Math.round(base.crimeRate * (1 + totalImpact.crimeChange / 100))
-    ),
-    housingSatisfaction: constrainMetric(
-      'housingSatisfaction',
-      base.housingSatisfaction + totalImpact.housingSatisfaction
-    ),
-    unemploymentRate: constrainMetric(
-      'unemploymentRate',
-      base.unemploymentRate + totalImpact.unemploymentChange
-    ),
-    housingSupplyRate: constrainMetric(
-      'housingSupplyRate',
-      base.housingSupplyRate + totalImpact.housingSupplyRate
-    ),
-    airQualityIndex: constrainMetric(
-      'airQualityIndex',
-      base.airQualityIndex * (1 + totalImpact.airQualityChange / 100)
-    ),
-    inflationRate: constrainMetric(
-      'inflationRate',
-      base.inflationRate + totalImpact.inflationRate
-    ),
-  };
+  const {
+    baseline2025,
+    projection2050,
+    userPlan2050,
+    netImpact,
+  } = simulationData;
 
   return (
     <Modal
@@ -123,10 +62,10 @@ const SimulationModal = ({
             <td style={{ borderBottom: '1px solid #ccc', padding: '8px' }} />
           </tr>
           {metricEntries.map(({ key: dataKey, label }) => {
-            const currentValue = burnaby2025[dataKey] ?? 0;
-            const forecastValue = burnabyForecast2050[dataKey] ?? 0;
-            const userTrendValue = simulationValue[dataKey] ?? 0;
-            const difference = userTrendValue - forecastValue;
+            const currentValue = baseline2025[dataKey] ?? 0;
+            const forecastValue = projection2050[dataKey] ?? 0;
+            const userTrendValue = userPlan2050[dataKey] ?? 0;
+            const difference = netImpact[dataKey] ?? 0;
             const favorable = isFavorableChange(dataKey, difference);
 
             return (
@@ -201,17 +140,6 @@ const SimulationModal = ({
               <td style={{ border: '1px solid #ccc', padding: '6px' }}>{inflationRate}</td>
             </tr>
           ))}
-          <tr style={{ fontWeight: 'bold', backgroundColor: '#f0f0f0' }}>
-            <td style={{ border: '1px solid #ccc', padding: '6px' }}>Total Impact</td>
-            <td style={{ border: '1px solid #ccc', padding: '6px' }}>{totalImpact.populationChange.toFixed(1)}</td>
-            <td style={{ border: '1px solid #ccc', padding: '6px' }}>{totalImpact.trafficChange.toFixed(1)}</td>
-            <td style={{ border: '1px solid #ccc', padding: '6px' }}>{totalImpact.crimeChange.toFixed(1)}</td>
-            <td style={{ border: '1px solid #ccc', padding: '6px' }}>{totalImpact.housingSatisfaction.toFixed(1)}</td>
-            <td style={{ border: '1px solid #ccc', padding: '6px' }}>{totalImpact.unemploymentChange.toFixed(1)}</td>
-            <td style={{ border: '1px solid #ccc', padding: '6px' }}>{totalImpact.housingSupplyRate.toFixed(1)}</td>
-            <td style={{ border: '1px solid #ccc', padding: '6px' }}>{totalImpact.airQualityChange.toFixed(1)}</td>
-            <td style={{ border: '1px solid #ccc', padding: '6px' }}>{totalImpact.inflationRate.toFixed(2)}</td>
-          </tr>
         </tbody>
       </table>
 

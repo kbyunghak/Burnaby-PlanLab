@@ -6,6 +6,7 @@ export const metricDefinitions = {
     min: 0,
     max: null,
     favorableDirection: 'increase',
+    impactKey: 'populationPercent',
   },
   trafficAccidents: {
     label: 'Traffic Accidents',
@@ -14,6 +15,7 @@ export const metricDefinitions = {
     min: 0,
     max: null,
     favorableDirection: 'decrease',
+    impactKey: 'trafficPercent',
   },
   crimeRate: {
     label: 'Crime Incidents',
@@ -22,6 +24,7 @@ export const metricDefinitions = {
     min: 0,
     max: null,
     favorableDirection: 'decrease',
+    impactKey: 'crimePercent',
   },
   housingSatisfaction: {
     label: 'Housing Satisfaction',
@@ -30,6 +33,7 @@ export const metricDefinitions = {
     min: 0,
     max: 100,
     favorableDirection: 'increase',
+    impactKey: 'housingSatisfactionPercent',
   },
   unemploymentRate: {
     label: 'Unemployment Rate',
@@ -38,6 +42,7 @@ export const metricDefinitions = {
     min: 0,
     max: 100,
     favorableDirection: 'decrease',
+    impactKey: 'unemploymentPercent',
   },
   housingSupplyRate: {
     label: 'Housing Supply Rate',
@@ -46,6 +51,7 @@ export const metricDefinitions = {
     min: 0,
     max: 100,
     favorableDirection: 'increase',
+    impactKey: 'housingSupplyPercent',
   },
   airQualityIndex: {
     label: 'Air Quality Index',
@@ -54,6 +60,7 @@ export const metricDefinitions = {
     min: 0,
     max: 500,
     favorableDirection: 'decrease',
+    impactKey: 'airQualityPercent',
   },
   inflationRate: {
     label: 'Inflation Rate',
@@ -62,6 +69,7 @@ export const metricDefinitions = {
     min: 0,
     max: 100,
     favorableDirection: 'decrease',
+    impactKey: 'inflationPercent',
   },
 };
 

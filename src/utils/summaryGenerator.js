@@ -44,10 +44,10 @@ export const facilityPolicySuggestions = {
 
 // Summary of policy simulation results
 export function generatePolicySummary(simulationData) {
-  if (!simulationData || simulationData.length === 0) return "";
+  if (!simulationData) return "";
 
-  const latest = simulationData[simulationData.length - 1];
-  const first = simulationData[0];
+  const latest = simulationData.userPlan2050;
+  const first = simulationData.projection2050;
   const positiveMsgs = [];
   const cautionMsgs = [];
 

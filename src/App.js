@@ -37,7 +37,7 @@ function App() {
   const [userPlanFacilities, setUserPlanFacilities] = useState([]);
   const [selectedBuilding, setSelectedBuilding] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [simulationData, setSimulationData] = useState([]);
+  const [simulationData, setSimulationData] = useState(null);
   const [isLegendOpen, setIsLegendOpen] = useState(false);
   const [showAllIcons, setShowAllIcons] = useState(false);
 

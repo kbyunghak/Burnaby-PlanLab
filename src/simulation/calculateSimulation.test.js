@@ -1,81 +1,100 @@
-import { burnaby2025 } from '../constants/mapData';
-import { calculateSimulation } from './calculateSimulation';
+import { burnaby2025, burnabyForecast2050 } from '../constants/mapData';
+import {
+  aggregateFacilityImpacts,
+  calculateSimulation,
+} from './calculateSimulation';
 
 const facility = (buildingName) => ({
   buildingName,
   position: [49.25, -122.98],
 });
 
+describe('aggregateFacilityImpacts', () => {
+  test('adds repeated facility impacts and ignores unknown facilities', () => {
+    const impacts = aggregateFacilityImpacts([
+      facility('Market'),
+      facility('Market'),
+      facility('UnknownFacility'),
+    ]);
+
+    expect(impacts.populationPercent).toBeCloseTo(0.06);
+    expect(impacts.trafficPercent).toBeCloseTo(0.10);
+  });
+});
+
 describe('calculateSimulation', () => {
-  test('returns a complete 2025-2050 timeline', () => {
+  test('returns the complete scenario comparison model', () => {
     const result = calculateSimulation([]);
 
-    expect(result).toHaveLength(26);
-    expect(result[0]).toEqual(burnaby2025);
-    expect(result[25].year).toBe(2050);
-  });
-
-  test('keeps baseline metrics unchanged when no facilities are provided', () => {
-    const result = calculateSimulation([]);
-    const finalYear = result.at(-1);
-
-    expect(finalYear).toEqual({ ...burnaby2025, year: 2050 });
-  });
-
-  test('applies the current impact multipliers for one school', () => {
-    const finalYear = calculateSimulation([facility('School')]).at(-1);
-
-    expect(finalYear).toEqual(expect.objectContaining({
+    expect(result).toEqual({
+      baseline2025: burnaby2025,
+      projection2050: burnabyForecast2050,
+      userPlan2050: burnabyForecast2050,
+      netImpact: expect.any(Object),
+      yearlyTrend: expect.any(Array),
+    });
+    expect(result.yearlyTrend).toHaveLength(26);
+    expect(result.yearlyTrend[0]).toEqual({
+      year: 2025,
+      projection: expect.objectContaining({ population: burnaby2025.population }),
+      withPlan: expect.objectContaining({ population: burnaby2025.population }),
+    });
+    expect(result.yearlyTrend.at(-1)).toEqual({
       year: 2050,
-      population: 276198,
-      housingSatisfaction: 32.24,
-      housingSupplyRate: 65.13,
+      projection: expect.objectContaining({ population: burnabyForecast2050.population }),
+      withPlan: expect.objectContaining({ population: burnabyForecast2050.population }),
+    });
+  });
+
+  test('produces zero net impact when the user plan is empty', () => {
+    const { netImpact } = calculateSimulation([]);
+
+    Object.values(netImpact).forEach((value) => expect(value).toBe(0));
+  });
+
+  test('applies one school to the no-plan 2050 projection', () => {
+    const { userPlan2050, netImpact } = calculateSimulation([
+      facility('School'),
+    ]);
+
+    expect(userPlan2050).toEqual(expect.objectContaining({
+      year: 2050,
+      population: 378000,
+      trafficAccidents: 4949,
+      crimeRate: 8075,
+      unemploymentRate: 4.074,
+      housingSupplyRate: 85.17,
       airQualityIndex: 17.34,
-      trafficAccidents: 8330,
-      crimeRate: 10873,
-      unemploymentRate: 6.014,
+      inflationRate: 3.2032,
     }));
-    expect(finalYear.inflationRate).toBeCloseTo(2.5025);
+    expect(userPlan2050.housingSatisfaction).toBeCloseTo(46.8);
+    expect(netImpact.population).toBe(18000);
+    expect(netImpact.crimeRate).toBe(-425);
   });
 
-  test('scales repeated facility impacts by facility count', () => {
-    const twoMarkets = calculateSimulation([
-      facility('Market'),
-      facility('Market'),
-    ]).at(-1);
+  test('scales repeated facilities and constrains supported ranges', () => {
+    const manyPoliceStations = Array.from(
+      { length: 10 },
+      () => facility('PoliceStation')
+    );
+    const { userPlan2050 } = calculateSimulation(manyPoliceStations);
 
-    expect(twoMarkets.population).toBe(278829);
-    expect(twoMarkets.trafficAccidents).toBe(9350);
+    expect(userPlan2050.population).toBeCloseTo(396000);
+    expect(userPlan2050.trafficAccidents).toBe(0);
+    expect(userPlan2050.crimeRate).toBe(0);
+    expect(userPlan2050.housingSatisfaction).toBeLessThanOrEqual(100);
   });
 
-  test('ignores unknown facility types', () => {
-    const result = calculateSimulation([facility('UnknownFacility')]);
-
-    expect(result.at(-1)).toEqual({ ...burnaby2025, year: 2050 });
-  });
-
-  test('does not mutate its input facilities or the baseline data', () => {
+  test('does not mutate facilities or source datasets', () => {
     const facilities = [facility('Hospital')];
     const facilitiesSnapshot = JSON.parse(JSON.stringify(facilities));
     const baselineSnapshot = { ...burnaby2025 };
+    const projectionSnapshot = { ...burnabyForecast2050 };
 
     calculateSimulation(facilities);
 
     expect(facilities).toEqual(facilitiesSnapshot);
     expect(burnaby2025).toEqual(baselineSnapshot);
-  });
-
-  test('constrains bounded metrics to their supported ranges', () => {
-    const manyPoliceStations = Array.from(
-      { length: 10 },
-      () => facility('PoliceStation')
-    );
-    const finalYear = calculateSimulation(manyPoliceStations).at(-1);
-
-    expect(finalYear.trafficAccidents).toBe(0);
-    expect(finalYear.crimeRate).toBe(0);
-    expect(finalYear.housingSatisfaction).toBeLessThanOrEqual(100);
-    expect(finalYear.unemploymentRate).toBeGreaterThanOrEqual(0);
-    expect(finalYear.airQualityIndex).toBeLessThanOrEqual(500);
+    expect(burnabyForecast2050).toEqual(projectionSnapshot);
   });
 });
