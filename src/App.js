@@ -83,6 +83,9 @@ function App() {
         buildingName: selectedBuilding.name,
       },
     ]);
+    setSimulationData(null);
+    setIsModalOpen(false);
+    setShowAllIcons(false);
   };
 
   const simulateCityGrowth = () => {

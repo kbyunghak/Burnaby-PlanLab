@@ -50,13 +50,13 @@ Goal: A user can understand, create, edit, and simulate a plan without being tra
 
 ### Step 1 — Stabilize Map Controls and Markers
 
-- [ ] Replace the obsolete map-instance callback with a React Leaflet v5-compatible controller.
-- [ ] Make Reset View reliably restore the initial center and zoom.
-- [ ] Preserve facility-specific icons before and after simulation.
-- [ ] Visually distinguish existing facilities from user-plan facilities.
-- [ ] Invalidate an existing result when the plan changes.
-- [ ] Add or update focused tests.
-- [ ] Manually verify reset, filtering, placement, and post-simulation markers.
+- [x] Replace the obsolete map-instance callback with a React Leaflet v5-compatible controller.
+- [x] Make Reset View reliably restore the initial center and zoom.
+- [x] Preserve facility-specific icons before and after simulation.
+- [x] Visually distinguish existing facilities from user-plan facilities.
+- [x] Invalidate an existing result when the plan changes.
+- [x] Add or update focused tests.
+- [x] Manually verify reset, filtering, placement, and post-simulation markers.
 
 Acceptance criteria:
 

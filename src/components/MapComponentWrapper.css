@@ -35,6 +35,14 @@
   min-height: 0;
 }
 
+.facility-marker--existing {
+  filter: grayscale(0.75);
+}
+
+.facility-marker--proposed {
+  filter: drop-shadow(0 0 3px rgba(20, 184, 166, 0.95));
+}
+
 @media (max-width: 980px) {
   .map-panel {
     height: 65vh;
