@@ -57,6 +57,11 @@ test('supports multiple facility filters', () => {
   expect(
     screen.getByLabelText('2 facility types selected')
   ).toHaveTextContent('× 2');
+  expect(screen.getByText('Facility filters')).toBeInTheDocument();
+  expect(screen.getByText('2 selected')).toBeInTheDocument();
+  expect(
+    screen.getByText('Facility filters').closest('details')
+  ).toHaveAttribute('open');
   fireEvent.click(screen.getByRole('checkbox', { name: 'Market' }));
 
   expect(defaultProps.onFacilityTypeToggle).toHaveBeenCalledWith('Market');

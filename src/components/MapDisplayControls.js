@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { facilityOptions } from '../constants/facilityDefinitions';
 import { MAP_VIEW_MODES } from '../map/mapVisibility';
 import './MapDisplayControls.css';
@@ -23,6 +23,11 @@ function MapDisplayControls({
   onShowProposedChange,
   visibleMarkerCount,
 }) {
+  const [filtersExpanded, setFiltersExpanded] = useState(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return true;
+
+    return !window.matchMedia('(max-width: 540px)').matches;
+  });
   const visibleFacilityLabels = facilityOptions
     .filter(({ name }) => visibleFacilityTypes.includes(name))
     .map(({ label }) => label);
@@ -82,7 +87,15 @@ function MapDisplayControls({
       )}
 
       {viewMode === MAP_VIEW_MODES.FILTER && (
-        <>
+        <details
+          className="map-display__filter-disclosure"
+          open={filtersExpanded}
+          onToggle={(event) => setFiltersExpanded(event.currentTarget.open)}
+        >
+          <summary>
+            Facility filters
+            <span>{visibleFacilityLabels.length} selected</span>
+          </summary>
           <p className="map-display__context map-display__context--filter">
             <strong>Showing:</strong>{' '}
             {visibleFacilitySummary}
@@ -116,7 +129,7 @@ function MapDisplayControls({
               ))}
             </div>
           </fieldset>
-        </>
+        </details>
       )}
 
     </section>

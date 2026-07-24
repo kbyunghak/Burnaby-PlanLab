@@ -41,6 +41,10 @@
   font-size: 0.74rem;
 }
 
+.map-display__filter-disclosure > summary {
+  display: none;
+}
+
 .map-display__modes {
   background: var(--color-surface-muted);
   border-radius: 7px;
@@ -219,6 +223,51 @@
 
   .map-display__filter-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .map-display__filter-disclosure {
+    margin-top: 6px;
+  }
+
+  .map-display__filter-disclosure > summary {
+    align-items: center;
+    color: var(--color-primary-dark);
+    cursor: pointer;
+    display: flex;
+    font-size: 0.75rem;
+    font-weight: 800;
+    justify-content: space-between;
+    list-style: none;
+    min-height: 30px;
+  }
+
+  .map-display__filter-disclosure > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .map-display__filter-disclosure > summary::after {
+    content: '+';
+    font-size: 1rem;
+    margin-left: 8px;
+  }
+
+  .map-display__filter-disclosure[open] > summary::after {
+    content: '−';
+  }
+
+  .map-display__filter-disclosure > summary span {
+    color: var(--color-text-muted);
+    font-size: 0.68rem;
+    margin-left: auto;
+  }
+
+  .map-display__filter-disclosure:not([open]) > :not(summary) {
+    display: none;
+  }
+
+  .map-display__filter-disclosure > summary:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
   }
 
 }

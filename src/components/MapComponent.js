@@ -332,22 +332,9 @@ const MapComponent = ({
 
       <button
         type="button"
+        className="map-reset-button"
         onClick={handleResetView}
         disabled={!map}
-        style={{
-          position: 'absolute',
-          top: 10,
-          right: 10,
-          padding: '6px 12px',
-          backgroundColor: !map ? '#999' : '#3f51b5',
-          color: 'white',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: !map ? 'not-allowed' : 'pointer',
-          fontWeight: '600',
-          boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
-          zIndex: 1000,
-        }}
         title="Reset View"
       >
         Reset View
