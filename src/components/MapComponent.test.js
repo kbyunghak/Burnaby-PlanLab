@@ -3,7 +3,6 @@ import MapComponent from './MapComponent';
 
 const mockMap = {
   fitBounds: jest.fn(),
-  setView: jest.fn(),
 };
 
 jest.mock('leaflet', () => ({
@@ -27,8 +26,9 @@ jest.mock('react-leaflet', () => ({
   ),
   Polygon: ({ pathOptions }) => (
     <div
-      data-testid="burnaby-boundary"
+      data-testid={pathOptions.className}
       data-interactive={pathOptions.interactive}
+      data-fill-rule={pathOptions.fillRule}
     />
   ),
   Popup: ({ children }) => <div>{children}</div>,
@@ -51,10 +51,9 @@ const proposedMarket = {
 
 beforeEach(() => {
   mockMap.fitBounds.mockClear();
-  mockMap.setView.mockClear();
 });
 
-test('connects Reset View to the initialized Leaflet map', async () => {
+test('highlights Burnaby and connects Reset View to its bounds', async () => {
   render(
     <MapComponent
       center={[49.2488, -122.9805]}
@@ -73,10 +72,17 @@ test('connects Reset View to the initialized Leaflet map', async () => {
     'data-interactive',
     'false'
   );
+  expect(screen.getByTestId('burnaby-map-mask')).toHaveAttribute(
+    'data-fill-rule',
+    'evenodd'
+  );
 
   fireEvent.click(resetButton);
 
-  expect(mockMap.setView).toHaveBeenCalledWith([49.2488, -122.9805], 12);
+  expect(mockMap.fitBounds).toHaveBeenLastCalledWith(
+    expect.any(Array),
+    { padding: [18, 18] }
+  );
 });
 
 test('keeps facility icons and distinguishes existing and proposed markers', () => {

@@ -63,6 +63,17 @@ const existingIconMap = Object.fromEntries(
   ])
 );
 
+const mapMaskBounds = [
+  [85, -180],
+  [85, 180],
+  [-85, 180],
+  [-85, -180],
+];
+
+const burnabyViewOptions = {
+  padding: [18, 18],
+};
+
 function MapController({ onReady }) {
   const map = useMap();
 
@@ -86,7 +97,7 @@ function FitBounds({ polygon }) {
   const map = useMap();
   useEffect(() => {
     if (polygon && polygon.length) {
-      map.fitBounds(polygon);
+      map.fitBounds(polygon, burnabyViewOptions);
     }
   }, [map, polygon]);
   return null;
@@ -103,13 +114,10 @@ const MapComponent = ({
 }) => {
   const [map, setMap] = useState(null);
 
-  const initialCenter = center;
-  const initialZoom = zoom;
-
   const handleResetView = () => {
     if (!map) return;
 
-    map.setView(initialCenter, initialZoom);
+    map.fitBounds(burnabyPolygon, burnabyViewOptions);
   };
 
   return (
@@ -127,11 +135,28 @@ const MapComponent = ({
         <FitBounds polygon={burnabyPolygon} />
         <LocationSelector onClick={onMapClick} />
         <Polygon
+          positions={[mapMaskBounds, burnabyPolygon]}
+          pathOptions={{
+            className: 'burnaby-map-mask',
+            color: 'transparent',
+            fillColor: '#172554',
+            fillOpacity: 0.38,
+            fillRule: 'evenodd',
+            interactive: false,
+            stroke: false,
+          }}
+        />
+        <Polygon
           positions={burnabyPolygon}
           pathOptions={{
-            color: '#3f51b5',
-            weight: 3,
-            fillOpacity: 0.1,
+            className: 'burnaby-boundary',
+            color: '#2349c6',
+            fillColor: '#dbeafe',
+            fillOpacity: 0.12,
+            lineCap: 'round',
+            lineJoin: 'round',
+            opacity: 1,
+            weight: 4,
             interactive: false,
           }}
         />
@@ -178,6 +203,11 @@ const MapComponent = ({
           );
         })}
       </MapContainer>
+
+      <div className="burnaby-map-label" aria-hidden="true">
+        <span>Planning area</span>
+        <strong>Burnaby</strong>
+      </div>
 
       <button
         type="button"
