@@ -1,469 +1,315 @@
-# City Sim Project Plan
+# City Simulation Delivery Plan
 
 ## 1. Purpose
 
-City Sim is an interactive urban-planning simulation for Burnaby, British Columbia. It allows users to allocate a fixed budget, place new public facilities on a map, and compare the projected effects of their plan against a no-plan 2050 scenario.
+This document is the authoritative delivery checklist for the Burnaby city-planning simulation. Work must proceed in order, one reviewable commit at a time. Every step must leave tests and the production build passing.
 
-This plan defines how the project will be developed into a reliable and maintainable portfolio application. It prioritizes correctness, transparent simulation rules, readable code, automated quality checks, and a dependable deployment process.
+If a step reveals an unexpected data issue, architectural conflict, broken dependency, or requirement that changes the agreed scope, implementation must stop and the issue must be reviewed before continuing.
 
-## 2. Product Goals
+## 2. Current Baseline
 
-The project should:
+The current version provides:
 
-- Clearly separate Burnaby's existing facilities from facilities proposed by the user.
-- Explain the difference between the 2026 baseline, the 2050 projection without a plan, and the 2050 projection with the user's plan.
-- Display the net impact caused by the user's choices.
-- Use one source of truth for facility costs, labels, icons, descriptions, and impact coefficients.
-- Provide a responsive and accessible planning experience.
-- Protect important behavior with automated tests.
-- Deploy only verified builds through CI/CD.
-- Remain easy to review, extend, and explain as a portfolio project.
+- A responsive React and Leaflet interface.
+- Facility selection and map placement within the Burnaby boundary.
+- Budget tracking and a facility usage summary.
+- A 2026 baseline, 2050 no-plan projection, user-plan projection, and net-impact results view.
+- Central facility and metric definitions.
+- Unit and component tests.
+- GitHub Actions checks for tests and the production build.
 
-## 3. Scope and Priorities
+Known product limitations:
 
-### Must Have
+- Facility location does not affect simulation outcomes.
+- A placed facility cannot be removed or undone.
+- The full plan cannot be reset.
+- The map reset control is not reliably connected to the Leaflet instance.
+- Facility-specific marker icons are lost after simulation.
+- Simulation requires the budget to reach exactly zero.
+- Building Usage is a read-only list rather than a plan-management tool.
+- User guidance and model explanations are limited.
+- Baseline and projection values still require authoritative source validation.
+- Continuous deployment and real-browser workflow tests are not configured.
 
-- Passing unit and component tests.
-- A passing production build in CI.
-- Consistent UTF-8 source files and user-facing text.
-- Separate existing facilities and user-plan facilities.
-- A documented and testable simulation model.
-- A single source of truth for facility and metric definitions.
-- A results view that shows baseline, no-plan projection, user-plan projection, and net impact.
-- A verified GitHub Pages deployment.
-- Updated project documentation.
+## 3. Delivery Rules
 
-### Should Have
+Each checklist item must:
 
-- Reusable component and style structure.
-- Plan editing, facility removal, and budget restoration.
-- Responsive layouts for desktop, tablet, and mobile.
-- Keyboard-friendly controls and visible focus states.
-- Integration tests for the primary planning workflow.
-- Test coverage reporting in CI.
+- Be implemented as a focused change.
+- Include tests for changed behavior.
+- Pass `npm test -- --watchAll=false`.
+- Pass `npm run build` with CI warnings treated as errors.
+- Pass `git diff --check`.
+- Be manually verified when it changes map behavior or responsive layout.
+- Be committed independently with the listed commit message.
+- Update this checklist in the same commit or an immediately following documentation commit.
 
-### Nice to Have
+## 4. Release 0.2 — Usable Planning Experience
 
-- Playwright end-to-end smoke tests.
-- Scenario save and load support using local storage.
-- Multiple budget presets.
-- Map layers or neighborhood-level analysis.
-- Tooltips that explain formulas and assumptions.
-- Charts comparing multiple user plans.
-- Import and export of scenarios as JSON.
-- Shareable scenario URLs.
-- Dark mode.
-- Localization support.
-- A future migration from Create React App to Vite.
+Goal: A user can understand, create, edit, and simulate a plan without being trapped by an accidental action.
 
-Nice-to-have items must not delay simulation correctness, accessibility, test reliability, or deployment stability.
+### Step 1 — Stabilize Map Controls and Markers
 
-## 4. Engineering Principles
+- [ ] Replace the obsolete map-instance callback with a React Leaflet v5-compatible controller.
+- [ ] Make Reset View reliably restore the initial center and zoom.
+- [ ] Preserve facility-specific icons before and after simulation.
+- [ ] Visually distinguish existing facilities from user-plan facilities.
+- [ ] Invalidate an existing result when the plan changes.
+- [ ] Add or update focused tests.
+- [ ] Manually verify reset, filtering, placement, and post-simulation markers.
 
-### Maintainability
+Acceptance criteria:
 
-- Keep business logic independent from React components.
-- Prefer pure functions for calculations and formatting.
-- Store domain definitions in centralized configuration modules.
-- Give components names based on their responsibility rather than their position.
-- Keep commits focused on one purpose.
-- Avoid mixing feature changes, styling changes, and build-system changes in one commit.
-- Remove unused state and code unless it is connected to a documented feature.
-
-### Readability
-
-- Use consistent terminology throughout code and UI.
-- Prefer `existingFacilities` and `userPlanFacilities` over a combined mutable marker collection.
-- Prefer `projection2050` and `userPlan2050` over ambiguous names such as `simulationValue`.
-- Use metric metadata to control labels, units, formatting, and positive-change direction.
-- Add comments only where they explain a policy decision, formula, or non-obvious constraint.
-
-### Styling
-
-- Move large inline style objects into component-level CSS Modules.
-- Define shared color, spacing, typography, and radius tokens.
-- Use CSS states for hover, focus, and disabled behavior.
-- Do not communicate positive or negative results through color alone.
-- Keep result tables readable at narrow widths.
-- Use semantic HTML before adding custom ARIA attributes.
-
-### Data Integrity
-
-- Store every facility's cost and impact coefficients in one definition.
-- Distinguish percentage changes from percentage-point changes.
-- Apply user-plan effects to the documented 2050 no-plan projection.
-- Avoid rounding intermediate results.
-- Validate metric ranges in shared calculation helpers.
-- Document assumptions and limitations alongside the model.
-
-## 5. Target Architecture
-
-```text
-src/
-  components/
-    BuildingSelector/
-    BudgetSummary/
-    CityMap/
-    PlanControls/
-    SimulationResults/
-      FacilityImpactTable/
-      ImpactSummary/
-      MetricComparisonTable/
-      TrendChart/
-  constants/
-    baselineData.js
-    facilityDefinitions.js
-    metricDefinitions.js
-  simulation/
-    calculateSimulation.js
-    calculateSimulation.test.js
-    facilityAggregation.js
-    metricFormatting.js
-  styles/
-    tokens.css
-  App.js
-doc/
-  Plan.md
-  SimulationMethodology.md
-```
-
-The exact folder structure may change during implementation, but domain logic should remain separate from presentation components.
-
-## 6. Delivery Plan
-
-Each step should be implemented, tested, reviewed, and committed independently.
-
-### Phase 1: Quality Baseline
-
-#### Step 1: Stabilize Tests and CI
-
-Work:
-
-- Replace the default Create React App test with application-specific tests.
-- Isolate the Leaflet rendering boundary during component tests.
-- Remove unused variables and resolve lint warnings.
-- Run tests and the production build in GitHub Actions.
-
-Validation:
-
-- `npm test -- --watchAll=false` passes.
-- `CI=true npm run build` passes without lint warnings.
-- The GitHub Actions workflow passes on pushes and pull requests.
+- Reset View works after map initialization.
+- Existing and proposed facilities remain distinguishable.
+- Every visible marker retains its facility identity.
+- A result is never presented as current after its input plan changes.
 
 Commit:
 
 ```text
-test: stabilize app tests and add CI workflow
+fix: stabilize map controls and facility markers
 ```
 
-#### Step 2: Protect Existing Simulation Behavior
+### Step 2 — Add Plan Editing
 
-Work:
+- [ ] Introduce a plan reducer or equivalent isolated state model.
+- [ ] Add Undo Last Placement.
+- [ ] Allow a selected user-plan marker to be removed.
+- [ ] Add Reset Plan.
+- [ ] Restore budget and usage counts after removal.
+- [ ] Prevent existing facilities from being removed.
+- [ ] Add reducer and integration tests for add, undo, remove, and reset.
 
-- Extract the current calculation code from `App.js`.
-- Add unit tests before changing the formula.
-- Test empty plans, single facilities, repeated facilities, range limits, and input immutability.
+Acceptance criteria:
 
-Validation:
-
-- Simulation tests run without rendering React.
-- Existing behavior is documented by tests.
+- Every user placement is reversible.
+- Budget and usage totals remain consistent.
+- Existing facility data remains immutable.
 
 Commit:
 
 ```text
-test: add coverage for simulation calculations
+feat: add editable planning controls
 ```
 
-### Phase 2: Domain Model Consolidation
+### Step 3 — Redesign Building Usage
 
-#### Step 3: Centralize Facility Definitions
+- [ ] Add a used-budget progress indicator.
+- [ ] Show user-facing labels instead of internal facility IDs.
+- [ ] List used facilities before unused facility types.
+- [ ] Collapse or hide zero-count facilities by default.
+- [ ] Show icon, count, unit cost, and total cost separately.
+- [ ] Add Locate, Remove One, and Remove All actions.
+- [ ] Provide a mobile card layout without horizontal overflow.
+- [ ] Add component and responsive behavior tests.
 
-Work:
+Acceptance criteria:
 
-- Combine facility labels, costs, icons, descriptions, and impacts.
-- Make the selector, legend, map, and simulation consume the same definitions.
-- Add definition validation tests.
-
-Validation:
-
-- No duplicate impact table remains.
-- Every facility has a valid ID, label, cost, icon, description, and impact object.
+- Building Usage functions as a plan-management panel.
+- Internal domain keys are not exposed to users.
+- The panel remains readable at desktop and mobile widths.
 
 Commit:
 
 ```text
-refactor: centralize facility definitions
+feat: redesign building usage as a plan summary
 ```
 
-#### Step 4: Centralize Metric Definitions
+### Step 4 — Add Guidance and Contextual Feedback
 
-Work:
+- [ ] Add a three-step first-use guide.
+- [ ] Explain the Burnaby placement boundary.
+- [ ] Explain existing and proposed marker styles.
+- [ ] Replace native alerts with contextual messages or toasts.
+- [ ] Explain why an action or Simulate button is unavailable.
+- [ ] Improve the facility legend with costs, measured impacts, and units.
+- [ ] Verify keyboard focus and screen-reader labels.
 
-- Define labels, units, decimal precision, valid ranges, and favorable direction for each metric.
-- Use the metadata in tables, summaries, and formatting helpers.
+Acceptance criteria:
 
-Validation:
-
-- Metric labels and formatting are not repeated across result components.
-- Positive and negative result styling respects the meaning of each metric.
+- The primary workflow can be understood without opening the README.
+- Every rejected action provides visible, contextual feedback.
+- Important status is not communicated by color alone.
 
 Commit:
 
 ```text
-refactor: centralize simulation metric metadata
+feat: add planning guidance and contextual feedback
 ```
 
-### Phase 3: Simulation Model
+### Step 5 — Simplify Simulation Execution
 
-#### Step 5: Separate Existing Facilities from the User Plan
+- [ ] Allow simulation when at least one valid user facility exists.
+- [ ] Treat remaining budget as unused budget.
+- [ ] Remove the artificial fixed loading delay.
+- [ ] Capture an immutable plan snapshot for each result.
+- [ ] Mark or close stale results after plan changes.
+- [ ] Handle empty and invalid plans explicitly.
+- [ ] Add full workflow integration tests.
 
-Work:
+Acceptance criteria:
 
-- Store existing facilities and newly placed facilities separately.
-- Combine them only for map display.
-- Use only user-plan facilities for budget and impact calculations.
-
-Validation:
-
-- Existing facilities do not consume the user's budget.
-- Existing facilities do not create user-plan impact.
-- Both facility groups remain visible with clear visual differences.
+- Users are not required to spend the budget exactly.
+- Results identify the plan from which they were calculated.
+- Execution state reflects real work rather than a cosmetic timer.
 
 Commit:
 
 ```text
-refactor: separate existing facilities from user plan
+refactor: simplify simulation execution flow
 ```
 
-#### Step 6: Implement Scenario Comparison
+## 5. Release 0.3 — Credible Simulation Model
 
-Return a result model similar to:
+Goal: Facility type and placement location both contribute to an explainable result.
 
-```js
-{
-  baseline2026,
-  projection2050,
-  userPlan2050,
-  netImpact,
-  yearlyTrend,
-}
-```
+### Step 6 — Validate Data Sources and Assumptions
 
-Work:
+- [ ] Create `doc/DataSources.md`.
+- [ ] Verify the 2026 baseline against authoritative sources.
+- [ ] Verify or define the 2050 no-plan projection methodology.
+- [ ] Record source organization, URL, publication date, geographic scope, unit, and retrieval date.
+- [ ] Label assumed, derived, and official values separately.
+- [ ] Define a repeatable data-update procedure.
+- [ ] Update the methodology and UI with data-status language.
 
-- Treat the published 2050 projection as the no-plan scenario.
-- Apply only user-plan effects to that projection.
-- Calculate net impact as the difference between the two 2050 scenarios.
-- Apply range constraints through shared helpers.
-- Round only for display.
+Stop condition:
 
-Validation:
-
-- An empty plan has zero net impact.
-- Repeated facilities scale according to the documented formula.
-- Boundary and representative scenario tests pass.
+- Do not replace current values when authoritative sources conflict, use incompatible geographic scopes, or require a policy decision. Document the conflict and request review.
 
 Commit:
 
 ```text
-feat: calculate baseline projection and user plan net impact
+docs: define simulation data sources and assumptions
 ```
 
-#### Step 7: Document the Model
+### Step 7 — Add a Spatial Demand Model
 
-Create `doc/SimulationMethodology.md` containing:
+- [ ] Choose and document a neighbourhood or grid analysis unit.
+- [ ] Add population or demand values for each analysis area.
+- [ ] Define a service radius or travel assumption for each facility.
+- [ ] Calculate existing-facility coverage.
+- [ ] Calculate proposed-facility coverage.
+- [ ] Detect overlapping coverage.
+- [ ] Display service areas and underserved areas on the map.
+- [ ] Add deterministic spatial calculation tests.
 
-- Data definitions and sources.
-- Formula descriptions.
-- Percentage versus percentage-point rules.
-- A worked example.
-- Assumptions and known limitations.
-- A statement that this is an educational planning model, not an official forecast.
+Acceptance criteria:
+
+- Moving the same facility to a meaningfully different location can change its result.
+- Spatial inputs and assumptions are visible and testable.
 
 Commit:
 
 ```text
-docs: document simulation methodology
+feat: add spatial demand and service coverage model
 ```
 
-### Phase 4: Results and User Interface
+### Step 8 — Implement Simulation Model v2
 
-#### Step 8: Redesign the Results View
+- [ ] Add diminishing returns for overlapping or repeated facilities.
+- [ ] Separate construction cost from recurring operating cost.
+- [ ] Add construction timing where supported.
+- [ ] Define supported facility interactions.
+- [ ] Produce low, base, and high scenarios where uncertainty exists.
+- [ ] Generate a contribution breakdown by facility and location.
+- [ ] Keep display text and calculation coefficients in the same definitions.
+- [ ] Add boundary, regression, immutability, and representative-scenario tests.
 
-Display:
+Acceptance criteria:
 
-- 2026 Baseline.
-- 2050 Without Plan.
-- 2050 With Your Plan.
-- Net Impact.
-- Facility-level contributions.
-- A yearly trend where meaningful.
-
-Work:
-
-- Replace ambiguous terminology such as "User Scenario."
-- Present the most important net impacts first.
-- Make favorable and unfavorable changes accessible without relying only on color.
+- Every result can be traced to documented inputs and assumptions.
+- Repeated facilities do not create uncontrolled linear growth.
+- Identical inputs produce identical outputs.
 
 Commit:
 
 ```text
-feat: redesign simulation results around net impact
+feat: implement explainable simulation model v2
 ```
 
-#### Step 9: Establish a Maintainable Style System
+### Step 9 — Expand Results and Scenario Comparison
 
-Work:
+- [ ] Allow the user to select a metric for trend visualization.
+- [ ] Add before-and-after spatial comparison.
+- [ ] Show neighbourhood-level coverage changes.
+- [ ] Show count and total contribution for each facility type.
+- [ ] Separate favorable, unfavorable, and uncertain effects.
+- [ ] Link result details back to relevant map locations.
+- [ ] Add local scenario save, load, and comparison.
+- [ ] Explain assumptions and limitations inside the result view.
 
-- Introduce shared design tokens.
-- Extract inline styles into CSS Modules.
-- Add responsive breakpoints.
-- Add visible keyboard focus states.
-- Standardize buttons, panels, tables, and modal spacing.
+Acceptance criteria:
 
-Validation:
-
-- Desktop, tablet, and mobile layouts remain usable.
-- Primary actions are keyboard accessible.
-- Direct DOM style mutation is removed.
+- The result explains what was placed, where it was placed, why it matters, and how it changes the scenario.
 
 Commit:
 
 ```text
-refactor: extract reusable layout and style primitives
+feat: add spatial and comparative simulation results
 ```
 
-#### Step 10: Split Large Components
+## 6. Release 0.4 — Maintainability and Delivery
 
-Work:
+Goal: Make the project safe to extend, verify, deploy, and present.
 
-- Reduce `App.js` to state orchestration and top-level composition.
-- Split selectors, budget details, plan controls, and result sections.
-- Replace generic names such as `SimulationSummary2`.
+### Step 10 — Separate Application Responsibilities
 
-Validation:
-
-- Each component has a clear responsibility.
-- Calculation logic is not duplicated in UI components.
-- Existing tests continue to pass.
+- [ ] Reduce `App.js` to top-level composition.
+- [ ] Extract planning state and actions.
+- [ ] Split map controls, plan controls, budget summary, usage summary, and result sections.
+- [ ] Replace temporary names such as `SimulationSummary2`.
+- [ ] Keep calculations independent from React presentation code.
+- [ ] Consolidate repeated styles into shared components or CSS modules.
 
 Commit:
 
 ```text
-refactor: split app and simulation result components
+refactor: separate planning simulation and presentation layers
 ```
 
-### Phase 5: Planning Workflow
+### Step 11 — Add Browser Workflow Coverage
 
-#### Step 11: Support Plan Editing
-
-Work:
-
-- Remove a newly placed facility.
-- Restore its cost to the available budget.
-- Reset the full user plan.
-- Prevent deletion of existing facilities.
-
-Validation:
-
-- Add, remove, and reset behavior updates both budget and facility counts.
-- Budget invariants are covered by tests.
+- [ ] Add Playwright.
+- [ ] Test selection, valid placement, invalid placement, removal, reset, simulation, and result display.
+- [ ] Test a mobile viewport.
+- [ ] Prevent remote map tiles from making tests flaky.
+- [ ] Add an automated accessibility smoke check.
 
 Commit:
 
 ```text
-feat: allow users to edit and reset facility plans
+test: add planning workflow and browser coverage
 ```
 
-#### Step 12: Expand Integration Coverage
+### Step 12 — Strengthen CI
 
-Cover:
-
-- Facility selection.
-- Valid and invalid placement.
-- Budget changes.
-- Simulation button state.
-- Scenario result rendering.
-- Plan removal and reset.
+- [ ] Run unit and component tests.
+- [ ] Run browser smoke tests.
+- [ ] Build the production bundle.
+- [ ] Add realistic coverage thresholds.
+- [ ] Upload useful test reports and build artifacts.
+- [ ] Configure minimal workflow permissions.
 
 Commit:
 
 ```text
-test: cover city planning and simulation workflows
+ci: add browser tests and quality gates
 ```
 
-### Phase 6: CI/CD
+### Step 13 — Add Verified Continuous Deployment
 
-#### Step 13: Add End-to-End Smoke Tests
+- [ ] Confirm the final repository name and production URL.
+- [ ] Deploy only from the protected default branch.
+- [ ] Deploy the exact artifact produced by the verified build job.
+- [ ] Prevent overlapping production deployments.
+- [ ] Add manual deployment support.
+- [ ] Run a production smoke check.
 
-Use Playwright to verify:
+Stop condition:
 
-- Application startup.
-- Facility selection and placement.
-- Budget updates.
-- Simulation execution.
-- Result display.
-- A basic mobile viewport.
-
-External map tiles should be mocked or blocked where needed to keep tests deterministic.
-
-Commit:
-
-```text
-test: add Playwright smoke tests
-```
-
-#### Step 14: Strengthen CI Quality Gates
-
-Work:
-
-- Use Node.js 20 and `npm ci`.
-- Run unit, component, and end-to-end tests.
-- Build the production bundle.
-- Upload useful test and build artifacts.
-- Add coverage reporting with realistic initial thresholds.
-- Configure minimal workflow permissions.
-
-Suggested initial coverage thresholds:
-
-| Metric | Threshold |
-|---|---:|
-| Statements | 70% |
-| Branches | 60% |
-| Functions | 70% |
-| Lines | 70% |
-
-Commit:
-
-```text
-ci: add coverage and end-to-end quality gates
-```
-
-#### Step 15: Add Verified GitHub Pages Deployment
-
-Deployment flow:
-
-```text
-Pull request
-  -> Test
-  -> Build
-  -> End-to-end smoke test
-
-Merge to master
-  -> Test
-  -> Build
-  -> Deploy build artifact
-  -> Production smoke check
-```
-
-Requirements:
-
-- Deploy only from the protected default branch.
-- Deploy the exact artifact created by the verified build job.
-- Prevent overlapping production deployments.
-- Support manual deployment with `workflow_dispatch`.
-- Use GitHub's official Pages actions and minimal permissions.
+- Do not change the repository name, GitHub Pages URL, or external GitHub settings without explicit confirmation of the final name and URL.
 
 Commit:
 
@@ -471,43 +317,35 @@ Commit:
 ci: deploy verified builds to GitHub Pages
 ```
 
-### Phase 7: Portfolio Documentation and Release
+### Step 14 — Complete Portfolio Documentation
 
-#### Step 16: Improve the README
-
-Include:
-
-- Project purpose and live demo.
-- Accurate clone instructions.
-- Key features.
-- Technology choices.
-- Setup, test, and build commands.
-- A short explanation of the simulation.
-- Screenshots or an animated demonstration.
-- CI and deployment badges.
-- Links to this plan and the simulation methodology.
-- Known limitations and future work.
+- [ ] Replace the placeholder clone URL.
+- [ ] Repair damaged README separators and text.
+- [ ] Update the project name after naming is confirmed.
+- [ ] Document purpose, features, architecture, setup, test, and build commands.
+- [ ] Link this plan, methodology, and data-source documentation.
+- [ ] Add current screenshots or a short demonstration.
+- [ ] Document limitations and future development.
+- [ ] Add CI and deployment badges.
 
 Commit:
 
 ```text
-docs: rewrite README for portfolio presentation
+docs: complete portfolio documentation
 ```
 
-#### Step 17: Complete the Release Review
+### Step 15 — Release Review
 
-Validate:
-
-- A clean clone installs with `npm ci`.
-- All automated tests pass.
-- The production build succeeds.
-- GitHub Pages serves the latest verified version.
-- There are no browser console errors.
-- Links, icons, and images load correctly.
-- Primary workflows work on desktop and mobile.
-- Keyboard navigation covers primary controls.
-- Source files contain no damaged Unicode characters.
-- Displayed impacts match the calculation definitions.
+- [ ] Verify a clean install with `npm ci`.
+- [ ] Run all automated tests.
+- [ ] Build the production bundle.
+- [ ] Verify the deployed application.
+- [ ] Check browser console output.
+- [ ] Verify links, icons, images, and map assets.
+- [ ] Review desktop, tablet, and mobile layouts.
+- [ ] Review keyboard navigation and focus visibility.
+- [ ] Scan source files for damaged Unicode.
+- [ ] Confirm that displayed impacts match calculation definitions.
 
 Commit:
 
@@ -515,130 +353,35 @@ Commit:
 chore: complete portfolio release quality checks
 ```
 
-Release tag:
+Target release tag:
 
 ```text
 v1.0.0
 ```
 
-## 7. Testing Strategy
+## 7. Nice to Have
 
-### Unit Tests
+These items must not delay simulation correctness, accessibility, or deployment stability.
 
-Test pure domain behavior:
+- [ ] Import and export scenarios as JSON.
+- [ ] Shareable scenario URLs.
+- [ ] Multiple budget and policy presets.
+- [ ] Construction phases between 2026 and 2050.
+- [ ] Additional map layers for transit, zoning, and climate risk.
+- [ ] Dark mode.
+- [ ] Localization.
+- [ ] Migrate from Create React App to Vite after the stable release.
 
-- Facility aggregation.
-- Budget calculations.
-- Point-in-polygon checks.
-- Simulation formulas.
-- Metric constraints.
-- Formatting helpers.
+## 8. Definition of Done
 
-### Component Tests
+A step is complete only when:
 
-Test visible behavior:
+- Every acceptance criterion is met.
+- Relevant automated tests pass.
+- The production build succeeds.
+- Manual verification is complete where required.
+- Documentation reflects changed behavior.
+- The checklist is updated.
+- The change is committed independently.
 
-- Facility selection.
-- Budget and usage summaries.
-- Button enabled and disabled states.
-- Result tables and summaries.
-- Plan editing controls.
-
-Leaflet should be isolated at this level so component tests do not depend on browser layout behavior or remote map tiles.
-
-### Integration Tests
-
-Test the main application workflow across components while keeping external network dependencies controlled.
-
-### End-to-End Tests
-
-Use a small number of high-value Playwright scenarios against the production build. E2E tests should validate integration and deployment behavior rather than repeat every unit-test case.
-
-### Manual Verification
-
-Before each release:
-
-- Review desktop, tablet, and mobile layouts.
-- Verify keyboard navigation and focus visibility.
-- Check color contrast and non-color status indicators.
-- Inspect the browser console.
-- Compare representative calculation results against documented examples.
-
-## 8. CI/CD Strategy
-
-### Continuous Integration
-
-CI should run on every pull request and push:
-
-1. Install locked dependencies with `npm ci`.
-2. Run unit and component tests.
-3. Enforce coverage thresholds when the test suite is mature enough.
-4. Create a production build with warnings treated as errors.
-5. Run end-to-end smoke tests against the production bundle.
-6. Preserve relevant reports and build artifacts.
-
-### Continuous Deployment
-
-CD should run only after all required checks pass on the default branch. The deployment job must use the verified build artifact instead of rebuilding independently.
-
-### Branch Protection
-
-Recommended repository settings:
-
-- Require a pull request before merging.
-- Require the CI workflow to pass.
-- Prevent force pushes to the default branch.
-- Require branches to be up to date before merging when practical.
-- Keep GitHub Pages deployment permissions limited to the deployment job.
-
-## 9. Commit and Review Strategy
-
-Every commit should:
-
-- Have one clear purpose.
-- Leave tests and the build passing.
-- Avoid unrelated formatting changes.
-- Include tests for changed behavior.
-- Be small enough to review without reconstructing multiple design decisions.
-
-Before committing:
-
-```bash
-npm test -- --watchAll=false
-CI=true npm run build
-git diff --check
-```
-
-For steps that add Playwright:
-
-```bash
-npm run test:e2e
-```
-
-The Create React App to Vite migration should be completed after the stable `v1.0.0` release in a separate branch and pull request. It should not be combined with domain-model or UI refactoring.
-
-## 10. Risks and Mitigation
-
-| Risk | Impact | Mitigation |
-|---|---|---|
-| Displayed impacts differ from calculated impacts | Loss of user trust | Use centralized facility definitions and contract tests |
-| Existing facilities affect the user scenario | Misleading results | Store existing and user-plan facilities separately |
-| Percent and percentage-point changes are mixed | Incorrect calculations | Define calculation types in metric metadata and methodology |
-| Map tests depend on remote services | Flaky CI | Mock Leaflet boundaries and remote tiles in automated tests |
-| Large refactors hide behavior changes | Difficult review and rollback | Use small phase-based commits with passing tests |
-| Styling changes reduce accessibility | Poor usability | Add keyboard, focus, contrast, and responsive checks |
-| Deployment rebuild differs from CI build | Unverified production artifact | Deploy the exact artifact produced by the verified build job |
-| CRA migration disrupts stabilization | Delayed release | Defer Vite migration until after `v1.0.0` |
-
-## 11. Definition of Done
-
-A development step is complete when:
-
-- Its acceptance criteria are met.
-- Relevant automated tests exist and pass.
-- The production build succeeds with warnings treated as errors.
-- User-facing behavior has been manually checked when applicable.
-- Documentation is updated when behavior or assumptions change.
-- The change is committed independently with a descriptive message.
-
-The portfolio release is complete when all must-have items are delivered, CI and CD are green, the live application matches the documented simulation model, and the repository can be understood and run by a new contributor without additional guidance.
+The portfolio release is complete when the application is usable without hidden instructions, the simulation is explainable, CI and CD are green, data provenance is documented, and a new contributor can run and understand the repository without additional guidance.
