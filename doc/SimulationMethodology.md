@@ -2,7 +2,7 @@
 
 ## Purpose
 
-City Sim is an educational urban-planning application. It demonstrates how a proposed mix of public facilities could be compared with a no-plan city projection.
+Burnaby PlanLab is an educational urban-planning application. It demonstrates how a proposed mix of public facilities could be compared with a no-plan city projection.
 
 The simulation is not an official City of Burnaby forecast, an engineering model, or a substitute for professional policy analysis. Its coefficients are simplified project assumptions designed to make user choices visible and comparable.
 

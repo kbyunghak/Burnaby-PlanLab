@@ -27,7 +27,7 @@ const createIcon = (iconUrl, className, size = 32) =>
   });
 
 const defaultIcon = new L.Icon({
-  iconUrl: getPublicAssetUrl('/city-sim-icon.svg'),
+  iconUrl: getPublicAssetUrl('/burnaby-plan-lab-icon.svg'),
   iconSize: [28, 28],
   iconAnchor: [14, 28],
   popupAnchor: [0, -28],

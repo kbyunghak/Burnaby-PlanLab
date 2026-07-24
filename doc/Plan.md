@@ -184,7 +184,7 @@ Do not use `npm audit fix --force` as a substitute for an intentional tooling mi
 - [ ] Add the confirmed subtitle.
 - [ ] Update the browser title and metadata.
 - [ ] Update the package name where safe.
-- [ ] Replace old `city-sim` and generic City Simulation references in documentation.
+- [x] Replace old `city-sim` and generic City Simulation references in documentation.
 - [ ] Update local deployment configuration to `/burnaby-plan-lab/`.
 - [ ] Replace the placeholder clone URL after the remote repository is renamed.
 - [ ] Verify favicon, manifest, links, and production asset paths.

@@ -30,6 +30,14 @@
   margin: 0;
 }
 
+.map-panel__header > span {
+  color: var(--color-text-muted);
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 650;
+  margin-top: 2px;
+}
+
 .map-key {
   display: flex;
   flex-wrap: wrap;

@@ -1,9 +1,9 @@
 {
-  "short_name": "City Sim",
-  "name": "City Sim - Burnaby Planning Simulator",
+  "short_name": "PlanLab",
+  "name": "Burnaby PlanLab - 2026–2050 City Development Simulator",
   "icons": [
     {
-      "src": "city-sim-icon.svg",
+      "src": "burnaby-plan-lab-icon.svg",
       "sizes": "any",
       "type": "image/svg+xml"
     },

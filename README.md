@@ -1,7 +1,7 @@
 
-# NextGen SmartCity Simulation
+# Burnaby PlanLab
 
-## Live Demo: https://kbyunghak.github.io/city-sim/
+## Live Demo: https://kbyunghak.github.io/burnaby-plan-lab/
 
 ![image](https://github.com/user-attachments/assets/defb8a73-fb91-41bd-864c-2bffcb3454f3)
 
@@ -66,8 +66,8 @@ Users can:
 ### Installation
 
 ```bash
-git clone https://github.com/yourusername/burnaby-city-simulation.git
-cd burnaby-city-simulation
+git clone https://github.com/kbyunghak/burnaby-plan-lab.git
+cd burnaby-plan-lab
 npm install
 ```
 

@@ -24,7 +24,8 @@ const MapComponentWrapper = ({
     <section className="map-panel" aria-labelledby="map-heading">
       <header className="map-panel__header">
         <p>Burnaby, British Columbia</p>
-        <h1 id="map-heading">City Development Simulation</h1>
+        <h1 id="map-heading">Burnaby PlanLab</h1>
+        <span>2026–2050 City Development Simulator</span>
       </header>
       <div className="map-key" aria-label="Map symbols">
         <span><i className="map-key__boundary" />Highlighted Burnaby planning area</span>
