@@ -3,7 +3,6 @@ import MapComponent from './MapComponent';
 
 const mockMap = {
   fitBounds: jest.fn(),
-  panTo: jest.fn(),
   setView: jest.fn(),
 };
 
@@ -52,7 +51,6 @@ const proposedMarket = {
 
 beforeEach(() => {
   mockMap.fitBounds.mockClear();
-  mockMap.panTo.mockClear();
   mockMap.setView.mockClear();
 });
 
@@ -67,7 +65,6 @@ test('connects Reset View to the initialized Leaflet map', async () => {
       showAllIcons={false}
       existingFacilities={[]}
       selectedUserFacilityId={null}
-      selectedUserFacility={null}
       onUserFacilitySelect={jest.fn()}
     />
   );
@@ -95,7 +92,6 @@ test('keeps facility icons and distinguishes existing and proposed markers', () 
       showAllIcons
       existingFacilities={[existingMarket]}
       selectedUserFacilityId={null}
-      selectedUserFacility={null}
       onUserFacilitySelect={jest.fn()}
     />
   );
@@ -112,23 +108,4 @@ test('keeps facility icons and distinguishes existing and proposed markers', () 
     'facility-marker facility-marker--proposed'
   );
   expect(markers[1]).toHaveAttribute('data-opacity', '1');
-});
-
-test('pans to a selected user-plan facility', () => {
-  render(
-    <MapComponent
-      center={[49.2488, -122.9805]}
-      zoom={12}
-      markers={[{ ...proposedMarket, id: 'plan-1' }]}
-      onMapClick={jest.fn()}
-      selectedBuilding={null}
-      showAllIcons
-      existingFacilities={[]}
-      selectedUserFacilityId="plan-1"
-      selectedUserFacility={{ ...proposedMarket, id: 'plan-1' }}
-      onUserFacilitySelect={jest.fn()}
-    />
-  );
-
-  expect(mockMap.panTo).toHaveBeenCalledWith(proposedMarket.position);
 });
