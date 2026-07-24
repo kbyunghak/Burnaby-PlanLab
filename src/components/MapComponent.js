@@ -104,6 +104,20 @@ function MapController({ onReady }) {
   return null;
 }
 
+function ZoomObserver({ onZoomChange }) {
+  const map = useMapEvents({
+    zoomend() {
+      onZoomChange(map.getZoom());
+    },
+  });
+
+  useEffect(() => {
+    onZoomChange(map.getZoom());
+  }, [map, onZoomChange]);
+
+  return null;
+}
+
 function LocationSelector({ onClick }) {
   useMapEvents({
     click(e) {
@@ -134,6 +148,22 @@ const MapComponent = ({
   onUserFacilitySelect,
 }) => {
   const [map, setMap] = useState(null);
+  const [currentZoom, setCurrentZoom] = useState(zoom);
+
+  const markerScale =
+    currentZoom < 11.5
+      ? 'far'
+      : currentZoom < 13
+        ? 'city'
+        : currentZoom < 14.5
+          ? 'district'
+          : 'street';
+
+  const handleZoomChange = (event) => {
+    if (!map) return;
+
+    map.setZoom(Number(event.target.value));
+  };
 
   const handleResetView = () => {
     if (!map) return;
@@ -142,7 +172,10 @@ const MapComponent = ({
   };
 
   return (
-    <div style={{ position: 'relative', height: '100%', width: '100%' }}>
+    <div
+      className={`map-canvas map-canvas--${markerScale}`}
+      style={{ position: 'relative', height: '100%', width: '100%' }}
+    >
       <MapContainer
         center={center}
         zoom={zoom}
@@ -152,6 +185,7 @@ const MapComponent = ({
         zoomDelta={0.25}
       >
         <MapController onReady={setMap} />
+        <ZoomObserver onZoomChange={setCurrentZoom} />
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         <FitBounds polygon={burnabyPolygon} />
         <LocationSelector onClick={onMapClick} />
@@ -234,6 +268,27 @@ const MapComponent = ({
         <span>Planning area</span>
         <strong>Burnaby</strong>
       </div>
+
+      <label className="map-detail-control">
+        <span className="map-detail-control__heading">
+          <strong>Map detail</strong>
+          <output>{currentZoom.toFixed(2)}</output>
+        </span>
+        <span className="map-detail-control__slider">
+          <span aria-hidden="true">City</span>
+          <input
+            type="range"
+            min="10.5"
+            max="16"
+            step="0.25"
+            value={currentZoom}
+            onChange={handleZoomChange}
+            disabled={!map}
+            aria-label="Map detail level"
+          />
+          <span aria-hidden="true">Street</span>
+        </span>
+      </label>
 
       <button
         type="button"

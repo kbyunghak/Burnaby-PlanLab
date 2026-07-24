@@ -3,6 +3,8 @@ import MapComponent from './MapComponent';
 
 const mockMap = {
   fitBounds: jest.fn(),
+  getZoom: jest.fn(() => 12),
+  setZoom: jest.fn(),
 };
 
 jest.mock('leaflet', () => ({
@@ -51,6 +53,9 @@ const proposedMarket = {
 
 beforeEach(() => {
   mockMap.fitBounds.mockClear();
+  mockMap.getZoom.mockReset();
+  mockMap.getZoom.mockReturnValue(12);
+  mockMap.setZoom.mockClear();
 });
 
 test('highlights Burnaby and connects Reset View to its bounds', async () => {
@@ -84,6 +89,30 @@ test('highlights Burnaby and connects Reset View to its bounds', async () => {
     expect.any(Array),
     { padding: [18, 18] }
   );
+});
+
+test('provides quarter-step map detail control without changing the center', () => {
+  render(
+    <MapComponent
+      center={[49.2488, -122.9805]}
+      zoom={12}
+      markers={[]}
+      onMapClick={jest.fn()}
+      existingFacilities={[]}
+      selectedBuildingName={null}
+      selectedUserFacilityId={null}
+      onUserFacilitySelect={jest.fn()}
+    />
+  );
+
+  const detailControl = screen.getByRole('slider', {
+    name: 'Map detail level',
+  });
+
+  expect(detailControl).toHaveAttribute('step', '0.25');
+  fireEvent.change(detailControl, { target: { value: '13.25' } });
+
+  expect(mockMap.setZoom).toHaveBeenCalledWith(13.25);
 });
 
 test('keeps facility icons and distinguishes existing and proposed markers', () => {
