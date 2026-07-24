@@ -1,7 +1,7 @@
 import React from 'react';
-import Modal from 'react-modal';
 import { facilityDefinitions } from '../constants/facilityDefinitions';
 import { metricEntries } from '../constants/metricDefinitions';
+import AppModal from './AppModal';
 import './LegendModal.css';
 
 const legendData = Object.entries(facilityDefinitions).map(
@@ -14,11 +14,10 @@ const formatImpact = (value) => {
 };
 
 const LegendModal = ({ isOpen, onRequestClose }) => (
-  <Modal
+  <AppModal
     isOpen={isOpen}
     onRequestClose={onRequestClose}
     contentLabel="Facility Impact Legend"
-    ariaHideApp={false}
     overlayClassName="legend-overlay"
     className="legend-modal"
   >
@@ -73,7 +72,7 @@ const LegendModal = ({ isOpen, onRequestClose }) => (
         </article>
       ))}
     </div>
-  </Modal>
+  </AppModal>
 );
 
 export default LegendModal;

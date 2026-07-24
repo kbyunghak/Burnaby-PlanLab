@@ -1,5 +1,4 @@
 import React from 'react';
-import Modal from 'react-modal';
 import {
   CartesianGrid,
   Legend,
@@ -18,6 +17,7 @@ import {
 } from '../constants/metricDefinitions';
 import SimulationSummary from './SimulationSummary';
 import SimulationSummary2 from './SimulationSummary2';
+import AppModal from './AppModal';
 import './SimulationModal.css';
 
 const featuredMetricKeys = [
@@ -76,11 +76,10 @@ const SimulationModal = ({
   }));
 
   return (
-    <Modal
+    <AppModal
       isOpen={isOpen}
       onRequestClose={onRequestClose}
       contentLabel="Simulation Results"
-      ariaHideApp={false}
       overlayClassName="simulation-modal-overlay"
       className="simulation-modal"
     >
@@ -301,7 +300,7 @@ const SimulationModal = ({
           Close Results
         </button>
       </footer>
-    </Modal>
+    </AppModal>
   );
 };
 

@@ -2,14 +2,6 @@ import { fireEvent, render, screen, within } from '@testing-library/react';
 import { calculateSimulation } from '../simulation/calculateSimulation';
 import SimulationModal from './SimulationModal';
 
-jest.mock('react-modal', () => function MockModal({
-  children,
-  isOpen,
-  contentLabel,
-}) {
-  return isOpen ? <div aria-label={contentLabel}>{children}</div> : null;
-});
-
 jest.mock('recharts', () => ({
   CartesianGrid: () => null,
   Legend: () => null,
