@@ -10,13 +10,13 @@ The simulation is not an official City of Burnaby forecast, an engineering model
 
 The application produces five related outputs:
 
-### 2026 Baseline
+### 2026 Model Start
 
-The starting state of Burnaby stored in `burnaby2026`. Existing facilities are part of the map context but do not create user-plan impacts or consume the user's budget.
+The population starting value is a model estimate interpolated between the official 2021 and 2030 reference points in the Burnaby 2050 Official Community Plan. Other indicators remain illustrative assumptions. Existing facilities are part of the map context but do not create user-plan impacts or consume the user's budget.
 
 ### 2050 Without Plan
 
-The reference projection stored in `burnabyForecast2050`. This represents the expected 2050 state before the user's proposed facilities are applied.
+The population reference is the Metro Vancouver high-growth scenario published in the Burnaby 2050 Official Community Plan. Other indicators remain illustrative assumptions. This scenario is evaluated before the user's proposed facilities are applied.
 
 ### 2050 With Your Plan
 
@@ -36,7 +36,9 @@ A 2026-2050 series used to compare a linearly interpolated no-plan projection wi
 
 ## Data Status
 
-The baseline and forecast values currently stored in the repository should be treated as project assumptions unless a source is explicitly added beside the dataset.
+Population reference values are stored as a versioned snapshot of the Burnaby 2050 Official Community Plan. The 2026 population is a documented model estimate. Other baseline and forecast indicators remain illustrative project assumptions.
+
+See [Simulation Data Sources](DataSources.md) for source metadata, published values, transformations, and maintenance rules.
 
 Before presenting the model as data-informed policy analysis, each baseline and forecast value should have:
 
@@ -144,8 +146,8 @@ Year Fraction =
   (Current Year - 2026) / (2050 - 2026)
 
 Projected Value =
-  2026 Baseline
-  + (2050 Without Plan - 2026 Baseline) × Year Fraction
+  2026 Model Start
+  + (2050 Reference - 2026 Model Start) × Year Fraction
 ```
 
 ### 5. Introduce User-Plan Effects Over Time
@@ -165,30 +167,30 @@ At 2026 the user-plan effect is zero. At 2050 the full effect is applied.
 Assume:
 
 ```text
-2050 population without plan: 360,000
+2050 population without plan: 408,150
 One School population coefficient: +0.05
 ```
 
 The user-plan population is:
 
 ```text
-360,000 × (1 + 0.05) = 378,000
+408,150 × (1 + 0.05) = 428,557.5
 ```
 
 The net population impact is:
 
 ```text
-378,000 - 360,000 = +18,000
+428,557.5 - 408,150 = +20,407.5
 ```
 
 The application should therefore display:
 
 | Scenario | Population |
 |---|---:|
-| 2026 Baseline | 263,046 |
-| 2050 Without Plan | 360,000 |
-| 2050 With Your Plan | 378,000 |
-| Net Impact | +18,000 |
+| 2026 Model Start | 289,421 |
+| 2050 Reference | 408,150 |
+| 2050 With Your Plan | 428,558 |
+| Net Impact | +20,408 |
 
 ## Precision and Formatting
 
@@ -229,7 +231,7 @@ This separation allows Net Impact to represent the user's choices rather than th
 
 ## Known Limitations
 
-- Baseline and forecast values do not yet include repository-level source citations.
+- Only population currently has a source-backed long-range reference series.
 - Facility coefficients are simplified assumptions rather than calibrated causal estimates.
 - Effects are additive and do not model diminishing returns.
 - Facilities do not interact with one another.

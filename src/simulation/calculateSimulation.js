@@ -4,6 +4,7 @@ import {
   metricEntries,
 } from '../constants/metricDefinitions';
 import { burnaby2026, burnabyForecast2050 } from '../constants/mapData';
+import { burnabyReferenceScenario } from '../constants/burnabyReferenceScenario';
 
 const START_YEAR = 2026;
 const END_YEAR = 2050;
@@ -67,6 +68,7 @@ export const calculateSimulation = (facilities) => {
   );
 
   return {
+    referenceScenario: burnabyReferenceScenario,
     baseline2026,
     projection2050,
     userPlan2050,

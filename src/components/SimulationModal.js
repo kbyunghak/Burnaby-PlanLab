@@ -60,7 +60,10 @@ const SimulationModal = ({
     netImpact,
     yearlyTrend,
     planSnapshot,
+    referenceScenario,
   } = simulationData;
+  const isNoPlan =
+    (planSnapshot?.facilityCount ?? facilitiesInstalled.length) === 0;
 
   const installedDefinitions = facilitiesInstalled
     .map((facilityName) => ({
@@ -85,11 +88,16 @@ const SimulationModal = ({
     >
       <header className="simulation-modal__header">
         <div>
-          <p className="simulation-modal__eyebrow">Your 2050 city plan</p>
-          <h2>Simulation Results</h2>
+          <p className="simulation-modal__eyebrow">
+            {isNoPlan ? 'No-plan reference scenario' : 'Your 2050 city plan'}
+          </p>
+          <h2>
+            {isNoPlan ? 'Burnaby 2050 Reference Outlook' : 'Simulation Results'}
+          </h2>
           <p>
-            Compare Burnaby&apos;s projected future with the measurable impact
-            of your facility plan.
+            {isNoPlan
+              ? 'See how Burnaby may change without additional facilities from your plan.'
+              : 'Compare Burnaby’s reference outlook with the illustrative impact of your facility plan.'}
           </p>
         </div>
         <button
@@ -120,13 +128,50 @@ const SimulationModal = ({
         </aside>
       )}
 
+      {referenceScenario && (
+        <aside
+          className="simulation-reference"
+          aria-label="Reference scenario source"
+        >
+          <div>
+            <span className="data-status data-status--official">
+              Official reference
+            </span>
+            <strong>{referenceScenario.label}</strong>
+            <p>
+              Population uses the Metro Vancouver high-growth scenario published
+              in the Burnaby 2050 Official Community Plan. The 2026 population is
+              a model estimate interpolated between official 2021 and 2030 values.
+            </p>
+          </div>
+          <div className="simulation-reference__actions">
+            <span className="data-status data-status--assumption">
+              Other indicators: illustrative
+            </span>
+            <a
+              href={referenceScenario.source.url}
+              target="_blank"
+              rel="noreferrer"
+            >
+              View official source
+            </a>
+          </div>
+        </aside>
+      )}
+
       <section aria-labelledby="net-impact-heading">
         <div className="simulation-section-heading">
           <div>
             <p className="simulation-section-heading__kicker">Plan outcome</p>
-            <h3 id="net-impact-heading">Net Impact by 2050</h3>
+            <h3 id="net-impact-heading">
+              {isNoPlan ? 'No Change From Your Plan' : 'Net Impact by 2050'}
+            </h3>
           </div>
-          <p>Changes shown against the 2050 projection without your plan.</p>
+          <p>
+            {isNoPlan
+              ? 'No facilities were proposed, so plan impact is zero.'
+              : 'Changes shown against the 2050 reference scenario without your plan.'}
+          </p>
         </div>
 
         <div className="impact-card-grid">
@@ -155,7 +200,7 @@ const SimulationModal = ({
         <div className="simulation-section-heading">
           <div>
             <p className="simulation-section-heading__kicker">Scenario comparison</p>
-            <h3 id="comparison-heading">Baseline and Plan Comparison</h3>
+            <h3 id="comparison-heading">Reference and Plan Comparison</h3>
           </div>
         </div>
 
@@ -164,8 +209,8 @@ const SimulationModal = ({
             <thead>
               <tr>
                 <th scope="col">Indicator</th>
-                <th scope="col">2026 Baseline</th>
-                <th scope="col">2050 Without Plan</th>
+                <th scope="col">2026 Model Start</th>
+                <th scope="col">2050 Reference</th>
                 <th scope="col">2050 With Your Plan</th>
                 <th scope="col">Net Impact</th>
               </tr>
@@ -176,7 +221,16 @@ const SimulationModal = ({
 
                 return (
                   <tr key={key}>
-                    <th scope="row">{label}</th>
+                    <th scope="row">
+                      <span>{label}</span>
+                      <small className={`data-status ${
+                        key === 'population'
+                          ? 'data-status--official'
+                          : 'data-status--assumption'
+                      }`}>
+                        {key === 'population' ? 'OCP-based' : 'Illustrative'}
+                      </small>
+                    </th>
                     <td>{formatMetricValue(key, baseline2026[key])}</td>
                     <td>{formatMetricValue(key, projection2050[key])}</td>
                     <td>{formatMetricValue(key, userPlan2050[key])}</td>

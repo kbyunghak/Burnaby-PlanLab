@@ -1,3 +1,9 @@
+import {
+  burnabyReferenceScenario,
+  illustrativeBaseline2026,
+  illustrativeProjection2050,
+} from './burnabyReferenceScenario';
+
 export const burnabyPolygon = [
   [49.29383005419665, -123.02342690275432],
   [49.29507239242638, -123.00676466744345],
@@ -23,26 +29,14 @@ export const burnabyPolygon = [
 
 export const burnaby2026 = {
   year: 2026,
-  population: 263046,
-  trafficAccidents: 8500,
-  crimeRate: 11445,        
-  housingSatisfaction: 31,
-  unemploymentRate: 6.2,
-  housingSupplyRate: 65,
-  airQualityIndex: 17,
-  inflationRate: 2.5,
+  population: burnabyReferenceScenario.modelStart2026.population,
+  ...illustrativeBaseline2026,
 };
 
 export const burnabyForecast2050 = {
   year: 2050,
-  population: 360000,
-  trafficAccidents: 5050,
-  crimeRate: 8500,        
-  housingSatisfaction: 45,
-  unemploymentRate: 4.2,
-  housingSupplyRate: 85,
-  airQualityIndex: 17,
-  inflationRate: 3.2,
+  population: burnabyReferenceScenario.officialSeries[2050].population,
+  ...illustrativeProjection2050,
 };
 
 export const existingFacilities = [

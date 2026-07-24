@@ -10,6 +10,8 @@ A React-based interactive city development simulation for Burnaby, BC, showcasin
 
 ## Project Documentation
 
+- [Simulation Data Sources](doc/DataSources.md) — official reference values, model estimates, illustrative assumptions, and maintenance rules.
+
 - [Development Plan](doc/Plan.md) — roadmap, execution strategy, testing, CI/CD, maintenance standards, and future enhancements.
 - [Simulation Methodology](doc/SimulationMethodology.md) — scenario definitions, formulas, assumptions, data status, and model limitations.
 

@@ -3,6 +3,7 @@ import {
   aggregateFacilityImpacts,
   calculateSimulation,
 } from './calculateSimulation';
+import { burnabyReferenceScenario } from '../constants/burnabyReferenceScenario';
 
 const facility = (buildingName) => ({
   buildingName,
@@ -27,6 +28,7 @@ describe('calculateSimulation', () => {
     const result = calculateSimulation([]);
 
     expect(result).toEqual({
+      referenceScenario: burnabyReferenceScenario,
       baseline2026: burnaby2026,
       projection2050: burnabyForecast2050,
       userPlan2050: burnabyForecast2050,
@@ -59,7 +61,7 @@ describe('calculateSimulation', () => {
 
     expect(userPlan2050).toEqual(expect.objectContaining({
       year: 2050,
-      population: 378000,
+      population: 428557.5,
       trafficAccidents: 4949,
       crimeRate: 8075,
       unemploymentRate: 4.074,
@@ -68,7 +70,7 @@ describe('calculateSimulation', () => {
       inflationRate: 3.2032,
     }));
     expect(userPlan2050.housingSatisfaction).toBeCloseTo(46.8);
-    expect(netImpact.population).toBe(18000);
+    expect(netImpact.population).toBeCloseTo(20407.5);
     expect(netImpact.crimeRate).toBe(-425);
   });
 
@@ -79,7 +81,7 @@ describe('calculateSimulation', () => {
     );
     const { userPlan2050 } = calculateSimulation(manyPoliceStations);
 
-    expect(userPlan2050.population).toBeCloseTo(396000);
+    expect(userPlan2050.population).toBeCloseTo(448965);
     expect(userPlan2050.trafficAccidents).toBe(0);
     expect(userPlan2050.crimeRate).toBe(0);
     expect(userPlan2050.housingSatisfaction).toBeLessThanOrEqual(100);

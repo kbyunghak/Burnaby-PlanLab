@@ -30,17 +30,18 @@ describe('SimulationModal', () => {
     );
 
     expect(screen.getByRole('heading', { name: /net impact by 2050/i })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /baseline and plan comparison/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /reference and plan comparison/i })).toBeInTheDocument();
 
     const comparisonSection = screen
-      .getByRole('heading', { name: /baseline and plan comparison/i })
+      .getByRole('heading', { name: /reference and plan comparison/i })
       .closest('section');
     const populationRow = within(comparisonSection)
       .getByRole('row', { name: /Population/ });
-    expect(populationRow).toHaveTextContent('263,046');
-    expect(populationRow).toHaveTextContent('360,000');
-    expect(populationRow).toHaveTextContent('378,000');
-    expect(populationRow).toHaveTextContent('+18,000');
+    expect(populationRow).toHaveTextContent('289,421');
+    expect(populationRow).toHaveTextContent('408,150');
+    expect(populationRow).toHaveTextContent('428,558');
+    expect(populationRow).toHaveTextContent('+20,408');
+    expect(populationRow).toHaveTextContent('OCP-based');
   });
 
   test('describes favorable and unfavorable net impacts semantically', () => {
@@ -54,7 +55,7 @@ describe('SimulationModal', () => {
     );
 
     expect(
-      screen.getAllByText('+18,000', { selector: '.impact-positive' })
+      screen.getAllByText('+20,408', { selector: '.impact-positive' })
     ).not.toHaveLength(0);
     expect(
       screen.getAllByText('-425', { selector: '.impact-positive' })
@@ -103,5 +104,36 @@ describe('SimulationModal', () => {
     expect(snapshot).toHaveTextContent('1 proposed facility');
     expect(snapshot).toHaveTextContent('$500 allocated');
     expect(snapshot).toHaveTextContent('$9,500 unallocated');
+  });
+
+  test('labels an empty plan as a sourced no-plan reference scenario', () => {
+    render(
+      <SimulationModal
+        isOpen
+        onRequestClose={jest.fn()}
+        simulationData={{
+          ...calculateSimulation([]),
+          planSnapshot: {
+            facilityCount: 0,
+            totalCost: 0,
+            remainingBudget: 10000,
+          },
+        }}
+        facilitiesInstalled={[]}
+      />
+    );
+
+    expect(
+      screen.getByRole('heading', { name: 'Burnaby 2050 Reference Outlook' })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'No Change From Your Plan' })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('complementary', { name: 'Reference scenario source' })
+    ).toHaveTextContent('Official reference');
+    expect(
+      screen.getByRole('link', { name: 'View official source' })
+    ).toHaveAttribute('href', expect.stringContaining('Burnaby%202050'));
   });
 });
