@@ -16,7 +16,23 @@ jest.mock('leaflet', () => ({
 }));
 
 jest.mock('react-leaflet', () => ({
-  MapContainer: ({ children }) => <div data-testid="leaflet-map">{children}</div>,
+  MapContainer: ({
+    children,
+    minZoom,
+    maxZoom,
+    maxBounds,
+    maxBoundsViscosity,
+  }) => (
+    <div
+      data-testid="leaflet-map"
+      data-min-zoom={minZoom}
+      data-max-zoom={maxZoom}
+      data-max-bounds={JSON.stringify(maxBounds)}
+      data-bounds-viscosity={maxBoundsViscosity}
+    >
+      {children}
+    </div>
+  ),
   Marker: ({ children, icon, opacity, alt, title }) => (
     <div
       data-testid="facility-marker"
@@ -90,8 +106,37 @@ test('highlights Burnaby and connects Reset View to its bounds', async () => {
 
   expect(mockMap.fitBounds).toHaveBeenLastCalledWith(
     expect.any(Array),
-    { padding: [18, 18] }
+    { animate: false, padding: [12, 12] }
   );
+  expect(mockMap.setZoom).toHaveBeenLastCalledWith(
+    12.5,
+    { animate: false }
+  );
+});
+
+test('limits navigation to the Burnaby context', () => {
+  render(
+    <MapComponent
+      center={[49.2488, -122.9805]}
+      zoom={12}
+      markers={[]}
+      onMapClick={jest.fn()}
+      existingFacilities={[]}
+      selectedBuildingName={null}
+      selectedUserFacilityId={null}
+      onUserFacilitySelect={jest.fn()}
+    />
+  );
+
+  const map = screen.getByTestId('leaflet-map');
+
+  expect(map).toHaveAttribute('data-min-zoom', '11.5');
+  expect(map).toHaveAttribute('data-max-zoom', '16');
+  expect(map).toHaveAttribute('data-bounds-viscosity', '0.8');
+  expect(JSON.parse(map.getAttribute('data-max-bounds'))).toEqual([
+    [49.1556, -123.0584],
+    [49.3245, -122.8572],
+  ]);
 });
 
 test('provides quarter-step map detail control without changing the center', () => {

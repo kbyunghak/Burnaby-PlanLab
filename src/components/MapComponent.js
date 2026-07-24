@@ -54,7 +54,22 @@ const mapMaskBounds = [
 ];
 
 const burnabyViewOptions = {
-  padding: [18, 18],
+  animate: false,
+  padding: [12, 12],
+};
+
+const burnabyNavigationBounds = [
+  [49.1556, -123.0584],
+  [49.3245, -122.8572],
+];
+
+const burnabyFrameZoom = 12.5;
+const minMapZoom = 11.5;
+const maxMapZoom = 16;
+
+const frameBurnaby = (map) => {
+  map.fitBounds(burnabyPolygon, burnabyViewOptions);
+  map.setZoom(burnabyFrameZoom, { animate: false });
 };
 
 function MapController({ onReady }) {
@@ -94,7 +109,7 @@ function FitBounds({ polygon }) {
   const map = useMap();
   useEffect(() => {
     if (polygon && polygon.length) {
-      map.fitBounds(polygon, burnabyViewOptions);
+      frameBurnaby(map);
     }
   }, [map, polygon]);
   return null;
@@ -162,7 +177,7 @@ const MapComponent = ({
   const handleResetView = () => {
     if (!map) return;
 
-    map.fitBounds(burnabyPolygon, burnabyViewOptions);
+    frameBurnaby(map);
   };
 
   return (
@@ -175,6 +190,10 @@ const MapComponent = ({
         zoom={zoom}
         style={{ height: '100%', width: '100%', borderRadius: '12px' }}
         scrollWheelZoom={true}
+        minZoom={minMapZoom}
+        maxZoom={maxMapZoom}
+        maxBounds={burnabyNavigationBounds}
+        maxBoundsViscosity={0.8}
         zoomSnap={0.25}
         zoomDelta={0.25}
       >
@@ -281,8 +300,8 @@ const MapComponent = ({
           <span aria-hidden="true">City</span>
           <input
             type="range"
-            min="10.5"
-            max="16"
+            min={minMapZoom}
+            max={maxMapZoom}
             step="0.25"
             value={currentZoom}
             onChange={handleZoomChange}
