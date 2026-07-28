@@ -5,6 +5,9 @@ const indexHtml = fs.readFileSync(
   path.join(process.cwd(), 'public', 'index.html'),
   'utf8'
 );
+const socialPreview = fs.readFileSync(
+  path.join(process.cwd(), 'public', 'social-preview.png')
+);
 
 test('publishes complete Open Graph and Twitter card metadata', () => {
   expect(indexHtml).toContain(
@@ -31,4 +34,10 @@ test('publishes complete Open Graph and Twitter card metadata', () => {
   expect(indexHtml).toContain(
     'rel="canonical"'
   );
+});
+
+test('keeps the social preview at the recommended Open Graph dimensions', () => {
+  expect(socialPreview.subarray(1, 4).toString('ascii')).toBe('PNG');
+  expect(socialPreview.readUInt32BE(16)).toBe(1200);
+  expect(socialPreview.readUInt32BE(20)).toBe(630);
 });
