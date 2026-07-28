@@ -6,7 +6,7 @@ const indexHtml = fs.readFileSync(
   'utf8'
 );
 const socialPreview = fs.readFileSync(
-  path.join(process.cwd(), 'public', 'social-preview-v2.png')
+  path.join(process.cwd(), 'public', 'social-preview-v3.jpg')
 );
 
 test('publishes complete Open Graph and Twitter card metadata', () => {
@@ -21,9 +21,15 @@ test('publishes complete Open Graph and Twitter card metadata', () => {
   );
   expect(
     indexHtml.match(
-      /content="https:\/\/kbyunghak\.github\.io\/Burnaby-PlanLab\/social-preview-v2\.png"/g
+      /content="https:\/\/kbyunghak\.github\.io\/Burnaby-PlanLab\/social-preview-v3\.jpg"/g
     )
-  ).toHaveLength(2);
+  ).toHaveLength(3);
+  expect(indexHtml).toContain(
+    'property="og:image:type" content="image/jpeg"'
+  );
+  expect(indexHtml).toContain(
+    'property="og:site_name" content="Burnaby PlanLab"'
+  );
   expect(indexHtml).toContain(
     'property="og:image:width" content="1200"'
   );
@@ -38,8 +44,9 @@ test('publishes complete Open Graph and Twitter card metadata', () => {
   );
 });
 
-test('keeps the social preview at the recommended Open Graph dimensions', () => {
-  expect(socialPreview.subarray(1, 4).toString('ascii')).toBe('PNG');
-  expect(socialPreview.readUInt32BE(16)).toBe(1200);
-  expect(socialPreview.readUInt32BE(20)).toBe(630);
+test('publishes a valid JPEG social preview', () => {
+  expect(socialPreview[0]).toBe(0xff);
+  expect(socialPreview[1]).toBe(0xd8);
+  expect(socialPreview[socialPreview.length - 2]).toBe(0xff);
+  expect(socialPreview[socialPreview.length - 1]).toBe(0xd9);
 });
