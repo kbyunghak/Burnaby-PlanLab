@@ -6,7 +6,7 @@ const indexHtml = fs.readFileSync(
   'utf8'
 );
 const socialPreview = fs.readFileSync(
-  path.join(process.cwd(), 'public', 'social-preview.png')
+  path.join(process.cwd(), 'public', 'social-preview-v2.png')
 );
 
 test('publishes complete Open Graph and Twitter card metadata', () => {
@@ -19,9 +19,11 @@ test('publishes complete Open Graph and Twitter card metadata', () => {
   expect(indexHtml).toContain(
     'property="og:image"'
   );
-  expect(indexHtml).toContain(
-    'content="https://kbyunghak.github.io/Burnaby-PlanLab/social-preview.png"'
-  );
+  expect(
+    indexHtml.match(
+      /content="https:\/\/kbyunghak\.github\.io\/Burnaby-PlanLab\/social-preview-v2\.png"/g
+    )
+  ).toHaveLength(2);
   expect(indexHtml).toContain(
     'property="og:image:width" content="1200"'
   );
