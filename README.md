@@ -185,5 +185,12 @@ build for every push and pull request. The production build uses the
 
 ## License
 
-No license file is currently provided. All rights are reserved unless a license is
-added explicitly.
+Copyright © 2026 Andrew Kim, doing business as JOYgle Studio. All rights reserved.
+
+This repository and its original source code, scenario content, game data,
+artwork, branding, documentation, and other original materials may not be
+reproduced, modified, distributed, or used commercially without prior written
+permission.
+
+Third-party libraries, frameworks, fonts, and other dependencies remain
+subject to their respective licenses.
